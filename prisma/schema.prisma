@@ -1,0 +1,201 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AdminRole {
+  super_admin
+  admin
+  editor
+  order_manager
+}
+
+enum BookStatus {
+  draft
+  upcoming
+  pre_order
+  published
+  out_of_stock
+  archived
+}
+
+enum PaymentMethod {
+  cash_on_delivery
+  bkash
+  nagad
+  rocket
+}
+
+enum PaymentStatus {
+  unpaid
+  pending
+  paid
+  failed
+  refunded
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  processing
+  shipped
+  delivered
+  cancelled
+  returned
+}
+
+model Admin {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         AdminRole @default(admin)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Book {
+  id               String      @id @default(cuid())
+  title            String
+  slug             String      @unique
+  subtitle         String?
+  author           String
+  publisher        String      @default("Ayesha-Sharif Publication")
+  isbn13           String?     @unique
+  edition          String?
+  language         String      @default("Bangla")
+  pages            Int?
+  binding          String?
+  publicationDate  DateTime?
+  shortDescription String?
+  description      String?
+  regularPrice     Decimal     @db.Decimal(10, 2)
+  salePrice        Decimal     @db.Decimal(10, 2)
+  discountPercent  Int         @default(0)
+  discountStart    DateTime?
+  discountEnd      DateTime?
+  stockQuantity    Int         @default(0)
+  status           BookStatus  @default(draft)
+  coverImage       String?
+  galleryImages    String[]    @default([])
+  samplePdf        String?
+  weight           Int?
+  isFeatured       Boolean     @default(false)
+  isBestSeller     Boolean     @default(false)
+  isNewArrival     Boolean     @default(false)
+  isRecommended    Boolean     @default(false)
+  categoryId       String?
+  category         Category?   @relation(fields: [categoryId], references: [id])
+  tags             BookTag[]
+  orderItems       OrderItem[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([title])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  books       Book[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  isActive  Boolean   @default(true)
+  books     BookTag[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model BookTag {
+  bookId String
+  tagId  String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([bookId, tagId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  shippingAddress String
+  district        String
+  deliveryArea    String
+  subtotal        Decimal       @db.Decimal(10, 2)
+  discountTotal   Decimal       @default(0) @db.Decimal(10, 2)
+  deliveryCharge  Decimal       @db.Decimal(10, 2)
+  grandTotal      Decimal       @db.Decimal(10, 2)
+  paymentMethod   PaymentMethod @default(cash_on_delivery)
+  paymentStatus   PaymentStatus @default(unpaid)
+  orderStatus     OrderStatus   @default(pending)
+  transactionId   String?
+  courierName     String?
+  trackingNumber  String?
+  notes           String?
+  adminNote       String?
+  stockReduced    Boolean       @default(false)
+  items           OrderItem[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([orderNumber])
+  @@index([customerPhone])
+  @@index([orderStatus])
+  @@index([paymentStatus])
+}
+
+model OrderItem {
+  id                String  @id @default(cuid())
+  orderId           String
+  bookId            String
+  bookTitleSnapshot String
+  quantity          Int
+  unitPrice         Decimal @db.Decimal(10, 2)
+  totalPrice        Decimal @db.Decimal(10, 2)
+  order             Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  book              Book    @relation(fields: [bookId], references: [id])
+
+  @@index([orderId])
+  @@index([bookId])
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  image     String
+  link      String?
+  position  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([position])
+  @@unique([position, title])
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

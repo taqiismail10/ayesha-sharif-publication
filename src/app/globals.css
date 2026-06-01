@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --page: #fffcf6;
+  --navy: #10233f;
+  --cream: #f7f1e3;
+  --gold: #c9a227;
+  --emerald: #0f766e;
+  --danger: #b42318;
+  --ink: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: Inter, "Noto Sans Bengali", system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(201, 162, 39, 0.35);
+}
+
+.container-px {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-page;
+}
+
+.form-input {
+  @apply w-full rounded-md border border-line bg-white px-3 py-2.5 text-sm text-ink shadow-sm outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/30;
+}
+
+.form-label {
+  @apply text-sm font-semibold text-ink;
+}
+
+.admin-table th {
+  @apply bg-cream px-3 py-3 text-left text-xs font-bold uppercase text-muted;
+}
+
+.admin-table td {
+  @apply border-t border-line px-3 py-3 text-sm;
+}
