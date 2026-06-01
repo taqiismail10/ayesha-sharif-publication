@@ -5,7 +5,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <Header />
-      <main>{children}</main>
+      <main className="relative overflow-hidden soft-grid-bg">{children}</main>
       <Footer />
     </>
   );

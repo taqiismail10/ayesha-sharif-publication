@@ -68,9 +68,14 @@ export default async function BookDetailsPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="grid gap-7 lg:grid-cols-[420px_1fr]">
+      <div className="section-shell grid gap-7 lg:grid-cols-[420px_1fr]">
         <div>
-          <BookCover title={book.title} author={book.author} image={book.coverImage} />
+          <BookCover
+            title={book.title}
+            author={book.author}
+            image={book.coverImage}
+            className="book-shadow"
+          />
           {book.galleryImages.length ? (
             <div className="mt-3 grid grid-cols-4 gap-2">
               {book.galleryImages.map((image) => (
@@ -123,7 +128,7 @@ export default async function BookDetailsPage({ params }: PageProps) {
             <BookPurchasePanel book={book} />
           </div>
 
-          <div className="mt-6 grid gap-3 rounded-lg border border-line bg-white p-4 text-sm sm:grid-cols-2">
+          <div className="premium-panel mt-6 grid gap-3 p-4 text-sm sm:grid-cols-2">
             <Info label="Publisher" value={book.publisher} />
             <Info label="ISBN-13" value={book.isbn13} />
             <Info label="Edition" value={book.edition} />
@@ -161,10 +166,8 @@ export default async function BookDetailsPage({ params }: PageProps) {
       </div>
 
       {book.description ? (
-        <section className="mt-10 rounded-lg border border-line bg-white p-5 sm:p-7">
-          <h2 className="font-heading text-2xl font-extrabold text-navy">
-            Description
-          </h2>
+        <section className="premium-panel mt-10 p-5 sm:p-7">
+          <h2 className="section-heading">Description</h2>
           <p className="mt-4 whitespace-pre-line leading-8 text-ink">{book.description}</p>
         </section>
       ) : null}

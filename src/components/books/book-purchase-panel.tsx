@@ -28,7 +28,7 @@ export function BookPurchasePanel({ book }: { book: BookDetailData }) {
   };
 
   return (
-    <div className="rounded-lg border border-line bg-white p-4 shadow-sm">
+    <div className="premium-panel p-4">
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-bold text-muted">Quantity</span>
         <div className="flex items-center rounded-md border border-line bg-page">

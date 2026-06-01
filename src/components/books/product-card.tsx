@@ -17,9 +17,14 @@ export function ProductCard({ book }: { book: BookCardData }) {
   const discount = book.discountPercent > 0;
 
   return (
-    <article className="group flex h-full flex-col rounded-lg border border-line bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft">
+    <article className="premium-card shine-hover group flex h-full flex-col p-3">
       <Link href={`/books/${book.slug}`} className="block">
-        <BookCover title={book.title} author={book.author} image={book.coverImage} />
+        <BookCover
+          title={book.title}
+          author={book.author}
+          image={book.coverImage}
+          className="book-shadow"
+        />
       </Link>
       <div className="flex flex-1 flex-col pt-4">
         <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -65,7 +70,7 @@ export function ProductCard({ book }: { book: BookCardData }) {
               quantity: 1
             })
           }
-          className="focus-ring mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-emerald px-3 py-2 text-sm font-bold text-white transition hover:bg-emerald/90 disabled:cursor-not-allowed disabled:bg-muted/40"
+          className="focus-ring mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-emerald px-3 py-2 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,118,110,0.18)] transition hover:-translate-y-0.5 hover:bg-emerald/90 disabled:cursor-not-allowed disabled:bg-muted/40 disabled:shadow-none"
           aria-label={`Add ${book.title} to cart`}
         >
           <ShoppingCart className="h-4 w-4" aria-hidden="true" />

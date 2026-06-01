@@ -6,15 +6,15 @@ import { CartLink } from "@/components/site/cart-link";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-page/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-white/70 bg-page/90 shadow-[0_10px_30px_rgba(16,35,63,0.07)] backdrop-blur-xl">
       <div className="container-px mx-auto flex max-w-7xl items-center gap-3 py-3">
-        <Link href="/" className="flex min-w-0 items-center gap-3">
+        <Link href="/" className="group flex min-w-0 items-center gap-3">
           <Image
             src="/logo/logo.png"
             alt="Ayesha-Sharif Publication"
             width={44}
             height={44}
-            className="h-11 w-11 rounded-md object-contain"
+            className="h-11 w-11 rounded-md object-contain shadow-sm transition group-hover:scale-105"
             priority
           />
           <span className="hidden text-sm font-extrabold leading-tight text-navy sm:block">
@@ -29,7 +29,7 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-bold text-ink transition hover:text-navy"
+              className="rounded-full px-3 py-2 text-sm font-bold text-ink/80 transition hover:bg-white/70 hover:text-navy hover:shadow-sm"
             >
               {item.label}
             </Link>
@@ -53,7 +53,7 @@ export function Header() {
               name="q"
               type="search"
               placeholder="Search books"
-              className="form-input h-11 min-w-0 pl-9"
+              className="form-input h-11 min-w-0 rounded-full border-white/75 bg-white/90 pl-9 shadow-[0_10px_24px_rgba(16,35,63,0.07)]"
             />
           </div>
         </form>
@@ -77,7 +77,7 @@ export function Header() {
             name="q"
             type="search"
             placeholder="Search books"
-            className="form-input h-11 pl-9"
+            className="form-input h-11 rounded-full border-white/75 bg-white/90 pl-9"
           />
         </div>
       </form>
@@ -86,7 +86,7 @@ export function Header() {
           <Link
             key={item.href}
             href={item.href}
-            className="whitespace-nowrap rounded-md border border-line bg-white px-3 py-2 text-sm font-bold text-ink"
+            className="whitespace-nowrap rounded-full border border-white/80 bg-white/80 px-3 py-2 text-sm font-bold text-ink shadow-sm"
           >
             {item.label}
           </Link>

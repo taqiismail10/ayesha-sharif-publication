@@ -5,8 +5,10 @@ import { defaultContact, policyLinks, publicNav } from "@/lib/constants";
 
 export function Footer() {
   return (
-    <footer className="mt-12 bg-navy text-white">
-      <div className="container-px mx-auto grid max-w-7xl gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="relative mt-16 overflow-hidden bg-navy text-white">
+      <div className="floating-orb -left-10 top-10 h-28 w-28" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(201,162,39,0.18),transparent_24rem)]" />
+      <div className="container-px relative mx-auto grid max-w-7xl gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <Image
             src="/logo/logo-white.png"
@@ -16,8 +18,8 @@ export function Footer() {
             className="mb-4 h-14 w-auto object-contain"
           />
           <p className="text-sm leading-6 text-white/75">
-            Premium but simple book publishing and ordering for Bangladeshi
-            readers.
+            Premium book publishing, ordering, and future-ready learning experiences
+            for Bangladeshi readers.
           </p>
         </div>
         <div>
@@ -61,7 +63,7 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-white/60">
+      <div className="relative border-t border-white/10 py-4 text-center text-xs text-white/60">
         © 2026 Ayesha-Sharif Publication. All rights reserved.
       </div>
     </footer>

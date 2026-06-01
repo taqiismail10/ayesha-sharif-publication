@@ -39,13 +39,14 @@ export async function BookListView({
   return (
     <div className="container-px mx-auto max-w-7xl py-8">
       <div className="mb-6">
+        <div className="mb-3 h-1 w-14 rounded-full bg-gold" />
         <h1 className="font-heading text-3xl font-extrabold text-navy sm:text-4xl">
           {title}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{description}</p>
       </div>
 
-      <form className="mb-7 grid gap-3 rounded-lg border border-line bg-white p-4 shadow-sm md:grid-cols-6">
+      <form className="premium-panel mb-7 grid gap-3 p-4 md:grid-cols-6">
         <input
           name="q"
           defaultValue={q}

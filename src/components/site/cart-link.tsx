@@ -10,7 +10,7 @@ export function CartLink() {
   return (
     <Link
       href="/cart"
-      className="focus-ring relative inline-flex h-11 w-11 items-center justify-center rounded-md border border-line bg-white text-navy"
+      className="focus-ring shine-hover relative inline-flex h-11 w-11 items-center justify-center rounded-md border border-gold/40 bg-white/90 text-navy shadow-[0_10px_26px_rgba(16,35,63,0.1)] transition hover:-translate-y-0.5 hover:border-gold"
       aria-label="Open cart"
       title="Cart"
     >

@@ -13,18 +13,17 @@ export function BookSection({ title, subtitle, books, href }: BookSectionProps) 
   if (!books.length) return null;
 
   return (
-    <section className="py-8 sm:py-10">
+    <section className="section-shell">
       <div className="mb-5 flex items-end justify-between gap-4">
         <div>
-          <h2 className="font-heading text-2xl font-extrabold text-navy sm:text-3xl">
-            {title}
-          </h2>
+          <div className="mb-3 h-1 w-14 rounded-full bg-gold" />
+          <h2 className="section-heading">{title}</h2>
           {subtitle ? <p className="mt-1 text-sm text-muted">{subtitle}</p> : null}
         </div>
         {href ? (
           <Link
             href={href}
-            className="rounded-md border border-gold px-3 py-2 text-sm font-bold text-navy transition hover:bg-gold/15"
+            className="premium-button-secondary min-h-10 px-4 py-2"
           >
             View all
           </Link>

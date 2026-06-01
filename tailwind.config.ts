@@ -20,7 +20,12 @@ const config: Config = {
         page: "#FFFCF6"
       },
       boxShadow: {
-        soft: "0 14px 35px rgba(16, 35, 63, 0.08)"
+        soft: "0 14px 35px rgba(16, 35, 63, 0.08)",
+        premium: "0 18px 48px rgba(16, 35, 63, 0.10)",
+        "premium-hover": "0 26px 64px rgba(16, 35, 63, 0.16)",
+        hero: "0 34px 90px rgba(16, 35, 63, 0.28)",
+        book:
+          "12px 18px 28px rgba(16, 35, 63, 0.18), 2px 4px 10px rgba(17, 24, 39, 0.14)"
       },
       fontFamily: {
         sans: ["Inter", "Noto Sans Bengali", "system-ui", "sans-serif"],
