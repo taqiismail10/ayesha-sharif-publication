@@ -47,6 +47,14 @@ enum OrderStatus {
   returned
 }
 
+enum CustomerBookEventType {
+  view
+  add_to_cart
+  purchase
+  search_click
+  sample_open
+}
+
 model Admin {
   id           String    @id @default(cuid())
   name         String
@@ -59,41 +67,43 @@ model Admin {
 }
 
 model Book {
-  id               String      @id @default(cuid())
+  id               String              @id @default(cuid())
   title            String
-  slug             String      @unique
+  slug             String              @unique
   subtitle         String?
   author           String
-  publisher        String      @default("Ayesha-Sharif Publication")
-  isbn13           String?     @unique
+  publisher        String              @default("Ayesha-Sharif Publication")
+  isbn13           String?             @unique
   edition          String?
-  language         String      @default("Bangla")
+  language         String              @default("Bangla")
   pages            Int?
   binding          String?
   publicationDate  DateTime?
   shortDescription String?
   description      String?
-  regularPrice     Decimal     @db.Decimal(10, 2)
-  salePrice        Decimal     @db.Decimal(10, 2)
-  discountPercent  Int         @default(0)
+  regularPrice     Decimal             @db.Decimal(10, 2)
+  salePrice        Decimal             @db.Decimal(10, 2)
+  discountPercent  Int                 @default(0)
   discountStart    DateTime?
   discountEnd      DateTime?
-  stockQuantity    Int         @default(0)
-  status           BookStatus  @default(draft)
+  stockQuantity    Int                 @default(0)
+  status           BookStatus          @default(draft)
   coverImage       String?
-  galleryImages    String[]    @default([])
+  galleryImages    String[]            @default([])
   samplePdf        String?
   weight           Int?
-  isFeatured       Boolean     @default(false)
-  isBestSeller     Boolean     @default(false)
-  isNewArrival     Boolean     @default(false)
-  isRecommended    Boolean     @default(false)
+  isFeatured       Boolean             @default(false)
+  isBestSeller     Boolean             @default(false)
+  isNewArrival     Boolean             @default(false)
+  isRecommended    Boolean             @default(false)
   categoryId       String?
-  category         Category?   @relation(fields: [categoryId], references: [id])
+  category         Category?           @relation(fields: [categoryId], references: [id])
   tags             BookTag[]
   orderItems       OrderItem[]
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  customerEvents   CustomerBookEvent[]
+  savedByCustomers SavedBook[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
 
   @@index([status])
   @@index([categoryId])
@@ -133,6 +143,7 @@ model BookTag {
 model Order {
   id              String        @id @default(cuid())
   orderNumber     String        @unique
+  customerId      String?
   customerName    String
   customerPhone   String
   customerEmail   String?
@@ -152,11 +163,13 @@ model Order {
   notes           String?
   adminNote       String?
   stockReduced    Boolean       @default(false)
+  customer        Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
   items           OrderItem[]
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
   @@index([orderNumber])
+  @@index([customerId])
   @@index([customerPhone])
   @@index([orderStatus])
   @@index([paymentStatus])
@@ -188,8 +201,8 @@ model Banner {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([position])
   @@unique([position, title])
+  @@index([position])
 }
 
 model SiteSetting {
@@ -198,4 +211,97 @@ model SiteSetting {
   value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id           String              @id @default(cuid())
+  name         String
+  email        String?             @unique
+  phone        String?             @unique
+  passwordHash String
+  isActive     Boolean             @default(true)
+  lastLoginAt  DateTime?
+  profile      CustomerProfile?
+  sessions     CustomerSession[]
+  preferences  CustomerPreference?
+  events       CustomerBookEvent[]
+  savedBooks   SavedBook[]
+  orders       Order[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@index([email])
+  @@index([phone])
+}
+
+model CustomerProfile {
+  id                     String   @id @default(cuid())
+  customerId             String   @unique
+  displayName            String?
+  phone                  String?
+  email                  String?
+  defaultDistrict        String?
+  defaultDeliveryArea    String?
+  defaultAddress         String?
+  avatarUrl              String?
+  marketingConsent       Boolean  @default(false)
+  personalizationConsent Boolean  @default(false)
+  customer               Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model CustomerSession {
+  id         String   @id @default(cuid())
+  customerId String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  userAgent  String?
+  ipHash     String?
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([customerId])
+  @@index([expiresAt])
+}
+
+model CustomerBookEvent {
+  id          String                @id @default(cuid())
+  customerId  String?
+  anonymousId String?
+  bookId      String
+  eventType   CustomerBookEventType
+  weight      Int                   @default(1)
+  source      String?
+  customer    Customer?             @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  book        Book                  @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt   DateTime              @default(now())
+
+  @@index([customerId, createdAt])
+  @@index([anonymousId, createdAt])
+  @@index([bookId, eventType])
+}
+
+model CustomerPreference {
+  id                  String   @id @default(cuid())
+  customerId          String   @unique
+  preferredCategories Json     @default("[]")
+  preferredTags       Json     @default("[]")
+  preferredLanguages  Json?
+  customer            Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model SavedBook {
+  id         String   @id @default(cuid())
+  customerId String
+  bookId     String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  book       Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, bookId])
+  @@index([customerId])
+  @@index([bookId])
 }
