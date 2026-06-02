@@ -1,27 +1,21 @@
 import Link from "next/link";
 import {
-  ArrowRight,
-  BookOpenCheck,
-  GraduationCap,
   HandCoins,
   MessageCircle,
   PackageCheck,
   ShieldCheck,
-  Sparkles,
   ShoppingBag,
   Truck
 } from "lucide-react";
-import { brand, defaultContact } from "@/lib/constants";
+import { defaultContact } from "@/lib/constants";
 import { getHomeData } from "@/lib/data";
-import { formatCurrency } from "@/lib/format";
-import { BookCover } from "@/components/books/book-cover";
 import { BookSection } from "@/components/books/book-section";
+import { PremiumHero } from "@/components/home/premium-hero";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const data = await getHomeData();
-  const heroBooks = data.featured.slice(0, 3);
 
   const whyBuy = [
     { icon: ShieldCheck, title: "Original publication", text: "Curated titles from the publisher." },
@@ -30,119 +24,9 @@ export default async function HomePage() {
     { icon: Truck, title: "Bangladesh-wide delivery", text: "Clear delivery areas and charges." }
   ];
 
-  const heroStats = [
-    { label: "Catalogue focus", value: "Books" },
-    { label: "Readers served", value: "BD" },
-    { label: "Platform path", value: "Learning-ready" }
-  ];
-
   return (
     <div>
-      <section
-        className="relative isolate overflow-hidden bg-navy text-white shadow-hero"
-        style={{
-          backgroundImage:
-            "linear-gradient(115deg, rgba(16,35,63,0.98), rgba(16,35,63,0.84) 46%, rgba(16,35,63,0.56)), url('/banners/homepage-banner.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center"
-        }}
-      >
-        <div className="floating-orb left-[6%] top-24 h-24 w-24" />
-        <div className="floating-orb bottom-20 right-[10%] h-32 w-32 [animation-delay:1.5s]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_65%_24%,rgba(201,162,39,0.22),transparent_26rem)]" />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-page to-transparent" />
-
-        <div className="container-px relative mx-auto grid min-h-[650px] max-w-7xl items-center gap-10 py-16 lg:grid-cols-[1fr_430px] lg:py-20">
-          <div className="max-w-3xl">
-            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-white/10 px-4 py-2 text-sm font-extrabold text-gold backdrop-blur">
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              Premium Bangladeshi publication house
-            </p>
-            <h1 className="font-heading text-4xl font-extrabold leading-tight sm:text-6xl lg:text-7xl">
-              {brand.name}
-            </h1>
-            <div className="gold-divider my-6 max-w-xl" />
-            <p className="max-w-2xl text-lg leading-8 text-white/80">
-              {brand.tagline} Built for books today, with a polished foundation for
-              future learning and exam experiences.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/books"
-                className="premium-button"
-              >
-                <ShoppingBag className="h-4 w-4" aria-hidden="true" />
-                Browse Books
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-              <a
-                href={`https://wa.me/${defaultContact.whatsapp.replace(/\D/g, "")}`}
-                className="premium-button-secondary border-white/30 bg-white/15 text-white hover:bg-white/20"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                Order on WhatsApp
-              </a>
-            </div>
-            <div className="mt-9 grid max-w-2xl grid-cols-3 gap-3">
-              {heroStats.map((stat) => (
-                <div key={stat.label} className="glass-panel rounded-lg p-3">
-                  <p className="text-xl font-extrabold text-gold">{stat.value}</p>
-                  <p className="mt-1 text-xs font-semibold text-white/70">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="glass-panel hidden rounded-lg p-5 lg:block">
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-gold">
-                  Featured shelf
-                </p>
-                <h2 className="mt-2 text-2xl font-extrabold text-white">
-                  Books with a learning-first feel
-                </h2>
-              </div>
-              <BookOpenCheck className="h-9 w-9 text-gold" aria-hidden="true" />
-            </div>
-            <div className="grid gap-4">
-              {heroBooks.map((book, index) => (
-                <Link
-                  key={book.id}
-                  href={`/books/${book.slug}`}
-                  className="group grid grid-cols-[86px_1fr] items-center gap-4 rounded-lg border border-white/15 bg-white/10 p-3 transition hover:bg-white/15"
-                  style={{ transform: `translateX(${index * 10}px)` }}
-                >
-                  <BookCover
-                    title={book.title}
-                    author={book.author}
-                    image={book.coverImage}
-                    className="book-shadow"
-                  />
-                  <div>
-                    <p className="line-clamp-2 font-extrabold leading-snug text-white">
-                      {book.title}
-                    </p>
-                    <p className="mt-1 text-sm text-white/70">{book.author}</p>
-                    <p className="mt-3 font-extrabold text-gold">
-                      {formatCurrency(book.salePrice)}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="mt-5 rounded-lg bg-cream/95 p-4 text-navy">
-              <div className="flex items-start gap-3">
-                <GraduationCap className="mt-0.5 h-5 w-5 text-gold" aria-hidden="true" />
-                <p className="text-sm font-bold leading-6">
-                  Academic, admission, children, Islamic, and literature collections
-                  can grow into learning sections later without changing the brand feel.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PremiumHero books={data.featured} />
 
       <section className="container-px relative z-10 mx-auto -mt-10 max-w-7xl">
         <div className="premium-panel grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
