@@ -173,7 +173,7 @@ function InfoPanel({
   return (
     <section className="rounded-lg border border-line bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
-        <Icon className="h-5 w-5 text-gold" aria-hidden="true" />
+        <Icon className="h-5 w-5 text-gold" aria-hidden={true} />
         <h2 className="text-lg font-extrabold text-navy">{title}</h2>
       </div>
       <div className="grid gap-3 text-sm">

@@ -24,11 +24,11 @@ export default async function CheckoutPage() {
         customer
           ? {
               name: customer.profile?.displayName || customer.name,
-              phone: customer.profile?.phone || customer.phone,
-              email: customer.profile?.email || customer.email,
-              district: customer.profile?.defaultDistrict,
-              deliveryArea: customer.profile?.defaultDeliveryArea,
-              address: customer.profile?.defaultAddress
+              phone: customer.profile?.phone || customer.phone || null,
+              email: customer.profile?.email || customer.email || null,
+              district: customer.profile?.defaultDistrict || null,
+              deliveryArea: customer.profile?.defaultDeliveryArea || null,
+              address: customer.profile?.defaultAddress || null
             }
           : null
       }

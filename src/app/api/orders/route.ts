@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import type { BookStatus } from "@prisma/client";
+import type { BookStatus, PaymentMethod } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { checkoutSchema } from "@/lib/validators";
 import { createOrderNumber, deliveryChargeFor } from "@/lib/order-utils";
@@ -52,7 +52,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const input = parsed.data;
+    const input = parsed.data as {
+      customerName: string;
+      customerPhone: string;
+      customerEmail?: string;
+      shippingAddress: string;
+      district: string;
+      deliveryArea: string;
+      paymentMethod: PaymentMethod;
+      transactionId?: string;
+      notes?: string;
+      anonymousId?: string | null;
+      items: Array<{ bookId: string; quantity: number }>;
+    };
     const currentCustomer = await getCurrentCustomer();
     const bookIds = input.items.map((item) => item.bookId);
     const books = await prisma.book.findMany({

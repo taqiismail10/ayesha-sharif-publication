@@ -64,20 +64,26 @@ export async function registerCustomerAction(
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Invalid account details." };
   }
+  const input = parsed.data as {
+    name: string;
+    email?: string;
+    phone?: string;
+    password: string;
+  };
 
   try {
-    const passwordHash = await hashPassword(parsed.data.password);
+    const passwordHash = await hashPassword(input.password);
     const customer = await prisma.customer.create({
       data: {
-        name: parsed.data.name,
-        email: parsed.data.email,
-        phone: parsed.data.phone,
+        name: input.name,
+        email: input.email,
+        phone: input.phone,
         passwordHash,
         profile: {
           create: {
-            displayName: parsed.data.name,
-            email: parsed.data.email,
-            phone: parsed.data.phone
+            displayName: input.name,
+            email: input.email,
+            phone: input.phone
           }
         },
         preferences: {
@@ -115,8 +121,13 @@ export async function loginCustomerAction(
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Invalid login details." };
   }
+  const input = parsed.data as {
+    identifier: string;
+    password: string;
+    redirectTo?: string;
+  };
 
-  const identifier = parsed.data.identifier;
+  const identifier = input.identifier;
   const email = identifier.includes("@") ? normalizeEmail(identifier) : undefined;
   const normalizedPhone = email ? undefined : normalizeBangladeshPhone(identifier);
   const phone =
@@ -135,7 +146,7 @@ export async function loginCustomerAction(
   });
 
   const validPassword = customer
-    ? await verifyPassword(parsed.data.password, customer.passwordHash)
+    ? await verifyPassword(input.password, customer.passwordHash)
     : false;
 
   if (!customer?.isActive || !validPassword) {
@@ -148,11 +159,11 @@ export async function loginCustomerAction(
   });
   await createCustomerSession(customer);
 
-  redirect(
-    isSafeAccountRedirect(parsed.data.redirectTo)
-      ? parsed.data.redirectTo
-      : "/account/profile"
-  );
+  const redirectTo =
+    input.redirectTo && isSafeAccountRedirect(input.redirectTo)
+      ? input.redirectTo
+      : "/account/profile";
+  redirect(redirectTo);
 }
 
 export async function logoutCustomerAction() {
@@ -182,53 +193,63 @@ export async function updateCustomerProfileAction(
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Invalid profile details." };
   }
+  const input = parsed.data as {
+    displayName: string;
+    email?: string;
+    phone?: string;
+    marketingConsent?: boolean;
+    personalizationConsent?: boolean;
+    preferredCategories?: string[];
+    preferredTags?: string[];
+    preferredLanguages?: string[];
+  };
 
   try {
     await prisma.$transaction([
       prisma.customer.update({
         where: { id: customer.id },
         data: {
-          name: parsed.data.displayName,
-          email: parsed.data.email,
-          phone: parsed.data.phone
+          name: input.displayName,
+          email: input.email,
+          phone: input.phone
         }
       }),
       prisma.customerProfile.upsert({
         where: { customerId: customer.id },
         update: {
-          displayName: parsed.data.displayName,
-          email: parsed.data.email,
-          phone: parsed.data.phone,
+          displayName: input.displayName,
+          email: input.email,
+          phone: input.phone,
           defaultDistrict: optionalString(formData.get("defaultDistrict")),
           defaultDeliveryArea: optionalString(formData.get("defaultDeliveryArea")),
           defaultAddress: optionalString(formData.get("defaultAddress")),
-          marketingConsent: !!parsed.data.marketingConsent,
-          personalizationConsent: !!parsed.data.personalizationConsent
+          marketingConsent: !!input.marketingConsent,
+          personalizationConsent: !!input.personalizationConsent
         },
         create: {
           customerId: customer.id,
-          displayName: parsed.data.displayName,
-          email: parsed.data.email,
-          phone: parsed.data.phone,
+          displayName: input.displayName,
+          email: input.email,
+          phone: input.phone,
           defaultDistrict: optionalString(formData.get("defaultDistrict")),
           defaultDeliveryArea: optionalString(formData.get("defaultDeliveryArea")),
           defaultAddress: optionalString(formData.get("defaultAddress")),
-          marketingConsent: !!parsed.data.marketingConsent,
-          personalizationConsent: !!parsed.data.personalizationConsent
+          marketingConsent: !!input.marketingConsent,
+          personalizationConsent: !!input.personalizationConsent
         }
       }),
       prisma.customerPreference.upsert({
         where: { customerId: customer.id },
         update: {
-          preferredCategories: parsed.data.preferredCategories || [],
-          preferredTags: parsed.data.preferredTags || [],
-          preferredLanguages: parsed.data.preferredLanguages || []
+          preferredCategories: input.preferredCategories || [],
+          preferredTags: input.preferredTags || [],
+          preferredLanguages: input.preferredLanguages || []
         },
         create: {
           customerId: customer.id,
-          preferredCategories: parsed.data.preferredCategories || [],
-          preferredTags: parsed.data.preferredTags || [],
-          preferredLanguages: parsed.data.preferredLanguages || []
+          preferredCategories: input.preferredCategories || [],
+          preferredTags: input.preferredTags || [],
+          preferredLanguages: input.preferredLanguages || []
         }
       })
     ]);
@@ -260,9 +281,13 @@ export async function changeCustomerPasswordAction(
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Invalid password details." };
   }
+  const input = parsed.data as {
+    currentPassword: string;
+    newPassword: string;
+  };
 
   const validPassword = await verifyPassword(
-    parsed.data.currentPassword,
+    input.currentPassword,
     customer.passwordHash
   );
   if (!validPassword) {
@@ -271,7 +296,7 @@ export async function changeCustomerPasswordAction(
 
   await prisma.customer.update({
     where: { id: customer.id },
-    data: { passwordHash: await hashPassword(parsed.data.newPassword) }
+    data: { passwordHash: await hashPassword(input.newPassword) }
   });
 
   return { success: "Password changed." };

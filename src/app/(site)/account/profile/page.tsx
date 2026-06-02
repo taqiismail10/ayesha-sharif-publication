@@ -163,7 +163,7 @@ function DashboardCard({
       href={href}
       className="rounded-lg border border-line bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-gold/60 hover:shadow-soft"
     >
-      <Icon className="h-5 w-5 text-gold" aria-hidden="true" />
+      <Icon className="h-5 w-5 text-gold" aria-hidden={true} />
       <p className="mt-3 text-sm font-bold text-muted">{title}</p>
       <p className="mt-1 text-2xl font-extrabold text-navy">{value}</p>
     </Link>

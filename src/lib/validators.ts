@@ -19,10 +19,16 @@ export function normalizeBangladeshPhone(value?: unknown) {
   return compact;
 }
 
+const bangladeshPhonePattern = /^01[3-9]\d{8}$/;
+
 export const phoneSchema = z
   .string()
   .transform((value) => normalizeBangladeshPhone(value) || "")
-  .regex(/^(\+?88)?01[3-9]\d{8}$/, "Enter a valid Bangladeshi phone number.");
+  .pipe(
+    z
+      .string()
+      .regex(bangladeshPhonePattern, "Enter a valid Bangladeshi phone number.")
+  );
 
 const optionalEmailSchema = z.preprocess(
   normalizeEmail,
@@ -31,7 +37,10 @@ const optionalEmailSchema = z.preprocess(
 
 const optionalPhoneSchema = z.preprocess(
   normalizeBangladeshPhone,
-  phoneSchema.optional()
+  z
+    .string()
+    .regex(bangladeshPhonePattern, "Enter a valid Bangladeshi phone number.")
+    .optional()
 );
 
 const passwordSchema = z
