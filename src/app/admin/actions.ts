@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { BookStatus, OrderStatus, PaymentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import {
+  revalidatePublicCatalogue,
+  revalidatePublicSettings
+} from "@/lib/cache-invalidation";
 import { deliveryAreas } from "@/lib/constants";
 import {
   assertAdminRole,
@@ -162,6 +166,7 @@ export async function createBookAction(formData: FormData) {
   });
 
   revalidatePath("/admin/books");
+  revalidatePublicCatalogue([created.slug]);
   redirect(`/admin/books/${created.id}/edit`);
 }
 
@@ -169,8 +174,12 @@ export async function updateBookAction(bookId: string, formData: FormData) {
   await assertAdminRole(["super_admin", "admin", "editor"]);
   const input = parseBookForm(formData);
   const { tagIds = [], galleryImages, ...book } = input;
+  const existing = await prisma.book.findUnique({
+    where: { id: bookId },
+    select: { slug: true }
+  });
 
-  await prisma.book.update({
+  const updated = await prisma.book.update({
     where: { id: bookId },
     data: {
       title: book.title,
@@ -211,25 +220,36 @@ export async function updateBookAction(bookId: string, formData: FormData) {
 
   revalidatePath("/admin/books");
   revalidatePath(`/admin/books/${bookId}/edit`);
+  revalidatePublicCatalogue([existing?.slug, updated.slug]);
   redirect("/admin/books");
 }
 
 export async function archiveBookAction(formData: FormData) {
   await assertAdminRole(["super_admin", "admin", "editor"]);
   const id = String(formData.get("id"));
-  await prisma.book.update({ where: { id }, data: { status: "archived" } });
+  const archived = await prisma.book.update({
+    where: { id },
+    data: { status: "archived" },
+    select: { slug: true }
+  });
   revalidatePath("/admin/books");
+  revalidatePublicCatalogue([archived.slug]);
 }
 
 export async function deleteBookAction(formData: FormData) {
   await assertAdminRole(["super_admin", "admin"]);
   const id = String(formData.get("id"));
+  const book = await prisma.book.findUnique({
+    where: { id },
+    select: { slug: true }
+  });
   const orderItemCount = await prisma.orderItem.count({ where: { bookId: id } });
   if (orderItemCount > 0) {
     throw new Error("This book has orders and cannot be deleted.");
   }
   await prisma.book.delete({ where: { id } });
   revalidatePath("/admin/books");
+  revalidatePublicCatalogue([book?.slug]);
 }
 
 export async function createCategoryAction(formData: FormData) {
@@ -243,6 +263,7 @@ export async function createCategoryAction(formData: FormData) {
 
   await prisma.category.create({ data: input });
   revalidatePath("/admin/categories");
+  revalidatePublicCatalogue();
 }
 
 export async function updateCategoryAction(id: string, formData: FormData) {
@@ -255,6 +276,7 @@ export async function updateCategoryAction(id: string, formData: FormData) {
   });
   await prisma.category.update({ where: { id }, data: input });
   revalidatePath("/admin/categories");
+  revalidatePublicCatalogue();
 }
 
 export async function archiveCategoryAction(formData: FormData) {
@@ -264,6 +286,7 @@ export async function archiveCategoryAction(formData: FormData) {
     data: { isActive: false }
   });
   revalidatePath("/admin/categories");
+  revalidatePublicCatalogue();
 }
 
 export async function createTagAction(formData: FormData) {
@@ -275,6 +298,7 @@ export async function createTagAction(formData: FormData) {
   });
   await prisma.tag.create({ data: input });
   revalidatePath("/admin/tags");
+  revalidatePublicCatalogue();
 }
 
 export async function updateTagAction(id: string, formData: FormData) {
@@ -286,6 +310,7 @@ export async function updateTagAction(id: string, formData: FormData) {
   });
   await prisma.tag.update({ where: { id }, data: input });
   revalidatePath("/admin/tags");
+  revalidatePublicCatalogue();
 }
 
 export async function archiveTagAction(formData: FormData) {
@@ -295,6 +320,7 @@ export async function archiveTagAction(formData: FormData) {
     data: { isActive: false }
   });
   revalidatePath("/admin/tags");
+  revalidatePublicCatalogue();
 }
 
 export async function updateOrderAction(orderId: string, formData: FormData) {
@@ -304,6 +330,7 @@ export async function updateOrderAction(orderId: string, formData: FormData) {
   const courierName = nullableString(String(formData.get("courierName") || ""));
   const trackingNumber = nullableString(String(formData.get("trackingNumber") || ""));
   const adminNote = nullableString(String(formData.get("adminNote") || ""));
+  const affectedBookIds = new Set<string>();
 
   await prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({
@@ -319,6 +346,7 @@ export async function updateOrderAction(orderId: string, formData: FormData) {
           where: { id: item.bookId },
           data: { stockQuantity: { decrement: item.quantity } }
         });
+        affectedBookIds.add(item.bookId);
       }
       stockReduced = true;
     }
@@ -333,6 +361,7 @@ export async function updateOrderAction(orderId: string, formData: FormData) {
           where: { id: item.bookId },
           data: { stockQuantity: { increment: item.quantity } }
         });
+        affectedBookIds.add(item.bookId);
       }
       stockReduced = false;
     }
@@ -352,6 +381,13 @@ export async function updateOrderAction(orderId: string, formData: FormData) {
 
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${orderId}`);
+  if (affectedBookIds.size) {
+    const affectedBooks = await prisma.book.findMany({
+      where: { id: { in: [...affectedBookIds] } },
+      select: { slug: true }
+    });
+    revalidatePublicCatalogue(affectedBooks.map((book) => book.slug));
+  }
 }
 
 export async function updateDeliverySettingsAction(formData: FormData) {
@@ -372,4 +408,5 @@ export async function updateDeliverySettingsAction(formData: FormData) {
   revalidatePath("/admin/settings");
   revalidatePath("/cart");
   revalidatePath("/checkout");
+  revalidatePublicSettings();
 }
