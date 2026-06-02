@@ -180,7 +180,7 @@ export function CheckoutPageClient({
               ).map((method) => (
                 <label
                   key={method}
-                  className="flex cursor-pointer items-center gap-2 rounded-md border border-line p-3 text-sm font-bold"
+                  className="flex min-h-12 cursor-pointer items-center gap-2 rounded-md border border-line p-3 text-sm font-bold"
                 >
                   <input
                     type="radio"
@@ -188,6 +188,7 @@ export function CheckoutPageClient({
                     value={method}
                     checked={paymentMethod === method}
                     onChange={() => setPaymentMethod(method)}
+                    className="h-4 w-4 accent-emerald"
                   />
                   {paymentMethodLabels[method]}
                 </label>

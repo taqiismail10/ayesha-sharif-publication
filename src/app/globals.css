@@ -1237,11 +1237,16 @@ textarea {
     transition-duration: 0.001ms !important;
   }
 
-  .premium-card:hover,
-  .premium-button:hover,
-  .premium-button-secondary:hover,
-  .group:hover .book-shadow,
-  .book-shadow:hover {
-    transform: none;
+    .premium-card:hover,
+    .publication-card:hover,
+    .story-card:hover,
+    .category-story-card:hover,
+    .premium-button:hover,
+    .premium-button-secondary:hover,
+    .group:hover .book-cover-frame,
+    .publication-cover-link:hover .book-cover-frame,
+    .group:hover .book-shadow,
+    .book-shadow:hover {
+      transform: none;
   }
 }
