@@ -3,8 +3,12 @@ import { NextResponse } from "next/server";
 import { getCurrentAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { toNumber } from "@/lib/format";
+import { privateNoStoreHeaders } from "@/lib/http-cache";
 
 const allowedRoles = ["super_admin", "admin", "order_manager"];
+
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 function csvCell(value: unknown) {
   const text = String(value ?? "");
@@ -14,7 +18,10 @@ function csvCell(value: unknown) {
 export async function GET(request: Request) {
   const admin = await getCurrentAdmin();
   if (!admin || !allowedRoles.includes(admin.role)) {
-    return NextResponse.json({ ok: false, message: "Unauthorized." }, { status: 401 });
+    return NextResponse.json(
+      { ok: false, message: "Unauthorized." },
+      { status: 401, headers: privateNoStoreHeaders }
+    );
   }
 
   const url = new URL(request.url);
@@ -84,6 +91,7 @@ export async function GET(request: Request) {
 
   return new Response(csv, {
     headers: {
+      ...privateNoStoreHeaders,
       "Content-Type": "text/csv; charset=utf-8",
       "Content-Disposition": `attachment; filename="orders-${Date.now()}.csv"`
     }

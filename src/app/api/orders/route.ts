@@ -6,8 +6,12 @@ import { createOrderNumber, deliveryChargeFor } from "@/lib/order-utils";
 import { toNumber } from "@/lib/format";
 import { getDeliveryOptions } from "@/lib/settings";
 import { hasUsableDatabaseUrl } from "@/lib/env";
+import { privateNoStoreHeaders } from "@/lib/http-cache";
 
 const purchasableStatuses: BookStatus[] = ["published", "pre_order"];
+
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 async function uniqueOrderNumber() {
   for (let attempt = 0; attempt < 5; attempt += 1) {
@@ -27,7 +31,7 @@ export async function POST(request: Request) {
           message:
             "Database is not configured yet. You can preview the storefront, but real order creation needs PostgreSQL."
         },
-        { status: 503 }
+        { status: 503, headers: privateNoStoreHeaders }
       );
     }
 
@@ -39,7 +43,7 @@ export async function POST(request: Request) {
           ok: false,
           message: parsed.error.issues[0]?.message || "Invalid checkout information."
         },
-        { status: 400 }
+        { status: 400, headers: privateNoStoreHeaders }
       );
     }
 
@@ -110,10 +114,13 @@ export async function POST(request: Request) {
       }
     });
 
-    return NextResponse.json({
-      ok: true,
-      orderNumber: order.orderNumber
-    });
+    return NextResponse.json(
+      {
+        ok: true,
+        orderNumber: order.orderNumber
+      },
+      { headers: privateNoStoreHeaders }
+    );
   } catch (caught) {
     return NextResponse.json(
       {
@@ -121,7 +128,7 @@ export async function POST(request: Request) {
         message:
           caught instanceof Error ? caught.message : "Failed to create order."
       },
-      { status: 400 }
+      { status: 400, headers: privateNoStoreHeaders }
     );
   }
 }
