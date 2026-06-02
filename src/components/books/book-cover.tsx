@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BookOpen } from "lucide-react";
 
 type BookCoverProps = {
@@ -5,6 +6,7 @@ type BookCoverProps = {
   author?: string;
   image?: string | null;
   priority?: boolean;
+  sizes?: string;
   className?: string;
 };
 
@@ -13,9 +15,11 @@ export function BookCover({
   author,
   image,
   priority = false,
+  sizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw",
   className = ""
 }: BookCoverProps) {
   const displayTitle = title.length > 56 ? `${title.slice(0, 54)}...` : title;
+  const unoptimized = image?.toLowerCase().endsWith(".svg") ?? false;
 
   return (
     <div
@@ -24,11 +28,14 @@ export function BookCover({
       <div className="book-cover-frame relative h-full w-full overflow-hidden rounded-md border border-white/80 bg-cream shadow-book">
         {image ? (
           <>
-            <img
+            <Image
               src={image}
               alt={title}
-              className="book-cover-image h-full w-full object-cover"
-              loading={priority ? "eager" : "lazy"}
+              fill
+              sizes={sizes}
+              priority={priority}
+              unoptimized={unoptimized}
+              className="book-cover-image object-cover"
             />
             <div className="pointer-events-none absolute inset-y-0 left-0 w-9 bg-gradient-to-r from-black/32 via-black/10 to-transparent" />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-white/0 via-white/12 to-white/0" />

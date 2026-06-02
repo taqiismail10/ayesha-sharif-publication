@@ -131,6 +131,7 @@ export function PremiumHero({ books }: PremiumHeroProps) {
                 title={book.title}
                 author={book.author}
                 image={book.coverImage}
+                priority={index === 0}
                 className="h-full"
               />
               {index === 0 ? (

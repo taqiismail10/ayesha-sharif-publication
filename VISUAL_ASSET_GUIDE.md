@@ -86,6 +86,17 @@ Current fallback asset:
 - Check every image on mobile before publishing.
 - Keep the public homepage lightweight: avoid adding multiple large animated assets.
 
+## Production Storage Note
+
+For local development, assets can live under `public/`. For multi-instance
+production, upload book covers, gallery images, and sample PDFs to Cloudinary,
+S3, Cloudflare R2, or another object storage provider, then store the returned
+public URL in the admin book fields.
+
+Configure one exact image host in `NEXT_PUBLIC_IMAGE_CDN_HOST`, or set
+`CLOUDINARY_CLOUD_NAME` for Cloudinary. Avoid allowing arbitrary remote image
+domains in `next.config.ts`.
+
 ## Replacement Checklist
 
 1. Add optimized logo files to `public/logo/`.
