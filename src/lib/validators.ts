@@ -4,10 +4,40 @@ import {
   paymentMethodLabels
 } from "@/lib/constants";
 
+export function normalizeEmail(value?: unknown) {
+  return typeof value === "string" && value.trim()
+    ? value.trim().toLowerCase()
+    : undefined;
+}
+
+export function normalizeBangladeshPhone(value?: unknown) {
+  if (typeof value !== "string") return undefined;
+  const compact = value.replace(/[\s-]/g, "").trim();
+  if (!compact) return undefined;
+  if (compact.startsWith("+88")) return compact.slice(3);
+  if (compact.startsWith("88")) return compact.slice(2);
+  return compact;
+}
+
 export const phoneSchema = z
   .string()
-  .trim()
+  .transform((value) => normalizeBangladeshPhone(value) || "")
   .regex(/^(\+?88)?01[3-9]\d{8}$/, "Enter a valid Bangladeshi phone number.");
+
+const optionalEmailSchema = z.preprocess(
+  normalizeEmail,
+  z.string().email().optional()
+);
+
+const optionalPhoneSchema = z.preprocess(
+  normalizeBangladeshPhone,
+  phoneSchema.optional()
+);
+
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters.")
+  .max(128, "Password is too long.");
 
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -18,10 +48,7 @@ export const checkoutSchema = z
   .object({
     customerName: z.string().trim().min(2, "Customer name is required."),
     customerPhone: phoneSchema,
-    customerEmail: z.preprocess(
-      (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
-      z.string().email().optional()
-    ),
+    customerEmail: optionalEmailSchema,
     shippingAddress: z.string().trim().min(10, "Full shipping address is required."),
     district: z.string().trim().min(2, "District is required."),
     deliveryArea: z.string().trim().min(2, "Delivery area is required."),
@@ -119,3 +146,74 @@ export const tagFormSchema = z.object({
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use a URL-friendly slug."),
   isActive: z.boolean().optional()
 });
+
+export const customerRegisterSchema = z
+  .object({
+    name: z.string().trim().min(2, "Name is required."),
+    email: optionalEmailSchema,
+    phone: optionalPhoneSchema,
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, "Confirm your password.")
+  })
+  .superRefine((value, ctx) => {
+    if (!value.email && !value.phone) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["email"],
+        message: "Enter either an email address or a phone number."
+      });
+    }
+    if (value.password !== value.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmPassword"],
+        message: "Passwords do not match."
+      });
+    }
+  });
+
+export const customerLoginSchema = z.object({
+  identifier: z.string().trim().min(5, "Enter your email or phone number."),
+  password: passwordSchema,
+  redirectTo: z.string().optional()
+});
+
+export const customerProfileSchema = z
+  .object({
+    displayName: z.string().trim().min(2, "Display name is required."),
+    email: optionalEmailSchema,
+    phone: optionalPhoneSchema,
+    defaultDistrict: z.string().trim().optional(),
+    defaultDeliveryArea: z.string().trim().optional(),
+    defaultAddress: z.string().trim().optional(),
+    marketingConsent: z.boolean().optional(),
+    personalizationConsent: z.boolean().optional(),
+    preferredCategories: z.array(z.string()).optional(),
+    preferredTags: z.array(z.string()).optional(),
+    preferredLanguages: z.array(z.string()).optional()
+  })
+  .superRefine((value, ctx) => {
+    if (!value.email && !value.phone) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["email"],
+        message: "Keep at least an email address or phone number on your account."
+      });
+    }
+  });
+
+export const customerPasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required."),
+    newPassword: passwordSchema,
+    confirmPassword: z.string().min(1, "Confirm your new password.")
+  })
+  .superRefine((value, ctx) => {
+    if (value.newPassword !== value.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmPassword"],
+        message: "Passwords do not match."
+      });
+    }
+  });
