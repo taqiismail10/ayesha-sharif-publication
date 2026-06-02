@@ -22,9 +22,35 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
   const { id } = await params;
   const order = await prisma.order.findUnique({
     where: { id },
-    include: { items: { include: { book: true } } }
+    include: {
+      items: { include: { book: true } },
+      customer: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          isActive: true,
+          createdAt: true
+        }
+      }
+    }
   });
   if (!order) notFound();
+  const linkedOrders = order.customerId
+    ? await prisma.order.findMany({
+        where: { customerId: order.customerId, id: { not: order.id } },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: {
+          id: true,
+          orderNumber: true,
+          grandTotal: true,
+          orderStatus: true,
+          createdAt: true
+        }
+      })
+    : [];
 
   const action = updateOrderAction.bind(null, order.id);
 
@@ -61,11 +87,59 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
               <Info label="Address" value={order.shippingAddress} />
               <Info label="Customer note" value={order.notes} />
               <Info
+                label="Linked account"
+                value={
+                  order.customer
+                    ? `${order.customer.name} (${order.customer.email || order.customer.phone})`
+                    : "Guest order"
+                }
+              />
+              <Info
                 label="Stock reduced"
                 value={order.stockReduced ? "Yes" : "No"}
               />
             </div>
           </section>
+
+          {order.customer ? (
+            <section className="rounded-lg border border-line bg-white p-5 shadow-sm">
+              <h2 className="text-lg font-extrabold text-navy">
+                Customer account history
+              </h2>
+              <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                <Info label="Account name" value={order.customer.name} />
+                <Info label="Account email" value={order.customer.email} />
+                <Info label="Account phone" value={order.customer.phone} />
+                <Info
+                  label="Account status"
+                  value={order.customer.isActive ? "Active" : "Inactive"}
+                />
+              </div>
+              <div className="mt-4 grid gap-2">
+                {linkedOrders.length ? (
+                  linkedOrders.map((linkedOrder) => (
+                    <Link
+                      key={linkedOrder.id}
+                      href={`/admin/orders/${linkedOrder.id}`}
+                      className="flex justify-between gap-3 rounded-md bg-page p-3 text-sm"
+                    >
+                      <span className="font-extrabold text-navy">
+                        {linkedOrder.orderNumber}
+                      </span>
+                      <span className="text-muted">
+                        {orderStatusLabels[linkedOrder.orderStatus]} ·{" "}
+                        {formatCurrency(linkedOrder.grandTotal)}
+                      </span>
+                    </Link>
+                  ))
+                ) : (
+                  <p className="rounded-md bg-page p-3 text-sm text-muted">
+                    No other linked orders for this customer.
+                  </p>
+                )}
+              </div>
+            </section>
+          ) : null}
 
           <section className="rounded-lg border border-line bg-white p-5 shadow-sm">
             <h2 className="text-lg font-extrabold text-navy">Items</h2>

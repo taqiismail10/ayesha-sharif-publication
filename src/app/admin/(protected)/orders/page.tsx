@@ -35,7 +35,10 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
               OR: [
                 { orderNumber: { contains: q, mode: "insensitive" } },
                 { customerName: { contains: q, mode: "insensitive" } },
-                { customerPhone: { contains: q, mode: "insensitive" } }
+                { customerPhone: { contains: q, mode: "insensitive" } },
+                { customerEmail: { contains: q, mode: "insensitive" } },
+                { customer: { is: { email: { contains: q, mode: "insensitive" } } } },
+                { customer: { is: { phone: { contains: q, mode: "insensitive" } } } }
               ]
             }
           : {},
@@ -43,7 +46,10 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
         paymentStatus ? { paymentStatus } : {}
       ]
     },
-    include: { _count: { select: { items: true } } },
+    include: {
+      _count: { select: { items: true } },
+      customer: { select: { id: true, name: true, email: true, phone: true } }
+    },
     orderBy: { createdAt: "desc" }
   });
 
@@ -74,7 +80,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
         <input
           name="q"
           defaultValue={q}
-          placeholder="Order number, phone, customer"
+          placeholder="Order number, phone, email, customer"
           className="form-input"
         />
         <select
@@ -128,6 +134,13 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
                   <td>
                     <p className="font-bold">{order.customerName}</p>
                     <p className="text-xs text-muted">{order.customerPhone}</p>
+                    {order.customer ? (
+                      <p className="mt-1 text-xs font-bold text-emerald">
+                        Account: {order.customer.email || order.customer.phone}
+                      </p>
+                    ) : (
+                      <p className="mt-1 text-xs font-bold text-muted">Guest order</p>
+                    )}
                   </td>
                   <td>{order._count.items}</td>
                   <td>{formatCurrency(order.grandTotal)}</td>

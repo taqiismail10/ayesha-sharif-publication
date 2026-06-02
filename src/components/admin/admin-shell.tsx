@@ -6,7 +6,8 @@ import {
   PackageCheck,
   Settings,
   Tags,
-  Ticket
+  Ticket,
+  Users
 } from "lucide-react";
 import type { Admin } from "@prisma/client";
 import { adminRoleLabels } from "@/lib/constants";
@@ -16,6 +17,7 @@ const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/books", label: "Books", icon: BookOpen },
   { href: "/admin/orders", label: "Orders", icon: PackageCheck },
+  { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/categories", label: "Categories", icon: Ticket },
   { href: "/admin/tags", label: "Tags", icon: Tags },
   { href: "/admin/settings", label: "Settings", icon: Settings }
