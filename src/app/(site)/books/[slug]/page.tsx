@@ -6,6 +6,7 @@ import { Tag } from "lucide-react";
 import { brand, bookStatusLabels } from "@/lib/constants";
 import { getBookBySlug } from "@/lib/data";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { getSimilarBooks } from "@/lib/recommendations";
 import { BookCover } from "@/components/books/book-cover";
 import { BookInteractionTracker } from "@/components/books/book-interaction-tracker";
 import { BookPurchasePanel } from "@/components/books/book-purchase-panel";
@@ -42,6 +43,7 @@ export default async function BookDetailsPage({ params }: PageProps) {
   if (!data) notFound();
 
   const { book, related } = data;
+  const similarBooks = await getSimilarBooks(slug, 4);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Book",
@@ -178,7 +180,12 @@ export default async function BookDetailsPage({ params }: PageProps) {
         </section>
       ) : null}
 
-      <BookSection title="Related books" books={related} href="/books" />
+      <BookSection
+        title="Similar books"
+        subtitle="Matched by category, tags, author, language, price, and availability."
+        books={similarBooks.length ? similarBooks : related}
+        href="/books"
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { getHomeData } from "@/lib/data";
 import { BookSection } from "@/components/books/book-section";
+import { PersonalizedRecommendationSection } from "@/components/books/client-recommendation-section";
 import { PremiumHero } from "@/components/home/premium-hero";
 import {
   CategoryStorySection,
@@ -23,6 +24,7 @@ export default async function HomePage() {
       <CategoryStorySection categories={data.categories} />
 
       <div className="container-px mx-auto max-w-7xl">
+        <PersonalizedRecommendationSection />
         <BookSection
           title="Featured books"
           subtitle="Selected titles from our first catalogue."

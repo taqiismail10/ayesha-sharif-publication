@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { publicNav } from "@/lib/constants";
+import { AccountMenu } from "@/components/site/account-menu";
 import { CartLink } from "@/components/site/cart-link";
 
 export function Header() {
@@ -58,7 +59,8 @@ export function Header() {
           </div>
         </form>
 
-        <div className="ml-auto shrink-0 md:ml-0">
+        <div className="ml-auto flex shrink-0 items-center gap-2 md:ml-0">
+          <AccountMenu />
           <CartLink />
         </div>
       </div>

@@ -7,6 +7,7 @@ import { useCart } from "@/lib/cart-client";
 import { formatCurrency } from "@/lib/format";
 import { calculateCartTotals } from "@/lib/order-utils";
 import { BookCover } from "@/components/books/book-cover";
+import { CartRecommendationSection } from "@/components/books/client-recommendation-section";
 import { EmptyState } from "@/components/site/empty-state";
 import { useState } from "react";
 
@@ -136,6 +137,10 @@ export function CartPageClient({
             Checkout
           </Link>
         </aside>
+      </div>
+
+      <div className="mt-8">
+        <CartRecommendationSection bookIds={cart.items.map((item) => item.bookId)} />
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white p-4 shadow-soft lg:hidden">
