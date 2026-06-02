@@ -7,11 +7,14 @@ export default function TermsPage() {
   return (
     <PolicyPage
       title="Terms and Conditions"
-      intro="These placeholder terms should be reviewed before accepting real customer orders."
+      intro="These simple terms describe how the bookstore MVP works. They should be reviewed before accepting real customer orders at scale."
       points={[
         "Book prices, discounts, and stock status may change before admin confirms an order.",
+        "Customer accounts are optional. Guest checkout remains available, but guest orders are tracked by order number rather than account order history.",
         "Ayesha-Sharif Publication may cancel fake, duplicate, or unreachable orders.",
-        "Using this website means the customer agrees to manual payment verification and manual delivery updates."
+        "Using this website means the customer agrees to manual payment verification and manual delivery updates.",
+        "Customers are responsible for keeping account passwords private and for entering correct delivery and payment information.",
+        "Personalized recommendations are suggestions based on book metadata, profile preferences, and consent-based activity. They do not guarantee availability or suitability."
       ]}
     />
   );
