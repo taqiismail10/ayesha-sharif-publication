@@ -35,6 +35,7 @@ export const policyLinks = [
   { href: "/payment-policy", label: "Payment Policy" },
   { href: "/return-policy", label: "Return Policy" },
   { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/cookie-settings", label: "Cookie Settings" },
   { href: "/terms-and-conditions", label: "Terms & Conditions" }
 ];
 
