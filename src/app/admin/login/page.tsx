@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth";
 import { LoginForm } from "@/components/admin/login-form";
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 export default async function AdminLoginPage() {
   const admin = await getCurrentAdmin();
   if (admin) redirect("/admin");

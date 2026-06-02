@@ -3,6 +3,7 @@ import { getDeliveryOptions } from "@/lib/settings";
 import { CheckoutPageClient } from "@/components/checkout/checkout-page-client";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export const metadata: Metadata = {
   title: "Guest Checkout",

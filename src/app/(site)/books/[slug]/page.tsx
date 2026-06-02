@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Download, Tag } from "lucide-react";
@@ -10,7 +11,8 @@ import { BookPurchasePanel } from "@/components/books/book-purchase-panel";
 import { BookSection } from "@/components/books/book-section";
 import { StatusBadge } from "@/components/books/status-badge";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
+export const dynamicParams = true;
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -79,12 +81,19 @@ export default async function BookDetailsPage({ params }: PageProps) {
           {book.galleryImages.length ? (
             <div className="mt-3 grid grid-cols-4 gap-2">
               {book.galleryImages.map((image) => (
-                <img
+                <div
                   key={image}
-                  src={image}
-                  alt={`${book.title} gallery`}
-                  className="aspect-[3/4] rounded-md border border-line object-cover"
-                />
+                  className="relative aspect-[3/4] overflow-hidden rounded-md border border-line bg-cream"
+                >
+                  <Image
+                    src={image}
+                    alt={`${book.title} gallery`}
+                    fill
+                    sizes="(max-width: 1024px) 25vw, 96px"
+                    className="object-cover"
+                    unoptimized={image.toLowerCase().endsWith(".svg")}
+                  />
+                </div>
               ))}
             </div>
           ) : null}

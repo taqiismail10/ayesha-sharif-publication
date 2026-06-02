@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { BookListView } from "@/components/books/book-list-view";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "All Books",

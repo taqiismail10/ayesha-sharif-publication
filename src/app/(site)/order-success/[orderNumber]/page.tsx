@@ -9,6 +9,7 @@ import {
 } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 type PageProps = {
   params: Promise<{ orderNumber: string }>;
