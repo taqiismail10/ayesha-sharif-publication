@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getCurrentCustomer } from "@/lib/customer-auth";
 import { formatCurrency, formatDate } from "@/lib/format";
 import {
   orderStatusLabels,
@@ -17,10 +18,13 @@ type PageProps = {
 
 export default async function OrderSuccessPage({ params }: PageProps) {
   const { orderNumber } = await params;
-  const order = await prisma.order.findUnique({
-    where: { orderNumber },
-    include: { items: true }
-  });
+  const [order, currentCustomer] = await Promise.all([
+    prisma.order.findUnique({
+      where: { orderNumber },
+      include: { items: true }
+    }),
+    getCurrentCustomer()
+  ]);
 
   if (!order) {
     return (
@@ -38,6 +42,9 @@ export default async function OrderSuccessPage({ params }: PageProps) {
     );
   }
 
+  const belongsToCurrentCustomer =
+    !!currentCustomer && order.customerId === currentCustomer.id;
+
   return (
     <div className="container-px mx-auto max-w-3xl py-10">
       <div className="rounded-lg border border-line bg-white p-6 text-center shadow-sm sm:p-8">
@@ -48,8 +55,18 @@ export default async function OrderSuccessPage({ params }: PageProps) {
         <p className="mt-2 text-sm leading-6 text-muted">
           Your order number is{" "}
           <span className="font-extrabold text-ink">{order.orderNumber}</span>.
-          Please keep it for future communication.
+          {belongsToCurrentCustomer
+            ? " You can also view it from your account."
+            : " Please keep it for future communication."}
         </p>
+        {belongsToCurrentCustomer ? (
+          <Link
+            href={`/account/orders/${order.orderNumber}`}
+            className="premium-button-secondary mt-5"
+          >
+            View from account
+          </Link>
+        ) : null}
       </div>
 
       <div className="mt-5 rounded-lg border border-line bg-white p-5 shadow-sm">

@@ -7,6 +7,7 @@ import { toNumber } from "@/lib/format";
 import { getDeliveryOptions } from "@/lib/settings";
 import { hasUsableDatabaseUrl } from "@/lib/env";
 import { privateNoStoreHeaders } from "@/lib/http-cache";
+import { getCurrentCustomer } from "@/lib/customer-auth";
 
 const purchasableStatuses: BookStatus[] = ["published", "pre_order"];
 
@@ -48,6 +49,7 @@ export async function POST(request: Request) {
     }
 
     const input = parsed.data;
+    const currentCustomer = await getCurrentCustomer();
     const bookIds = input.items.map((item) => item.bookId);
     const books = await prisma.book.findMany({
       where: { id: { in: bookIds } }
@@ -86,6 +88,7 @@ export async function POST(request: Request) {
     const order = await prisma.order.create({
       data: {
         orderNumber,
+        customerId: currentCustomer?.id,
         customerName: input.customerName,
         customerPhone: input.customerPhone,
         customerEmail: input.customerEmail,

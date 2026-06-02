@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getCurrentCustomer } from "@/lib/customer-auth";
 import { getDeliveryOptions } from "@/lib/settings";
 import { CheckoutPageClient } from "@/components/checkout/checkout-page-client";
 
@@ -6,10 +7,31 @@ export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 export const metadata: Metadata = {
-  title: "Guest Checkout",
-  description: "Place an order without a customer account."
+  title: "Checkout",
+  description: "Place an order as a guest or signed-in customer."
 };
 
 export default async function CheckoutPage() {
-  return <CheckoutPageClient deliveryOptions={await getDeliveryOptions()} />;
+  const [deliveryOptions, customer] = await Promise.all([
+    getDeliveryOptions(),
+    getCurrentCustomer()
+  ]);
+
+  return (
+    <CheckoutPageClient
+      deliveryOptions={deliveryOptions}
+      initialCustomer={
+        customer
+          ? {
+              name: customer.profile?.displayName || customer.name,
+              phone: customer.profile?.phone || customer.phone,
+              email: customer.profile?.email || customer.email,
+              district: customer.profile?.defaultDistrict,
+              deliveryArea: customer.profile?.defaultDeliveryArea,
+              address: customer.profile?.defaultAddress
+            }
+          : null
+      }
+    />
+  );
 }

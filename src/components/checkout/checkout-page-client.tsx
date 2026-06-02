@@ -15,14 +15,27 @@ import { formatCurrency } from "@/lib/format";
 import { calculateCartTotals } from "@/lib/order-utils";
 import { EmptyState } from "@/components/site/empty-state";
 
+type CheckoutCustomerDefaults = {
+  name: string | null;
+  phone: string | null;
+  email: string | null;
+  district: string | null;
+  deliveryArea: string | null;
+  address: string | null;
+};
+
 export function CheckoutPageClient({
-  deliveryOptions
+  deliveryOptions,
+  initialCustomer
 }: {
   deliveryOptions: DeliveryAreaOption[];
+  initialCustomer?: CheckoutCustomerDefaults | null;
 }) {
   const router = useRouter();
   const cart = useCart();
-  const [deliveryArea, setDeliveryArea] = useState("other");
+  const [deliveryArea, setDeliveryArea] = useState(
+    initialCustomer?.deliveryArea || "other"
+  );
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>("cash_on_delivery");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,15 +111,30 @@ export function CheckoutPageClient({
     <div className="container-px mx-auto max-w-6xl py-8">
       <div className="mb-6">
         <h1 className="font-heading text-3xl font-extrabold text-navy">
-          Guest Checkout
+          {initialCustomer ? "Checkout" : "Guest Checkout"}
         </h1>
         <p className="mt-2 text-sm text-muted">
-          No customer account, login, or registration needed.
+          {initialCustomer
+            ? "Your saved profile details are ready. You can still edit them for this order."
+            : "No customer account, login, or registration needed."}
         </p>
       </div>
 
       <form onSubmit={onSubmit} className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="grid gap-5 rounded-lg border border-line bg-white p-5 shadow-sm">
+          {!initialCustomer ? (
+            <div className="rounded-md border border-gold/40 bg-gold/10 p-3 text-sm leading-6 text-navy">
+              Already have an account?{" "}
+              <Link
+                href="/account/login?next=/checkout"
+                className="font-extrabold underline decoration-gold decoration-2 underline-offset-4"
+              >
+                Log in to track this order
+              </Link>
+              .
+            </div>
+          ) : null}
+
           {error ? (
             <div className="flex gap-2 rounded-md bg-danger/10 p-3 text-sm font-semibold text-danger">
               <AlertCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
@@ -117,12 +145,18 @@ export function CheckoutPageClient({
           <div className="grid gap-4 sm:grid-cols-2">
             <label>
               <span className="form-label">Customer name *</span>
-              <input name="customerName" required className="form-input mt-1" />
+              <input
+                name="customerName"
+                defaultValue={initialCustomer?.name || ""}
+                required
+                className="form-input mt-1"
+              />
             </label>
             <label>
               <span className="form-label">Phone number *</span>
               <input
                 name="customerPhone"
+                defaultValue={initialCustomer?.phone || ""}
                 required
                 placeholder="01XXXXXXXXX"
                 className="form-input mt-1"
@@ -133,12 +167,18 @@ export function CheckoutPageClient({
               <input
                 name="customerEmail"
                 type="email"
+                defaultValue={initialCustomer?.email || ""}
                 className="form-input mt-1"
               />
             </label>
             <label>
               <span className="form-label">District *</span>
-              <input name="district" required className="form-input mt-1" />
+              <input
+                name="district"
+                defaultValue={initialCustomer?.district || ""}
+                required
+                className="form-input mt-1"
+              />
             </label>
           </div>
 
@@ -148,6 +188,7 @@ export function CheckoutPageClient({
               name="shippingAddress"
               required
               rows={4}
+              defaultValue={initialCustomer?.address || ""}
               className="form-input mt-1"
             />
           </label>
