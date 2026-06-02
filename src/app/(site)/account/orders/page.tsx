@@ -1,0 +1,82 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { PackageCheck } from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import { requireCustomer } from "@/lib/customer-auth";
+import { formatCurrency, formatDate } from "@/lib/format";
+import { orderStatusLabels, paymentStatusLabels } from "@/lib/constants";
+import { EmptyState } from "@/components/site/empty-state";
+
+export const metadata: Metadata = {
+  title: "My Orders",
+  description: "View your Ayesha-Sharif Publication order history."
+};
+
+export default async function CustomerOrdersPage() {
+  const customer = await requireCustomer();
+  const orders = await prisma.order.findMany({
+    where: { customerId: customer.id },
+    orderBy: { createdAt: "desc" },
+    include: {
+      _count: { select: { items: true } }
+    }
+  });
+
+  return (
+    <div className="container-px mx-auto max-w-6xl py-8">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="story-kicker">Reader account</p>
+          <h1 className="font-heading text-3xl font-extrabold text-navy">
+            My Orders
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            Orders placed while signed in to your customer account.
+          </p>
+        </div>
+        <Link href="/account/profile" className="premium-button-secondary w-fit">
+          Back to profile
+        </Link>
+      </div>
+
+      {orders.length ? (
+        <div className="grid gap-3">
+          {orders.map((order) => (
+            <Link
+              key={order.id}
+              href={`/account/orders/${order.orderNumber}`}
+              className="rounded-lg border border-line bg-white p-4 shadow-sm transition hover:border-gold/60 hover:shadow-soft"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-lg font-extrabold text-navy">
+                    {order.orderNumber}
+                  </p>
+                  <p className="mt-1 text-sm text-muted">
+                    {formatDate(order.createdAt)} · {order._count.items} item
+                    {order._count.items === 1 ? "" : "s"}
+                  </p>
+                </div>
+                <div className="grid gap-1 text-sm sm:text-right">
+                  <p className="font-extrabold text-navy">
+                    {formatCurrency(order.grandTotal)}
+                  </p>
+                  <p className="font-semibold text-muted">
+                    {orderStatusLabels[order.orderStatus]} ·{" "}
+                    {paymentStatusLabels[order.paymentStatus]}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon={PackageCheck}
+          title="No account orders yet"
+          description="Orders placed as a guest will still work, but only signed-in checkout orders appear here."
+        />
+      )}
+    </div>
+  );
+}
