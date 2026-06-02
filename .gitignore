@@ -7,4 +7,6 @@ coverage
 public/uploads
 *.log
 .chrome-debug
+.chrome-*
 homepage-*.png
+phase34-*.png
