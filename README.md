@@ -26,6 +26,8 @@ cp .env.example .env
 ```
 
 3. Fill `DATABASE_URL`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL`.
+   Use `DIRECT_URL` for migrations if your production database provides a
+   separate direct connection and pooled runtime connection.
 
 4. Generate Prisma client and run migrations:
 
@@ -58,12 +60,14 @@ Change the default admin password immediately after the first login. The seed sc
 See [.env.example](.env.example).
 
 - `DATABASE_URL`: PostgreSQL connection string
+- `DIRECT_URL`: optional direct PostgreSQL URL for Prisma migrations
 - `NEXTAUTH_SECRET`: secret used to sign admin sessions
 - `NEXTAUTH_URL`: public site URL
 - `ADMIN_SEED_EMAIL`: optional seed admin email
 - `ADMIN_SEED_PASSWORD`: optional seed admin password
 - `UPLOAD_PROVIDER`: currently `local`
 - `CLOUDINARY_*`: reserved for future hosted uploads
+- `NEXT_PUBLIC_IMAGE_CDN_HOST`: exact CDN/object-storage host allowed by Next Image
 
 ## Folder structure
 
@@ -87,7 +91,11 @@ See [.env.example](.env.example).
 ## Deployment notes
 
 - Use a managed PostgreSQL database.
+- Use a pooled runtime `DATABASE_URL` when running multiple app instances.
+- Use `DIRECT_URL` for migrations when your provider separates direct and pooled URLs.
 - Set a strong `NEXTAUTH_SECRET`.
 - Keep `/admin` behind HTTPS.
 - For production uploads, replace local uploads with Cloudinary or object storage.
 - Add final phone, WhatsApp, email, Facebook, and office address before launch.
+- Health check endpoint: `/api/health`.
+- Cache and scaling docs: [CACHE_POLICY.md](CACHE_POLICY.md) and [PRODUCTION_SCALING.md](PRODUCTION_SCALING.md).
