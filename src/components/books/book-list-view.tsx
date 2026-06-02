@@ -108,7 +108,7 @@ export async function BookListView({
       </form>
 
       {books.length ? (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="book-grid grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {books.map((book) => (
             <ProductCard key={book.id} book={book} />
           ))}

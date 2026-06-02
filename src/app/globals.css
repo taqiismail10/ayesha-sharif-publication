@@ -117,6 +117,165 @@ textarea {
     box-shadow: 0 18px 52px rgba(16, 35, 63, 0.09);
   }
 
+  .publication-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(229, 231, 235, 0.92);
+    border-radius: 0.5rem;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 252, 246, 0.96)),
+      radial-gradient(circle at 18% 0%, rgba(201, 162, 39, 0.14), transparent 18rem);
+    box-shadow: 0 18px 46px rgba(16, 35, 63, 0.08);
+    transition:
+      transform 220ms ease,
+      border-color 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .publication-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      rgba(201, 162, 39, 0.18),
+      transparent 28%,
+      transparent 72%,
+      rgba(15, 118, 110, 0.12)
+    );
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+
+  .publication-card:hover {
+    transform: translateY(-0.38rem);
+    border-color: rgba(201, 162, 39, 0.56);
+    box-shadow: 0 28px 68px rgba(16, 35, 63, 0.16);
+  }
+
+  .publication-card:hover::before {
+    opacity: 1;
+  }
+
+  .publication-cover-link {
+    position: relative;
+    border-radius: 0.5rem;
+  }
+
+  .book-cover-stage {
+    isolation: isolate;
+    transform: translateZ(0);
+  }
+
+  .book-cover-stage::after {
+    content: "";
+    position: absolute;
+    left: 10%;
+    right: 7%;
+    bottom: -0.42rem;
+    z-index: -1;
+    height: 1.2rem;
+    border-radius: 9999px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(16, 35, 63, 0.28),
+      rgba(16, 35, 63, 0.08) 48%,
+      transparent 72%
+    );
+    filter: blur(0.22rem);
+    transition:
+      opacity 220ms ease,
+      transform 220ms ease;
+  }
+
+  .book-cover-frame {
+    transform-origin: center bottom;
+    transition:
+      transform 260ms ease,
+      box-shadow 260ms ease,
+      filter 260ms ease;
+  }
+
+  .book-cover-image,
+  .fallback-cover {
+    transition: transform 360ms ease;
+  }
+
+  .group:hover .book-cover-frame,
+  .publication-cover-link:hover .book-cover-frame {
+    transform: translateY(-0.28rem) rotate(-0.45deg);
+    box-shadow: 16px 24px 44px rgba(16, 35, 63, 0.24),
+      4px 8px 18px rgba(17, 24, 39, 0.16);
+    filter: saturate(1.04);
+  }
+
+  .group:hover .book-cover-stage::after,
+  .publication-cover-link:hover .book-cover-stage::after {
+    opacity: 0.9;
+    transform: scaleX(1.08);
+  }
+
+  .group:hover .book-cover-image,
+  .publication-cover-link:hover .book-cover-image,
+  .group:hover .fallback-cover,
+  .publication-cover-link:hover .fallback-cover {
+    transform: scale(1.035);
+  }
+
+  .fallback-cover {
+    background:
+      linear-gradient(158deg, #10233f 0%, #10233f 53%, #173257 53%, #173257 67%, #f7f1e3 67%, #fffcf6 100%),
+      radial-gradient(circle at 70% 18%, rgba(201, 162, 39, 0.22), transparent 12rem);
+  }
+
+  .status-badge,
+  .discount-badge {
+    display: inline-flex;
+    min-height: 1.7rem;
+    align-items: center;
+    border-width: 1px;
+    border-radius: 0.35rem;
+    padding: 0.28rem 0.52rem;
+    font-size: 0.72rem;
+    font-weight: 900;
+    line-height: 1rem;
+    letter-spacing: 0;
+    box-shadow: 0 8px 18px rgba(16, 35, 63, 0.06);
+  }
+
+  .status-badge-glow {
+    box-shadow:
+      0 8px 20px rgba(201, 162, 39, 0.12),
+      0 0 0 1px rgba(255, 255, 255, 0.64) inset;
+  }
+
+  .discount-badge {
+    border-color: rgba(180, 35, 24, 0.22);
+    background: linear-gradient(135deg, rgba(180, 35, 24, 0.95), rgba(143, 28, 21, 0.94));
+    color: white;
+    box-shadow:
+      0 10px 22px rgba(180, 35, 24, 0.18),
+      0 0 18px rgba(180, 35, 24, 0.12);
+  }
+
+  .cart-button {
+    transform-origin: center;
+  }
+
+  .cart-button:active {
+    box-shadow: 0 8px 18px rgba(15, 118, 110, 0.18);
+  }
+
+  .book-section {
+    padding-block: 2.75rem;
+  }
+
+  .book-section-header {
+    position: relative;
+  }
+
   .section-shell {
     position: relative;
     padding-block: 2.5rem;
