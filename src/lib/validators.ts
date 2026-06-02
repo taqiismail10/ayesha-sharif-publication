@@ -60,6 +60,7 @@ export const checkoutSchema = z
     ]),
     transactionId: z.string().trim().optional(),
     notes: z.string().trim().max(500).optional(),
+    anonymousId: z.string().trim().max(80).optional().nullable(),
     items: z
       .array(
         z.object({

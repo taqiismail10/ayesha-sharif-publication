@@ -8,6 +8,10 @@ import { getDeliveryOptions } from "@/lib/settings";
 import { hasUsableDatabaseUrl } from "@/lib/env";
 import { privateNoStoreHeaders } from "@/lib/http-cache";
 import { getCurrentCustomer } from "@/lib/customer-auth";
+import {
+  cleanAnonymousRecommendationId,
+  recordRecommendationEvent
+} from "@/lib/recommendation-events";
 
 const purchasableStatuses: BookStatus[] = ["published", "pre_order"];
 
@@ -116,6 +120,18 @@ export async function POST(request: Request) {
         }
       }
     });
+
+    await Promise.all(
+      orderItems.map((item) =>
+        recordRecommendationEvent({
+          customer: currentCustomer,
+          anonymousId: cleanAnonymousRecommendationId(input.anonymousId),
+          bookId: item.book.id,
+          eventType: "purchase",
+          source: "checkout"
+        })
+      )
+    ).catch(() => undefined);
 
     return NextResponse.json(
       {

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
 import type { BookStatus } from "@prisma/client";
 import { addCartItem } from "@/lib/cart-client";
+import { trackBookEvent } from "@/lib/tracking-client";
 import type { BookDetailData } from "@/types";
 
 const purchasableStatuses: BookStatus[] = ["published", "pre_order"];
@@ -60,7 +61,14 @@ export function BookPurchasePanel({ book }: { book: BookDetailData }) {
         <button
           type="button"
           disabled={!canBuy}
-          onClick={() => addCartItem(item)}
+          onClick={() => {
+            addCartItem(item);
+            trackBookEvent({
+              bookId: book.id,
+              eventType: "add_to_cart",
+              source: "book_detail"
+            });
+          }}
           className="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-emerald px-4 py-3 text-sm font-extrabold text-emerald transition hover:bg-emerald/10 disabled:cursor-not-allowed disabled:border-muted/40 disabled:text-muted"
         >
           <ShoppingCart className="h-4 w-4" aria-hidden="true" />
@@ -71,6 +79,11 @@ export function BookPurchasePanel({ book }: { book: BookDetailData }) {
           disabled={!canBuy}
           onClick={() => {
             addCartItem(item);
+            trackBookEvent({
+              bookId: book.id,
+              eventType: "add_to_cart",
+              source: "buy_now"
+            });
             router.push("/checkout");
           }}
           className="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-emerald px-4 py-3 text-sm font-extrabold text-white transition hover:bg-emerald/90 disabled:cursor-not-allowed disabled:bg-muted/40"

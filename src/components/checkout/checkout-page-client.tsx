@@ -11,6 +11,7 @@ import {
   paymentMethodLabels
 } from "@/lib/constants";
 import { clearCart, useCart } from "@/lib/cart-client";
+import { getAnonymousRecommendationId } from "@/lib/consent-client";
 import { formatCurrency } from "@/lib/format";
 import { calculateCartTotals } from "@/lib/order-utils";
 import { EmptyState } from "@/components/site/empty-state";
@@ -58,6 +59,7 @@ export function CheckoutPageClient({
       paymentMethod,
       transactionId: formData.get("transactionId"),
       notes: formData.get("notes"),
+      anonymousId: getAnonymousRecommendationId(),
       items: cart.items.map((item) => ({
         bookId: item.bookId,
         quantity: item.quantity

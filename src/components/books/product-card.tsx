@@ -5,6 +5,7 @@ import { ArrowUpRight, ShoppingCart } from "lucide-react";
 import type { BookStatus } from "@prisma/client";
 import { addCartItem } from "@/lib/cart-client";
 import { formatCurrency } from "@/lib/format";
+import { trackBookEvent } from "@/lib/tracking-client";
 import type { BookCardData } from "@/types";
 import { BookCover } from "@/components/books/book-cover";
 import { StatusBadge } from "@/components/books/status-badge";
@@ -21,6 +22,13 @@ export function ProductCard({ book }: { book: BookCardData }) {
     <article className="publication-card shine-hover group grid h-full min-w-0 grid-cols-[104px_minmax(0,1fr)] gap-3 p-3 sm:flex sm:flex-col sm:gap-0">
       <Link
         href={`/books/${book.slug}`}
+        onClick={() =>
+          trackBookEvent({
+            bookId: book.id,
+            eventType: "search_click",
+            source: "product_card_cover"
+          })
+        }
         className="publication-cover-link block self-start sm:self-auto"
         aria-label={`View ${book.title}`}
       >
@@ -40,7 +48,17 @@ export function ProductCard({ book }: { book: BookCardData }) {
             </span>
           ) : null}
         </div>
-        <Link href={`/books/${book.slug}`} className="min-w-0 group-hover:text-navy">
+        <Link
+          href={`/books/${book.slug}`}
+          onClick={() =>
+            trackBookEvent({
+              bookId: book.id,
+              eventType: "search_click",
+              source: "product_card_title"
+            })
+          }
+          className="min-w-0 group-hover:text-navy"
+        >
           <h3 className="line-clamp-3 text-base font-black leading-snug text-ink transition group-hover:text-navy sm:line-clamp-2 sm:min-h-[2.65rem]">
             {book.title}
           </h3>
@@ -77,7 +95,7 @@ export function ProductCard({ book }: { book: BookCardData }) {
         <button
           type="button"
           disabled={!isAvailable}
-          onClick={() =>
+          onClick={() => {
             addCartItem({
               bookId: book.id,
               title: book.title,
@@ -88,8 +106,13 @@ export function ProductCard({ book }: { book: BookCardData }) {
               salePrice: book.salePrice,
               stockQuantity: book.stockQuantity,
               quantity: 1
-            })
-          }
+            });
+            trackBookEvent({
+              bookId: book.id,
+              eventType: "add_to_cart",
+              source: "product_card"
+            });
+          }}
           className="cart-button focus-ring mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-emerald px-3 py-2.5 text-sm font-black text-white shadow-[0_14px_28px_rgba(15,118,110,0.2)] transition hover:-translate-y-0.5 hover:bg-emerald/90 active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-muted/40 disabled:text-white/80 disabled:shadow-none sm:mt-4 sm:min-h-12"
           aria-label={`${isPreOrder ? "Pre-order" : "Add"} ${book.title} to cart`}
         >

@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Download, Tag } from "lucide-react";
+import { Tag } from "lucide-react";
 import { brand, bookStatusLabels } from "@/lib/constants";
 import { getBookBySlug } from "@/lib/data";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { BookCover } from "@/components/books/book-cover";
+import { BookInteractionTracker } from "@/components/books/book-interaction-tracker";
 import { BookPurchasePanel } from "@/components/books/book-purchase-panel";
+import { BookSampleLink } from "@/components/books/book-sample-link";
 import { BookSection } from "@/components/books/book-section";
 import { StatusBadge } from "@/components/books/status-badge";
 
@@ -66,6 +68,7 @@ export default async function BookDetailsPage({ params }: PageProps) {
 
   return (
     <div className="container-px mx-auto max-w-7xl py-8">
+      <BookInteractionTracker bookId={book.id} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -163,13 +166,7 @@ export default async function BookDetailsPage({ params }: PageProps) {
           ) : null}
 
           {book.samplePdf ? (
-            <Link
-              href={book.samplePdf}
-              className="mt-5 inline-flex items-center gap-2 rounded-md border border-gold px-4 py-2 text-sm font-bold text-navy"
-            >
-              <Download className="h-4 w-4" aria-hidden="true" />
-              Preview sample
-            </Link>
+            <BookSampleLink href={book.samplePdf} bookId={book.id} />
           ) : null}
         </div>
       </div>
