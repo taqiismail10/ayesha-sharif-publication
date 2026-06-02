@@ -1,5 +1,11 @@
 import { Prisma, type BookStatus } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import {
+  CACHE_REVALIDATE_SECONDS,
+  CACHE_TAGS,
+  bookCacheTag
+} from "@/lib/cache-tags";
 import { toNumber } from "@/lib/format";
 import { hasUsableDatabaseUrl } from "@/lib/env";
 import {
@@ -20,6 +26,28 @@ const cardInclude = {
   category: { select: { name: true, slug: true } },
   tags: { include: { tag: { select: { name: true, slug: true } } } }
 } satisfies Prisma.BookInclude;
+
+type BookQueryParams = {
+  q?: string;
+  category?: string;
+  tag?: string;
+  status?: string;
+  min?: string;
+  max?: string;
+  sort?: string;
+};
+
+function normalizeBookParams(params: BookQueryParams): BookQueryParams {
+  return {
+    q: params.q?.trim() || undefined,
+    category: params.category?.trim() || undefined,
+    tag: params.tag?.trim() || undefined,
+    status: params.status?.trim() || undefined,
+    min: params.min?.trim() || undefined,
+    max: params.max?.trim() || undefined,
+    sort: params.sort?.trim() || "newest"
+  };
+}
 
 export function serializeBookCard(book: Prisma.BookGetPayload<{ include: typeof cardInclude }>): BookCardData {
   return {
@@ -63,9 +91,7 @@ export function serializeBookDetail(
   };
 }
 
-export async function getHomeData() {
-  if (!hasUsableDatabaseUrl()) return getSampleHomeData();
-
+async function queryHomeData() {
   try {
     const [featured, newArrivals, discountBooks, upcoming, bestSellers, categories] =
       await Promise.all([
@@ -128,17 +154,22 @@ export async function getHomeData() {
   }
 }
 
-export async function getBooks(params: {
-  q?: string;
-  category?: string;
-  tag?: string;
-  status?: string;
-  min?: string;
-  max?: string;
-  sort?: string;
-}) {
-  if (!hasUsableDatabaseUrl()) return getSampleBooks(params);
+const getCachedHomeData = unstable_cache(queryHomeData, ["public-home-data"], {
+  revalidate: CACHE_REVALIDATE_SECONDS.home,
+  tags: [
+    CACHE_TAGS.publicCatalogue,
+    CACHE_TAGS.home,
+    CACHE_TAGS.books,
+    CACHE_TAGS.categories
+  ]
+});
 
+export async function getHomeData() {
+  if (!hasUsableDatabaseUrl()) return getSampleHomeData();
+  return getCachedHomeData();
+}
+
+async function queryBooks(params: BookQueryParams) {
   const selectedStatus = publicStatuses.find((status) => status === params.status);
   const where: Prisma.BookWhereInput = {
     status: selectedStatus ?? { in: publicStatuses }
@@ -203,9 +234,23 @@ export async function getBooks(params: {
   }
 }
 
-export async function getBookBySlug(slug: string) {
-  if (!hasUsableDatabaseUrl()) return getSampleBookBySlug(slug);
+const getCachedBooks = unstable_cache(queryBooks, ["public-book-list"], {
+  revalidate: CACHE_REVALIDATE_SECONDS.catalogue,
+  tags: [
+    CACHE_TAGS.publicCatalogue,
+    CACHE_TAGS.books,
+    CACHE_TAGS.categories,
+    CACHE_TAGS.tags
+  ]
+});
 
+export async function getBooks(params: BookQueryParams) {
+  const normalizedParams = normalizeBookParams(params);
+  if (!hasUsableDatabaseUrl()) return getSampleBooks(normalizedParams);
+  return getCachedBooks(normalizedParams);
+}
+
+async function queryBookBySlug(slug: string) {
   try {
     const book = await prisma.book.findFirst({
       where: { slug, status: { in: publicStatuses } },
@@ -242,9 +287,16 @@ export async function getBookBySlug(slug: string) {
   }
 }
 
-export async function getContactSettings() {
-  if (!hasUsableDatabaseUrl()) return null;
+export async function getBookBySlug(slug: string) {
+  if (!hasUsableDatabaseUrl()) return getSampleBookBySlug(slug);
 
+  return unstable_cache(() => queryBookBySlug(slug), ["public-book-detail", slug], {
+    revalidate: CACHE_REVALIDATE_SECONDS.book,
+    tags: [CACHE_TAGS.publicCatalogue, CACHE_TAGS.books, bookCacheTag(slug)]
+  })();
+}
+
+async function queryContactSettings() {
   try {
     const setting = await prisma.siteSetting.findUnique({
       where: { key: "contact" }
@@ -253,4 +305,18 @@ export async function getContactSettings() {
   } catch {
     return null;
   }
+}
+
+const getCachedContactSettings = unstable_cache(
+  queryContactSettings,
+  ["public-contact-settings"],
+  {
+    revalidate: CACHE_REVALIDATE_SECONDS.settings,
+    tags: [CACHE_TAGS.settings]
+  }
+);
+
+export async function getContactSettings() {
+  if (!hasUsableDatabaseUrl()) return null;
+  return getCachedContactSettings();
 }
