@@ -35,6 +35,7 @@ const remotePatterns = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  devIndicators: false,
   images: {
     remotePatterns,
     formats: ["image/avif", "image/webp"]
@@ -56,6 +57,10 @@ const nextConfig: NextConfig = {
         headers: noStoreHeaders
       },
       {
+        source: "/account/:path*",
+        headers: noStoreHeaders
+      },
+      {
         source: "/cart",
         headers: noStoreHeaders
       },
@@ -64,11 +69,19 @@ const nextConfig: NextConfig = {
         headers: noStoreHeaders
       },
       {
+        source: "/cookie-settings",
+        headers: noStoreHeaders
+      },
+      {
         source: "/order-success/:path*",
         headers: noStoreHeaders
       },
       {
         source: "/logo/:path*",
+        headers: [{ key: "Cache-Control", value: publicAssetCache }]
+      },
+      {
+        source: "/favicon/:path*",
         headers: [{ key: "Cache-Control", value: publicAssetCache }]
       },
       {

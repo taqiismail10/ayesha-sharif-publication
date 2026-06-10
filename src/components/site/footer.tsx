@@ -1,70 +1,139 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Mail, Phone } from "lucide-react";
-import { defaultContact, policyLinks, publicNav } from "@/lib/constants";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { publicNav } from "@/lib/constants";
+import { getFooterContent, getContactContent } from "@/lib/site-content";
 
-export function Footer() {
+const columnHeadingClass =
+  "mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-[#D4A574]";
+
+const navLinkClass =
+  "w-fit text-sm leading-[1.75] text-[rgba(245,241,232,0.76)] transition-colors duration-150 hover:text-[#D4A574]";
+
+export async function Footer() {
+  // Both columns now come from the DB (with constants as fallback)
+  const [footer, contact] = await Promise.all([
+    getFooterContent(),
+    getContactContent(),
+  ]);
+
+  // WhatsApp href uses the editable contact.whatsapp field
+  const whatsappHref = `https://wa.me/${contact.whatsapp.replace(/\D/g, "")}`;
+
   return (
-    <footer className="relative mt-16 overflow-hidden bg-navy text-white">
-      <div className="floating-orb -left-10 top-10 h-28 w-28" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(201,162,39,0.18),transparent_24rem)]" />
-      <div className="container-px relative mx-auto grid max-w-7xl gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <Image
-            src="/logo/logo-white.png"
-            alt="Ayesha-Sharif Publication"
-            width={150}
-            height={56}
-            className="mb-4 h-14 w-auto object-contain"
-          />
-          <p className="text-sm leading-6 text-white/75">
-            Premium book publishing, ordering, and future-ready learning experiences
-            for Bangladeshi readers.
-          </p>
-        </div>
-        <div>
-          <h3 className="mb-3 text-sm font-extrabold uppercase text-gold">Explore</h3>
-          <div className="grid gap-2 text-sm text-white/80">
-            {publicNav.map((item) => (
-              <Link key={item.href} href={item.href} className="hover:text-white">
-                {item.label}
-              </Link>
-            ))}
-            <Link href="/admin/login" className="hover:text-white">
-              Admin Login
-            </Link>
+    <footer
+      role="contentinfo"
+      className="site-footer relative z-10"
+      style={{
+        background: `
+          radial-gradient(ellipse at 18% 15%, rgba(212,165,116,0.07) 0%, transparent 52%),
+          radial-gradient(ellipse at 82% 88%, rgba(107,142,111,0.14) 0%, transparent 48%),
+          #2D4A2B
+        `,
+        borderTop: "1px solid rgba(212, 165, 116, 0.14)",
+      }}
+    >
+      <div className="relative z-10 mx-auto max-w-[1440px] px-6 pb-6 pt-10 sm:px-10 sm:pt-12 lg:px-16">
+
+        {/* ── Main columns ── */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-[1.3fr_0.6fr_0.8fr_1fr] lg:gap-8 xl:gap-10">
+
+          {/* Brand */}
+          <div className="min-w-0">
+            <Image
+              src="/logo/logo-horizontal-light-transparent-trimmed.png"
+              alt="Ayesha-Sharif Publication"
+              width={1510}
+              height={272}
+              loading="lazy"
+              className="h-auto w-[152px] object-contain"
+            />
+            <p
+              className="mt-3 text-sm leading-[1.65] text-[rgba(245,241,232,0.76)]"
+              style={{ fontFamily: "var(--font-serif)", fontStyle: "italic" }}
+            >
+              {footer.tagline}
+            </p>
+            <p className="mt-2 text-sm leading-[1.65] text-[rgba(245,241,232,0.60)]">
+              {footer.description}
+            </p>
+            <a
+              href={whatsappHref}
+              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[rgba(245,241,232,0.76)] transition-colors duration-150 hover:text-[#D4A574]"
+            >
+              <MessageCircle className="h-4 w-4 shrink-0 text-[#D4A574]" aria-hidden="true" />
+              {footer.whatsappLabel}
+            </a>
+          </div>
+
+          {/* Explore — kept as static nav (site structure links) */}
+          <div>
+            <h3 className={columnHeadingClass}>Explore</h3>
+            <nav className="flex flex-col" aria-label="Site navigation">
+              {publicNav.map((item) => (
+                <Link key={item.href} href={item.href} className={navLinkClass}>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Info — now reads from footer.infoLinks (DB-editable) */}
+          <div>
+            <h3 className={columnHeadingClass}>Info</h3>
+            <nav className="flex flex-col" aria-label="Policy links">
+              {footer.infoLinks.map((item, i) => (
+                <Link key={i} href={item.href} className={navLinkClass}>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Contact — now reads from contact content (DB-editable) */}
+          <div>
+            <h3 className={columnHeadingClass}>Contact</h3>
+            <div className="flex flex-col gap-3">
+              {contact.phone && (
+                <p className="flex items-center gap-2.5 text-sm leading-snug text-[rgba(245,241,232,0.68)]">
+                  <Phone className="h-3.5 w-3.5 shrink-0 text-[#D4A574]" aria-hidden="true" />
+                  <span>{contact.phone}</span>
+                </p>
+              )}
+              {contact.email && (
+                <p className="flex items-center gap-2.5 text-sm leading-snug text-[rgba(245,241,232,0.68)]">
+                  <Mail className="h-3.5 w-3.5 shrink-0 text-[#D4A574]" aria-hidden="true" />
+                  <span>{contact.email}</span>
+                </p>
+              )}
+              {contact.address && (
+                <p className="flex items-start gap-2.5 text-sm leading-snug text-[rgba(245,241,232,0.68)]">
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#D4A574]" aria-hidden="true" />
+                  <span>{contact.address}</span>
+                </p>
+              )}
+            </div>
           </div>
         </div>
-        <div>
-          <h3 className="mb-3 text-sm font-extrabold uppercase text-gold">Policies</h3>
-          <div className="grid gap-2 text-sm text-white/80">
-            {policyLinks.map((item) => (
-              <Link key={item.href} href={item.href} className="hover:text-white">
-                {item.label}
-              </Link>
-            ))}
-          </div>
+
+        {/* ── Divider ── */}
+        <div
+          className="mb-4 mt-8"
+          style={{ height: "1px", backgroundColor: "rgba(245, 241, 232, 0.12)" }}
+          aria-hidden="true"
+        />
+
+        {/* ── Bottom bar ── */}
+        <div className="flex flex-col gap-2 text-xs text-[rgba(245,241,232,0.48)] sm:flex-row sm:items-center sm:justify-between">
+          <p>{footer.copyright}</p>
+          <Link
+            href="/admin/login"
+            className="w-fit transition-colors duration-150 hover:text-[#D4A574]"
+          >
+            Admin Login
+          </Link>
         </div>
-        <div>
-          <h3 className="mb-3 text-sm font-extrabold uppercase text-gold">Contact</h3>
-          <div className="grid gap-3 text-sm text-white/80">
-            <p className="flex items-center gap-2" suppressHydrationWarning>
-              <Phone className="h-4 w-4 text-gold" aria-hidden="true" />
-              <span suppressHydrationWarning>{defaultContact.phone}</span>
-            </p>
-            <p className="flex items-center gap-2" suppressHydrationWarning>
-              <Mail className="h-4 w-4 text-gold" aria-hidden="true" />
-              <span suppressHydrationWarning>{defaultContact.email}</span>
-            </p>
-            <p className="flex items-center gap-2" suppressHydrationWarning>
-              <Facebook className="h-4 w-4 text-gold" aria-hidden="true" />
-              <span suppressHydrationWarning>Facebook page placeholder</span>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="relative border-t border-white/10 py-4 text-center text-xs text-white/60">
-        © 2026 Ayesha-Sharif Publication. All rights reserved.
+
       </div>
     </footer>
   );

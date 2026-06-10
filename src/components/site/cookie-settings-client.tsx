@@ -39,7 +39,7 @@ export function CookieSettingsClient() {
   return (
     <div className="grid gap-4">
       {saved ? (
-        <div className="rounded-md bg-emerald/10 p-3 text-sm font-semibold text-emerald">
+        <div className="rounded-md bg-sage/10 p-3 text-sm font-semibold text-sage">
           Cookie preferences saved.
         </div>
       ) : null}
@@ -83,14 +83,14 @@ export function CookieSettingsClient() {
             saveCookieConsent(defaults);
             setSaved(true);
           }}
-          className="focus-ring min-h-11 rounded-md border border-line bg-white px-4 py-2 text-sm font-extrabold text-navy"
+          className="focus-ring min-h-11 rounded-md border border-line bg-white px-4 py-2 text-sm font-extrabold text-forest"
         >
           Reject all optional
         </button>
         <button
           type="button"
           onClick={save}
-          className="focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-emerald px-4 py-2 text-sm font-extrabold text-white"
+          className="focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-sage px-4 py-2 text-sm font-extrabold text-white"
         >
           <Save className="h-4 w-4" aria-hidden="true" />
           Save preferences
@@ -120,10 +120,10 @@ function ConsentToggle({
         checked={checked}
         disabled={disabled}
         onChange={(event) => onChange?.(event.target.checked)}
-        className="mt-1 h-4 w-4 accent-emerald"
+        className="mt-1 h-4 w-4 accent-sage"
       />
       <span>
-        <span className="block font-extrabold text-navy">{title}</span>
+        <span className="block font-extrabold text-forest">{title}</span>
         <span className="mt-1 block text-sm leading-6 text-muted">{description}</span>
       </span>
     </label>

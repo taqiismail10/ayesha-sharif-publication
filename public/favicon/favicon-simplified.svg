@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ASP simplified book icon">
+  <title>ASP simplified book icon</title>
+  <g fill="none" stroke="#2D4A2B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 17v29c7-4 17-5 25 2"/>
+    <path d="M57 17v29c-7-4-17-5-25 2"/>
+    <path d="M32 48V17"/>
+    <path d="M14 22v19c5-2 12-2 18 5"/>
+    <path d="M50 22v19c-5-2-12-2-18 5"/>
+    <path d="M22 37l10-23 10 23"/>
+    <path d="M26 30h12"/>
+  </g>
+  <path d="M25 39h14" stroke="#D4A574" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

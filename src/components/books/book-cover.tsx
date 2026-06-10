@@ -55,7 +55,7 @@ export function BookCover({
 
             <div className="relative flex items-start justify-between gap-3">
               <BookOpen className="h-8 w-8 text-gold" aria-hidden="true" />
-              <span className="rounded-sm border border-gold/40 bg-gold px-2 py-1 text-[11px] font-black uppercase tracking-normal text-navy shadow-[0_8px_18px_rgba(0,0,0,0.18)]">
+              <span className="rounded-sm border border-gold/40 bg-gold px-2 py-1 text-[11px] font-black uppercase tracking-normal text-forest shadow-[0_8px_18px_rgba(0,0,0,0.18)]">
                 ASP
               </span>
             </div>

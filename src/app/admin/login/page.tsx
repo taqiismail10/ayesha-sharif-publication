@@ -15,11 +15,11 @@ export default async function AdminLoginPage() {
       <div className="w-full max-w-md rounded-lg border border-line bg-white p-6 shadow-soft">
         <div className="mb-6 text-center">
           <Image
-            src="/logo/logo.png"
+            src="/logo/logo-horizontal-forest-transparent-trimmed.png"
             alt="Ayesha-Sharif Publication"
-            width={72}
-            height={72}
-            className="mx-auto h-16 w-16 object-contain"
+            width={1510}
+            height={272}
+            className="mx-auto h-auto w-[220px] object-contain"
           />
           <h1 className="mt-4 text-2xl font-extrabold text-navy">Admin Login</h1>
           <p className="mt-1 text-sm text-muted">

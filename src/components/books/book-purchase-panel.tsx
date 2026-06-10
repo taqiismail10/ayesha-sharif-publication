@@ -10,6 +10,10 @@ import type { BookDetailData } from "@/types";
 
 const purchasableStatuses: BookStatus[] = ["published", "pre_order"];
 
+/* Shared transition for both action buttons */
+const btnTransition =
+  "transition-[transform,background-color,border-color,color] duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-[1px] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0";
+
 export function BookPurchasePanel({ book }: { book: BookDetailData }) {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
@@ -25,79 +29,105 @@ export function BookPurchasePanel({ book }: { book: BookDetailData }) {
     regularPrice: book.regularPrice,
     salePrice: book.salePrice,
     stockQuantity: book.stockQuantity,
-    quantity
+    quantity,
   };
 
   return (
-    <div className="premium-panel p-4">
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-bold text-muted">Quantity</span>
-        <div className="flex items-center rounded-md border border-line bg-page">
+    <div
+      className="glass-panel rounded-[8px] p-5"
+    >
+      {/* Quantity stepper */}
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <span
+          className="text-[13px] font-medium"
+          style={{ color: "#B0A89C" }}
+        >
+          Quantity
+        </span>
+        <div
+          className="flex items-center"
+          style={{
+            border: "1px solid rgba(176,168,156,0.4)",
+            borderRadius: "4px",
+            backgroundColor: "#FFFFFF",
+          }}
+        >
           <button
             type="button"
-            className="focus-ring inline-flex h-10 w-10 items-center justify-center text-navy disabled:text-muted"
-            onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+            onClick={() => setQuantity((v) => Math.max(1, v - 1))}
             disabled={!canBuy || quantity <= 1}
             aria-label="Decrease quantity"
-            title="Decrease quantity"
+            className="inline-flex h-10 w-10 items-center justify-center transition-colors duration-150 hover:text-[#6B8E6F] disabled:opacity-40"
+            style={{ color: "#2D4A2B" }}
           >
-            <Minus className="h-4 w-4" />
+            <Minus className="h-3.5 w-3.5" />
           </button>
-          <span className="w-10 text-center text-sm font-extrabold">{quantity}</span>
+          <span
+            className="w-10 select-none text-center text-sm font-semibold"
+            style={{ color: "#2D4A2B" }}
+          >
+            {quantity}
+          </span>
           <button
             type="button"
-            className="focus-ring inline-flex h-10 w-10 items-center justify-center text-navy disabled:text-muted"
-            onClick={() => setQuantity((value) => Math.min(maxQuantity, value + 1))}
+            onClick={() => setQuantity((v) => Math.min(maxQuantity, v + 1))}
             disabled={!canBuy || quantity >= maxQuantity}
             aria-label="Increase quantity"
-            title="Increase quantity"
+            className="inline-flex h-10 w-10 items-center justify-center transition-colors duration-150 hover:text-[#6B8E6F] disabled:opacity-40"
+            style={{ color: "#2D4A2B" }}
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <button
-          type="button"
-          disabled={!canBuy}
-          onClick={() => {
-            addCartItem(item);
-            trackBookEvent({
-              bookId: book.id,
-              eventType: "add_to_cart",
-              source: "book_detail"
-            });
-          }}
-          className="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-emerald px-4 py-3 text-sm font-extrabold text-emerald transition hover:bg-emerald/10 disabled:cursor-not-allowed disabled:border-muted/40 disabled:text-muted"
-        >
-          <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-          Add to cart
-        </button>
-        <button
-          type="button"
-          disabled={!canBuy}
-          onClick={() => {
-            addCartItem(item);
-            trackBookEvent({
-              bookId: book.id,
-              eventType: "add_to_cart",
-              source: "buy_now"
-            });
-            router.push("/checkout");
-          }}
-          className="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-emerald px-4 py-3 text-sm font-extrabold text-white transition hover:bg-emerald/90 disabled:cursor-not-allowed disabled:bg-muted/40"
-        >
-          <ShoppingBag className="h-4 w-4" aria-hidden="true" />
-          Buy now
-        </button>
-      </div>
+      {/* Add to Cart */}
+      <button
+        type="button"
+        disabled={!canBuy}
+        onClick={() => {
+          addCartItem(item);
+          trackBookEvent({ bookId: book.id, eventType: "add_to_cart", source: "book_detail" });
+        }}
+        className={`flex w-full items-center justify-center gap-2 rounded-[4px] py-[14px] text-[15px] font-medium text-white ${btnTransition}`}
+        style={{ backgroundColor: canBuy ? "#6B8E6F" : "#B0A89C" }}
+      >
+        <ShoppingCart className="h-4 w-4" aria-hidden="true" />
+        {canBuy ? "Add to cart" : "Unavailable"}
+      </button>
 
-      {!canBuy ? (
-        <p className="mt-3 rounded-md bg-danger/10 px-3 py-2 text-sm font-semibold text-danger">
-          This book is currently not available for checkout.
+      {/* Buy Now */}
+      <button
+        type="button"
+        disabled={!canBuy}
+        onClick={() => {
+          addCartItem(item);
+          trackBookEvent({ bookId: book.id, eventType: "add_to_cart", source: "buy_now" });
+          router.push("/checkout");
+        }}
+        className={`mt-2 flex w-full items-center justify-center gap-2 rounded-[4px] bg-transparent py-[14px] text-[15px] font-medium ${btnTransition}`}
+        style={{
+          border: "2px solid #2D4A2B",
+          color: canBuy ? "#2D4A2B" : "#B0A89C",
+          borderColor: canBuy ? "#2D4A2B" : "rgba(176,168,156,0.4)",
+        }}
+      >
+        <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+        Buy now
+      </button>
+
+      {/* Unavailability notice */}
+      {!canBuy && (
+        <p
+          className="mt-3 rounded-[4px] px-3 py-2 text-[13px]"
+          style={{
+            backgroundColor: "rgba(176,168,156,0.1)",
+            color: "#B0A89C",
+          }}
+        >
+          This book is currently not available for purchase.
         </p>
-      ) : null}
+      )}
     </div>
   );
 }

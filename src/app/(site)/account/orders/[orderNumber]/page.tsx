@@ -47,7 +47,7 @@ export default async function CustomerOrderDetailPage({ params }: PageProps) {
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="story-kicker">Order details</p>
-          <h1 className="font-heading text-3xl font-extrabold text-navy">
+          <h1 className="font-serif text-3xl font-medium text-forest">
             {order.orderNumber}
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted">
@@ -61,17 +61,17 @@ export default async function CustomerOrderDetailPage({ params }: PageProps) {
 
       <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
         <section className="rounded-lg border border-line bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-extrabold text-navy">Books ordered</h2>
+          <h2 className="text-xl font-medium text-forest">Books ordered</h2>
           <div className="mt-4 grid gap-3">
             {order.items.map((item) => (
               <div
                 key={item.id}
-                className="flex justify-between gap-4 rounded-md bg-page p-3 text-sm"
+                className="flex justify-between gap-4 rounded-md bg-cream p-3 text-sm"
               >
                 <div>
                   <Link
                     href={`/books/${item.book.slug}`}
-                    className="font-extrabold text-navy"
+                    className="font-medium text-forest"
                   >
                     {item.bookTitleSnapshot}
                   </Link>
@@ -153,7 +153,7 @@ function TotalLine({
 }) {
   return (
     <div
-      className={`flex justify-between ${strong ? "text-base font-extrabold text-navy" : ""}`}
+      className={`flex justify-between ${strong ? "text-base font-medium text-forest" : ""}`}
     >
       <span className={strong ? "" : "text-muted"}>{label}</span>
       <span className="font-bold">{value}</span>
@@ -174,7 +174,7 @@ function InfoPanel({
     <section className="rounded-lg border border-line bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
         <Icon className="h-5 w-5 text-gold" aria-hidden={true} />
-        <h2 className="text-lg font-extrabold text-navy">{title}</h2>
+        <h2 className="text-lg font-medium text-forest">{title}</h2>
       </div>
       <div className="grid gap-3 text-sm">
         {rows.map(([label, value]) => (

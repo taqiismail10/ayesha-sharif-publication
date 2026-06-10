@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { LogIn, UserPlus } from "lucide-react";
+import { useActionState, useState } from "react";
+import { Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
 import {
   loginCustomerAction,
   registerCustomerAction,
@@ -10,6 +10,46 @@ import {
 } from "@/app/(site)/account/actions";
 
 const initialState: CustomerActionState = {};
+
+function PasswordInput({
+  autoComplete,
+  label,
+  name
+}: {
+  autoComplete: string;
+  label: string;
+  name: string;
+}) {
+  const [isVisible, setIsVisible] = useState(false);
+  const id = `customer-${name}`;
+  const Icon = isVisible ? EyeOff : Eye;
+
+  return (
+    <div>
+      <label className="form-label" htmlFor={id}>
+        {label}
+      </label>
+      <div className="relative mt-1">
+        <input
+          id={id}
+          name={name}
+          type={isVisible ? "text" : "password"}
+          autoComplete={autoComplete}
+          required
+          className="form-input pr-12"
+        />
+        <button
+          type="button"
+          aria-label={isVisible ? `Hide ${label}` : `Show ${label}`}
+          className="focus-ring absolute right-1.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-gray-soft transition hover:bg-cream hover:text-forest"
+          onClick={() => setIsVisible((current) => !current)}
+        >
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function CustomerAuthForm({
   mode,
@@ -81,34 +121,24 @@ export function CustomerAuthForm({
         </div>
       )}
 
-      <label>
-        <span className="form-label">Password</span>
-        <input
-          name="password"
-          type="password"
-          autoComplete={isLogin ? "current-password" : "new-password"}
-          required
-          className="form-input mt-1"
-        />
-      </label>
+      <PasswordInput
+        name="password"
+        label="Password"
+        autoComplete={isLogin ? "current-password" : "new-password"}
+      />
 
       {!isLogin ? (
-        <label>
-          <span className="form-label">Confirm password</span>
-          <input
-            name="confirmPassword"
-            type="password"
-            autoComplete="new-password"
-            required
-            className="form-input mt-1"
-          />
-        </label>
+        <PasswordInput
+          name="confirmPassword"
+          label="Confirm password"
+          autoComplete="new-password"
+        />
       ) : null}
 
       <button
         type="submit"
         disabled={isPending}
-        className="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-navy px-5 py-3 text-sm font-extrabold text-white disabled:bg-muted/40"
+        className="btn-lift focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-sage px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-soft"
       >
         <Icon className="h-4 w-4" aria-hidden="true" />
         {isPending
@@ -124,7 +154,7 @@ export function CustomerAuthForm({
         {isLogin ? "New here?" : "Already have an account?"}{" "}
         <Link
           href={isLogin ? "/account/register" : "/account/login"}
-          className="text-navy underline decoration-gold decoration-2 underline-offset-4"
+          className="text-forest underline decoration-gold decoration-2 underline-offset-4 transition-colors duration-150 hover:text-sage"
         >
           {isLogin ? "Create an account" : "Sign in"}
         </Link>

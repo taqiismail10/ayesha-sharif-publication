@@ -12,11 +12,14 @@ import {
   MessageCircle,
   PackageCheck,
   Phone,
+  RotateCcw,
   ShieldCheck,
   ShoppingBag,
   Truck
 } from "lucide-react";
 import { defaultContact } from "@/lib/constants";
+import { SectionTitle } from "@/components/site/section-title";
+import { ScrollReveal } from "@/components/site/scroll-reveal";
 
 type HomeCategory = {
   id: string;
@@ -253,6 +256,150 @@ export function HelpOrderingSection() {
           <MessageCircle className="h-4 w-4" aria-hidden="true" />
           Contact on WhatsApp
         </a>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   New editorial homepage sections (Phase 5)
+───────────────────────────────────────────── */
+
+export function CategoriesSection({ categories }: { categories: HomeCategory[] }) {
+  if (!categories.length) return null;
+
+  return (
+    <section className="py-12 md:py-[72px]">
+      <div className="mx-auto max-w-[1200px] px-6">
+        <SectionTitle overline="— Browse —" title="Browse by Category" />
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          {categories.slice(0, 8).map((category, i) => (
+            <ScrollReveal
+              key={category.id}
+              variant="rise"
+              delay={Math.min(i, 4) * 40}
+            >
+              <Link
+                href={`/books?category=${category.slug}`}
+                className="glass-pill rounded-full px-5 py-[10px] text-[12px] font-medium uppercase tracking-[0.04em] text-white hover:bg-[#2D4A2B] hover:text-[#D4A574] hover:scale-[1.03] sm:px-6 sm:text-[13px]"
+                style={{
+                  transition:
+                    "background-color 150ms cubic-bezier(0.4,0,0.2,1), color 150ms cubic-bezier(0.4,0,0.2,1), transform 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1)",
+                }}
+              >
+                {category.name}
+              </Link>
+            </ScrollReveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const trustItems = [
+  { icon: BookOpen,   label: "400+ Books" },
+  { icon: HandCoins,  label: "Cash on Delivery" },
+  { icon: RotateCcw,  label: "Easy Returns" },
+  { icon: Truck,      label: "Nationwide Shipping" },
+] as const;
+
+export function TrustStrip() {
+  return (
+    <section
+      className="py-12"
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.38)",
+        borderTop: "1px solid rgba(176, 168, 156, 0.16)",
+        borderBottom: "1px solid rgba(176, 168, 156, 0.16)",
+      }}
+    >
+      <div className="mx-auto flex max-w-[1200px] flex-wrap justify-center gap-x-12 gap-y-8 px-6">
+        {trustItems.map(({ icon: Icon, label }, i) => (
+          <ScrollReveal key={label} variant="rise" delay={i * 80}>
+            <div className="flex flex-col items-center gap-2">
+              <Icon
+                className="h-5 w-5"
+                aria-hidden="true"
+                style={{ color: "#6B8E6F" }}
+              />
+              <span
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "13px",
+                  color: "#B0A89C",
+                }}
+              >
+                {label}
+              </span>
+            </div>
+          </ScrollReveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function WhatsAppSection() {
+  const whatsappNumber = defaultContact.whatsapp.replace(/\D/g, "");
+
+  return (
+    <section
+      className="pb-16 pt-20"
+      style={{
+        background: `
+          radial-gradient(ellipse at 50% 0%, rgba(212,165,116,0.09) 0%, transparent 55%),
+          radial-gradient(ellipse at 10% 100%, rgba(107,142,111,0.12) 0%, transparent 45%),
+          #2D4A2B
+        `,
+        borderTop: "1px solid rgba(212, 165, 116, 0.12)",
+      }}
+    >
+      <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-4 px-6 text-center">
+        {/* Heading — rise */}
+        <ScrollReveal variant="rise" delay={0}>
+          <h2
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: "24px",
+              fontWeight: 400,
+              color: "#F5F1E8",
+              margin: 0,
+            }}
+          >
+            Need help choosing?
+          </h2>
+        </ScrollReveal>
+
+        {/* Subtext — rise */}
+        <ScrollReveal variant="rise" delay={80}>
+          <p
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: "14px",
+              color: "rgba(245, 241, 232, 0.7)",
+              margin: 0,
+            }}
+          >
+            Chat with us on WhatsApp
+          </p>
+        </ScrollReveal>
+
+        {/* Button — scale */}
+        <ScrollReveal variant="scale" delay={160}>
+          <a
+            href={`https://wa.me/${whatsappNumber}`}
+            className="btn-lift mt-2 inline-flex items-center gap-2 rounded-[4px] px-8 py-3 font-semibold"
+            style={{
+              backgroundColor: "#D4A574",
+              color: "#2D4A2B",
+              fontSize: "14px",
+            }}
+          >
+            <MessageCircle className="h-4 w-4" aria-hidden="true" />
+            Chat on WhatsApp
+          </a>
+        </ScrollReveal>
       </div>
     </section>
   );

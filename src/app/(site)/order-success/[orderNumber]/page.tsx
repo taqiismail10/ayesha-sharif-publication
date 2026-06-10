@@ -30,10 +30,10 @@ export default async function OrderSuccessPage({ params }: PageProps) {
     return (
       <div className="container-px mx-auto max-w-3xl py-12">
         <div className="rounded-lg border border-line bg-white p-8 text-center">
-          <h1 className="text-2xl font-extrabold text-navy">Order not found</h1>
+          <h1 className="text-2xl font-medium text-forest">Order not found</h1>
           <Link
             href="/books"
-            className="mt-5 inline-flex rounded-md bg-navy px-5 py-3 text-sm font-extrabold text-white"
+            className="mt-5 inline-flex rounded-md bg-forest px-5 py-3 text-sm font-extrabold text-white"
           >
             Browse Books
           </Link>
@@ -49,7 +49,7 @@ export default async function OrderSuccessPage({ params }: PageProps) {
     <div className="container-px mx-auto max-w-3xl py-10">
       <div className="rounded-lg border border-line bg-white p-6 text-center shadow-sm sm:p-8">
         <CheckCircle2 className="mx-auto h-12 w-12 text-emerald" aria-hidden="true" />
-        <h1 className="mt-4 font-heading text-3xl font-extrabold text-navy">
+        <h1 className="mt-4 font-serif text-3xl font-medium text-forest">
           Order placed successfully
         </h1>
         <p className="mt-2 text-sm leading-6 text-muted">
@@ -70,7 +70,7 @@ export default async function OrderSuccessPage({ params }: PageProps) {
       </div>
 
       <div className="mt-5 rounded-lg border border-line bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-extrabold text-navy">Order details</h2>
+        <h2 className="text-lg font-medium text-forest">Order details</h2>
         <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
           <Info label="Date" value={formatDate(order.createdAt)} />
           <Info label="Payment method" value={paymentMethodLabels[order.paymentMethod]} />

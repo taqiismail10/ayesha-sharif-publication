@@ -43,33 +43,38 @@ export function CookieConsentBanner() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-white/95 shadow-[0_-18px_45px_rgba(16,35,63,0.14)] backdrop-blur">
-      <div className="container-px mx-auto grid max-w-7xl gap-4 py-4 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div className="flex gap-3">
-          <span className="mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-navy text-gold">
-            <Cookie className="h-5 w-5" aria-hidden="true" />
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:px-6 sm:pb-6">
+      <div
+        className="pointer-events-auto mx-auto grid max-h-[calc(100vh-2rem)] w-full max-w-[980px] gap-4 overflow-y-auto rounded-[8px] border p-4 shadow-[0_18px_44px_rgba(45,74,43,0.16)] backdrop-blur sm:p-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center"
+        style={{
+          backgroundColor: "rgba(245, 241, 232, 0.97)",
+          borderColor: "rgba(212, 165, 116, 0.22)",
+        }}
+      >
+        <div className="flex min-w-0 gap-3">
+          <span className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-forest text-gold">
+            <Cookie className="h-[18px] w-[18px]" aria-hidden="true" />
           </span>
-          <div>
-            <p className="font-extrabold text-navy">Cookie preferences</p>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-forest">Cookie preferences</p>
             <p className="mt-1 text-sm leading-6 text-muted">
-              Necessary cookies keep cart and sessions working. Personalization
-              helps recommend books only after you allow it. Analytics and
-              marketing are placeholders in this phase.
+              Cookies keep carts and sessions working. Optional personalization
+              can improve book recommendations.
             </p>
             <Link
               href="/privacy-policy"
-              className="mt-2 inline-flex text-sm font-bold text-navy underline decoration-gold decoration-2 underline-offset-4"
+              className="mt-1 inline-flex text-sm font-medium text-forest underline decoration-gold decoration-2 underline-offset-4"
             >
               Read privacy policy
             </Link>
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[32rem]">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:min-w-[27rem]">
           <button
             type="button"
             onClick={() => save(defaultChoices)}
-            className="focus-ring min-h-11 rounded-md border border-line bg-white px-4 py-2 text-sm font-extrabold text-navy"
+            className="focus-ring min-h-11 rounded-[6px] border border-[rgba(176,168,156,0.35)] bg-transparent px-4 py-2 text-sm font-semibold text-forest transition-colors duration-150 hover:border-gold hover:bg-white/35"
           >
             Reject all
           </button>
@@ -82,14 +87,14 @@ export function CookieConsentBanner() {
                 marketing: true
               })
             }
-            className="focus-ring min-h-11 rounded-md bg-navy px-4 py-2 text-sm font-extrabold text-white"
+            className="focus-ring min-h-11 rounded-[6px] bg-forest px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-sage"
           >
             Accept all
           </button>
           <button
             type="button"
             onClick={() => setIsExpanded((value) => !value)}
-            className="focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-gold bg-gold/10 px-4 py-2 text-sm font-extrabold text-navy"
+            className="focus-ring col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-[6px] border border-gold bg-transparent px-4 py-2 text-sm font-semibold text-forest transition-colors duration-150 hover:bg-gold/10 sm:col-span-1"
           >
             <Settings className="h-4 w-4" aria-hidden="true" />
             Choices
@@ -97,7 +102,7 @@ export function CookieConsentBanner() {
         </div>
 
         {isExpanded ? (
-          <div className="rounded-md bg-page p-4 lg:col-span-2">
+          <div className="rounded-[8px] border border-[rgba(176,168,156,0.18)] bg-white/35 p-4 lg:col-span-2">
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <ConsentRow label="Necessary" checked disabled />
               <ConsentRow
@@ -128,7 +133,7 @@ export function CookieConsentBanner() {
             <button
               type="button"
               onClick={() => save(choices)}
-              className="focus-ring mt-4 min-h-11 rounded-md bg-emerald px-4 py-2 text-sm font-extrabold text-white"
+              className="focus-ring mt-4 min-h-11 rounded-[6px] bg-sage px-4 py-2 text-sm font-semibold text-white"
             >
               Save choices
             </button>
@@ -151,7 +156,7 @@ function ConsentRow({
   onChange?: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex items-center gap-2 rounded-md border border-line bg-white p-3 text-sm font-bold text-navy">
+    <label className="flex items-center gap-2 rounded-[6px] border border-[rgba(176,168,156,0.24)] bg-[#F5F1E8] p-3 text-sm font-medium text-forest">
       <input
         type="checkbox"
         checked={checked}

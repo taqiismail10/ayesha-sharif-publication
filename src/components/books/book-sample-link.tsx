@@ -21,7 +21,7 @@ export function BookSampleLink({
           source: "book_detail"
         })
       }
-      className="mt-5 inline-flex items-center gap-2 rounded-md border border-gold px-4 py-2 text-sm font-bold text-navy"
+      className="mt-5 inline-flex items-center gap-2 rounded-[4px] border-2 border-forest px-4 py-2 text-sm font-medium text-forest transition-colors duration-150 hover:bg-forest hover:text-white"
     >
       <Download className="h-4 w-4" aria-hidden="true" />
       Preview sample

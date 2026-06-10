@@ -67,7 +67,7 @@ export default async function CustomerProfilePage() {
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="story-kicker">Reader account</p>
-          <h1 className="font-heading text-3xl font-extrabold text-navy">
+          <h1 className="font-serif text-3xl font-medium text-forest">
             My Profile
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
@@ -109,7 +109,7 @@ export default async function CustomerProfilePage() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
         <section className="rounded-lg border border-line bg-white p-5 shadow-sm sm:p-6">
-          <h2 className="mb-4 text-xl font-extrabold text-navy">
+          <h2 className="mb-4 text-xl font-medium text-forest">
             Profile and preferences
           </h2>
           <CustomerProfileForm
@@ -125,19 +125,19 @@ export default async function CustomerProfilePage() {
           <section className="rounded-lg border border-line bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <LockKeyhole className="h-5 w-5 text-gold" aria-hidden="true" />
-              <h2 className="text-lg font-extrabold text-navy">Security</h2>
+              <h2 className="text-lg font-medium text-forest">Security</h2>
             </div>
             <CustomerPasswordForm />
           </section>
 
           <section className="rounded-lg border border-line bg-cream p-5">
-            <h2 className="text-lg font-extrabold text-navy">Privacy note</h2>
+            <h2 className="text-lg font-medium text-forest">Privacy note</h2>
             <p className="mt-2 text-sm leading-6 text-muted">
               You can turn off personalization at any time. Anonymous
               recommendation tracking is controlled separately from account
               profile preferences.
             </p>
-            <Link href="/privacy-policy" className="mt-4 inline-flex text-sm font-bold text-navy">
+            <Link href="/privacy-policy" className="mt-4 inline-flex text-sm font-bold text-forest">
               Read privacy policy
             </Link>
           </section>
@@ -165,7 +165,7 @@ function DashboardCard({
     >
       <Icon className="h-5 w-5 text-gold" aria-hidden={true} />
       <p className="mt-3 text-sm font-bold text-muted">{title}</p>
-      <p className="mt-1 text-2xl font-extrabold text-navy">{value}</p>
+      <p className="mt-1 text-2xl font-medium text-forest">{value}</p>
     </Link>
   );
 }

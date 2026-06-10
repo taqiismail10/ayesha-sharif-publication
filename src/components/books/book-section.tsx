@@ -1,48 +1,57 @@
 import Link from "next/link";
-import { ArrowRight, BookOpenCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { BookCardData } from "@/types";
 import { ProductCard } from "@/components/books/product-card";
+import { SectionTitle } from "@/components/site/section-title";
+import { ScrollReveal } from "@/components/site/scroll-reveal";
 
 type BookSectionProps = {
   title: string;
   subtitle?: string;
+  /** Small uppercase overline label above the title, e.g. "— Featured —" */
+  overline?: string;
   books: BookCardData[];
   href?: string;
 };
 
-export function BookSection({ title, subtitle, books, href }: BookSectionProps) {
+export function BookSection({
+  title,
+  subtitle,
+  overline,
+  books,
+  href,
+}: BookSectionProps) {
   if (!books.length) return null;
 
   return (
-    <section className="book-section section-shell">
-      <div className="book-section-header mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-navy text-gold shadow-[0_12px_26px_rgba(16,35,63,0.12)]">
-              <BookOpenCheck className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <div className="h-px w-20 bg-gradient-to-r from-gold via-gold/55 to-transparent" />
-          </div>
-          <h2 className="section-heading">{title}</h2>
-          {subtitle ? (
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-              {subtitle}
-            </p>
-          ) : null}
-        </div>
+    <section className="py-12 md:py-[72px]">
+      <div className="mb-10 flex flex-col items-center gap-3">
+        {/* SectionTitle handles overline + title + underline + subtitle animations */}
+        <SectionTitle title={title} subtitle={subtitle} overline={overline} />
+
         {href ? (
-          <Link
-            href={href}
-            className="premium-button-secondary min-h-11 w-fit px-4 py-2.5"
-          >
-            View all
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
+          <ScrollReveal variant="rise" delay={200}>
+            <Link
+              href={href}
+              className="inline-flex items-center gap-1 text-sm font-medium text-[#6B8E6F] transition-colors duration-150 hover:text-[#2D4A2B]"
+            >
+              View all
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+          </ScrollReveal>
         ) : null}
       </div>
-      <div className="book-grid grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-        {books.map((book) => (
-          <ProductCard key={book.id} book={book} />
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+        {books.map((book, i) => (
+          <ScrollReveal
+            key={book.id}
+            variant="scale"
+            delay={Math.min(i, 4) * 60}
+            className="h-full"
+          >
+            <ProductCard book={book} />
+          </ScrollReveal>
         ))}
       </div>
     </section>

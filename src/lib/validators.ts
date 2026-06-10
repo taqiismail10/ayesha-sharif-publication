@@ -20,6 +20,12 @@ export function normalizeBangladeshPhone(value?: unknown) {
 }
 
 const bangladeshPhonePattern = /^01[3-9]\d{8}$/;
+const formString = (value: unknown) => (typeof value === "string" ? value : "");
+const optionalTrimmedString = (value: unknown) => {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed || undefined;
+};
 
 export const phoneSchema = z
   .string()
@@ -44,9 +50,13 @@ const optionalPhoneSchema = z.preprocess(
 );
 
 const passwordSchema = z
-  .string()
-  .min(8, "Password must be at least 8 characters.")
-  .max(128, "Password is too long.");
+  .preprocess(
+    formString,
+    z
+      .string()
+      .min(8, "Password must be at least 8 characters.")
+      .max(128, "Password is too long.")
+  );
 
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -183,9 +193,12 @@ export const customerRegisterSchema = z
   });
 
 export const customerLoginSchema = z.object({
-  identifier: z.string().trim().min(5, "Enter your email or phone number."),
+  identifier: z.preprocess(
+    formString,
+    z.string().trim().min(5, "Enter your email or phone number.")
+  ),
   password: passwordSchema,
-  redirectTo: z.string().optional()
+  redirectTo: z.preprocess(optionalTrimmedString, z.string().optional())
 });
 
 export const customerProfileSchema = z

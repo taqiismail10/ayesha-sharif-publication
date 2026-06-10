@@ -27,7 +27,7 @@ export default async function CustomerOrdersPage() {
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="story-kicker">Reader account</p>
-          <h1 className="font-heading text-3xl font-extrabold text-navy">
+          <h1 className="font-serif text-3xl font-medium text-forest">
             My Orders
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted">
@@ -49,7 +49,7 @@ export default async function CustomerOrdersPage() {
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-lg font-extrabold text-navy">
+                  <p className="text-lg font-medium text-forest">
                     {order.orderNumber}
                   </p>
                   <p className="mt-1 text-sm text-muted">
@@ -58,7 +58,7 @@ export default async function CustomerOrdersPage() {
                   </p>
                 </div>
                 <div className="grid gap-1 text-sm sm:text-right">
-                  <p className="font-extrabold text-navy">
+                  <p className="font-medium text-forest">
                     {formatCurrency(order.grandTotal)}
                   </p>
                   <p className="font-semibold text-muted">

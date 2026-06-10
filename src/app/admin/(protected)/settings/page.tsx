@@ -45,7 +45,7 @@ export default async function AdminSettingsPage() {
             </label>
           ))}
           <div className="flex items-end">
-            <button className="focus-ring min-h-12 w-full rounded-md bg-emerald px-5 py-3 text-sm font-extrabold text-white">
+            <button className="focus-ring min-h-12 w-full rounded-[4px] bg-forest px-5 py-3 text-sm font-medium text-white transition-colors duration-150 hover:bg-[#1e3320]">
               Save settings
             </button>
           </div>

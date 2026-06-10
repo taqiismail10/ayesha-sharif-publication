@@ -73,7 +73,7 @@ function RecommendationGrid({
   return (
     <section className="section-shell">
       <div className="mb-6 flex items-start gap-3">
-        <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-navy text-gold shadow-[0_12px_26px_rgba(16,35,63,0.12)]">
+        <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-forest text-gold shadow-[0_12px_26px_rgba(16,35,63,0.12)]">
           <Sparkles className="h-5 w-5" aria-hidden="true" />
         </span>
         <div>
