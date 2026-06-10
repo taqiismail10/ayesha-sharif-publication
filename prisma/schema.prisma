@@ -2,6 +2,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Second generator for the NestJS API (apps/api) — explicit output so the API
+// gets its own generated client instead of resolving the Next app's
+// node_modules. Additive only; the Next.js app's generator above is unchanged.
+generator apiClient {
+  provider = "prisma-client-js"
+  output   = "../apps/api/generated/prisma"
+}
+
 datasource db {
   provider = "postgresql"
 }

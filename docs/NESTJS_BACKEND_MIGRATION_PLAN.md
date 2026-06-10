@@ -276,14 +276,14 @@ nest-backend/
 
 ## 9. Step-by-Step Implementation Checklist
 
-### Phase 0 — Foundations (no behavior change)
-- [ ] Decide deployment topology (same-domain proxy recommended) and storage for uploads (move off `public/`)
-- [ ] Create `nest-backend/` (separate repo or monorepo workspace — recommend npm workspaces monorepo: `apps/web`, `apps/api`, `packages/contracts`)
-- [ ] Scaffold NestJS: `@nestjs/cli`, `@nestjs/config`, `nestjs-zod`, cookie-parser, helmet, CORS
-- [ ] Move `prisma/schema.prisma` + migrations + seed to the API app; wire global `PrismaModule`
-- [ ] Port `validators.ts` schemas into `packages/contracts`
-- [ ] Implement Prisma exception filter + global validation pipe
-- [ ] Real `/health` with DB ping
+### Phase 0 — Foundations (no behavior change) — ✅ DONE (see docs/API_FOUNDATION_SETUP.md)
+- [x] Created `apps/api/` as a **standalone npm package** (workspace conversion deferred — moving the Next app to `apps/web` judged too risky for Phase 0)
+- [x] Scaffolded NestJS 11: `@nestjs/config` (global), cookie-parser, helmet, CORS (`FRONTEND_ORIGIN`, credentials), global `ValidationPipe`
+- [x] Prisma wired via **dual-generator approach**: root `prisma/schema.prisma` kept in place (NOT moved); an additive `apiClient` generator outputs to `apps/api/generated/prisma`. Models unchanged; Next app's generator untouched. *(Correction to original plan: schema is shared in place, not moved.)*
+- [x] Prisma exception filter (P2002→409, P2025→404) + global validation pipe
+- [x] Real `/health` with DB ping (`SELECT 1`), graceful `not_configured` mode without DATABASE_URL
+- [ ] Port `validators.ts` schemas into a shared contracts package *(deferred to Phase 1 — nestjs-zod decision pending)*
+- [ ] Decide upload storage location (move off `public/`) *(deferred to Phase 3 prep)*
 
 ### Phase 1 — Read-only public API (lowest risk)
 - [ ] `GET /books/home`, `GET /books`, `GET /books/:slug`, `GET /books/:slug/similar`
