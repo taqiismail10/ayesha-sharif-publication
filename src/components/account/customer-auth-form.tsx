@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
+import { apiUrl } from "@/lib/api-client";
 import {
   loginCustomerAction,
   registerCustomerAction,
@@ -162,9 +163,9 @@ export function CustomerAuthForm({
       {/* Full-page redirect to the NestJS OAuth start route. The API validates
           the redirect param server-side (open-redirect safe). */}
       <a
-        href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/auth/customer/google${
-          redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""
-        }`}
+        href={apiUrl(
+          `/auth/customer/google${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`,
+        )}
         className="focus-ring inline-flex min-h-12 w-full select-none items-center justify-center gap-2.5 rounded-[4px] border border-line bg-white px-5 py-3 text-sm font-medium text-forest transition-colors duration-150 hover:bg-cream"
       >
         <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogIn, PackageCheck, UserCircle } from "lucide-react";
+import { apiFetch } from "@/lib/api-client";
 
 type AccountResponse = {
   ok?: boolean;
@@ -23,7 +24,9 @@ export function AccountMenu() {
     let active = true;
     setIsLoading(true);
 
-    fetch("/api/account/me", { cache: "no-store", credentials: "include" })
+    // Phase 2F: retargeted from Next's /api/account/me to the NestJS API.
+    // Response shape is identical: { ok, customer: {name,email,phone} | null }
+    apiFetch("/auth/customer/me", { cache: "no-store" })
       .then((response) => response.json() as Promise<AccountResponse>)
       .then((data) => {
         if (active) {
@@ -100,12 +103,22 @@ export function AccountMenu() {
           <PackageCheck className="h-4 w-4 text-gold" aria-hidden="true" />
           Orders
         </Link>
-        <Link
-          href="/account/logout"
-          className="block rounded-md px-3 py-2 font-bold text-danger hover:bg-danger/10"
+        {/* Phase 2F: logout via the NestJS API (deletes the shared session
+            row, so the cookie dies for both backends). Old /account/logout
+            route is kept alive as a fallback path. */}
+        <button
+          type="button"
+          onClick={() => {
+            apiFetch("/auth/customer/logout", { method: "POST" })
+              .catch(() => undefined)
+              .finally(() => {
+                window.location.href = "/";
+              });
+          }}
+          className="block w-full rounded-md px-3 py-2 text-left font-bold text-danger hover:bg-danger/10"
         >
           Logout
-        </Link>
+        </button>
       </div>
     </div>
   );

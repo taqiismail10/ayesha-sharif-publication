@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import type { BookCardData } from "@/types";
+import { apiFetch } from "@/lib/api-client";
 import { peekAnonymousRecommendationId } from "@/lib/consent-client";
 import { ProductCard } from "@/components/books/product-card";
 
@@ -17,7 +18,9 @@ export function PersonalizedRecommendationSection() {
   useEffect(() => {
     const anonymousId = peekAnonymousRecommendationId();
     const params = anonymousId ? `?anonymousId=${encodeURIComponent(anonymousId)}` : "";
-    fetch(`/api/recommendations${params}`, { cache: "no-store" })
+    // Phase 2F: retargeted to NestJS. Cookies included so logged-in
+    // customers get consent-aware personalization (same as old same-origin).
+    apiFetch(`/recommendations${params}`, { cache: "no-store" })
       .then((response) => response.json() as Promise<RecommendationResponse>)
       .then((data) => setBooks(data.books || []))
       .catch(() => setBooks([]));
@@ -39,7 +42,8 @@ export function CartRecommendationSection({ bookIds }: { bookIds: string[] }) {
 
   useEffect(() => {
     if (!bookIds.length) return;
-    fetch("/api/recommendations", {
+    // Phase 2F: old POST /api/recommendations → NestJS POST /recommendations/cart
+    apiFetch("/recommendations/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ bookIds }),

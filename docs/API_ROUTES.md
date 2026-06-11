@@ -54,6 +54,22 @@ Optional customer session: a valid cookie attaches `customerId`; guests check ou
 - `400 {"ok":false,"message":"<first validation issue | business error>"}`
 - `503 {"ok":false,"message":"Database is not configured yet. …"}`
 
+## Recommendations (Phase 2E)
+
+All three accept an **optional** customer session cookie; guests use `anonymousId` (valid iff `^[a-zA-Z0-9_-]{16,80}$`, otherwise silently treated as absent). Books are returned as `BookCardData[]` — identical 16-field shape to `serializeBookCard` (Decimal prices → numbers).
+
+| Method | Route | Request | Success | Errors |
+|---|---|---|---|---|
+| GET | `/recommendations?anonymousId=` | — | `200 {ok:true, books:[≤8]}` | — (always 200) |
+| POST | `/recommendations/cart` | `{bookIds: string[≤30]}` | `200 {ok:true, books:[≤4]}` | `400 {ok:false, message:"Invalid recommendation request."}` |
+| POST | `/recommendations/events` | `{bookId, eventType, anonymousId?, source?≤80}` | `200 {ok:true, tracked:bool}` | `400 {ok:false, tracked:false}` |
+
+**Event types** (only the 5 existing ones — none invented): `view`(w1) · `search_click`(w2) · `sample_open`(w3) · `add_to_cart`(w4) · `purchase`(w8).
+
+**Engine parity** (ported 1:1 from `src/lib/recommendations.ts`): signal accumulation from customer events (last 40) + orders (last 10, score 6) + stated preferences (category 6 / tag 4 / language 3), or anonymous event history (last 30); candidate pools 32 (cart) / 48 (personalized); scoring boosts (in-stock+purchasable +2, discount +1, upcoming/pre-order +1, bestSeller +2, featured +1); tie-break newest-first; source/cart/evented books excluded; popularity fallback (bestSeller > featured > newArrival > newest) whenever signals or results are empty. Consent rules identical: logged-in customers without `personalizationConsent` get the fallback (GET) and are never tracked (events); guests without a valid `anonymousId` are never tracked; `view` deduped per actor+book within 30 minutes.
+
+**Deliberate deviations:** no `unstable_cache` (Next-only — queries run per request); no sample-data demo mode (DB unconfigured ⇒ `{ok:true, books:[]}` instead of canned books — frontend sections hide on empty lists).
+
 ### Old (Next.js) vs new (NestJS) behavior
 
 | Aspect | Old `src/app/api/orders/route.ts` | New `POST /orders` |

@@ -2,17 +2,19 @@
 
 Every frontend dependency on the old backend, by mechanism. Risk level = blast radius if the migration of that call breaks (🔴 checkout/auth-critical · 🟠 visible feature · 🟡 degraded-gracefully).
 
+**Phase 2F status:** all customer-facing `fetch()` call-sites now go through `src/lib/api-client.ts` (`NEXT_PUBLIC_API_BASE_URL`, `credentials:"include"`) to the NestJS API. Admin calls untouched. Old Next routes remain live as fallback.
+
 ## A. Client-side `fetch()` (5 call sites — the only true HTTP dependencies)
 
-| Frontend file | API called | Feature | Old route/function | Proposed NestJS endpoint | Risk level |
-|---|---|---|---|---|---|
-| `src/components/checkout/checkout-page-client.tsx` | `POST /api/orders` | Checkout submit | `app/api/orders/route.ts` | `POST /orders` | 🔴 revenue path |
-| `src/components/site/account-menu.tsx` | `GET /api/account/me` | Header login state (renders on every page) | `app/api/account/me/route.ts` | `GET /auth/customer/me` | 🟠 every-page header |
-| `src/components/admin/upload-field.tsx` | `POST /api/admin/upload` | Book cover/gallery/PDF upload | `app/api/admin/upload/route.ts` | `POST /admin/uploads` | 🟠 admin workflow |
-| `src/components/books/client-recommendation-section.tsx` | `GET /api/recommendations`, `POST /api/recommendations` | Personalized + cart recommendations | `app/api/recommendations/route.ts` | `GET /recommendations`, `POST /recommendations/cart` | 🟡 section self-hides on failure |
-| `src/lib/tracking-client.ts` (used by `product-card`, `book-interaction-tracker`, `book-sample-link`) | `POST /api/recommendation-events` | Interaction tracking | `app/api/recommendation-events/route.ts` | `POST /recommendations/events` | 🟡 fire-and-forget |
+| Frontend file | API called | Feature | Old route/function | NestJS endpoint | Status | Risk level |
+|---|---|---|---|---|---|---|
+| `src/components/checkout/checkout-page-client.tsx` | ~~`POST /api/orders`~~ | Checkout submit | `app/api/orders/route.ts` (kept) | `POST /orders` | ✅ **retargeted (2F)** | 🔴 revenue path |
+| `src/components/site/account-menu.tsx` | ~~`GET /api/account/me`~~ + logout link | Header login state + logout | `app/api/account/me/route.ts`, `/account/logout` (both kept) | `GET /auth/customer/me`, `POST /auth/customer/logout` | ✅ **retargeted (2F)** | 🟠 every-page header |
+| `src/components/admin/upload-field.tsx` | `POST /api/admin/upload` | Book cover/gallery/PDF upload | `app/api/admin/upload/route.ts` | `POST /admin/uploads` | ⏳ Phase 3 — **not touched** | 🟠 admin workflow |
+| `src/components/books/client-recommendation-section.tsx` | ~~`GET/POST /api/recommendations`~~ | Personalized + cart recommendations | `app/api/recommendations/route.ts` (kept) | `GET /recommendations`, `POST /recommendations/cart` | ✅ **retargeted (2F)** | 🟡 self-hides on failure |
+| `src/lib/tracking-client.ts` | ~~`POST /api/recommendation-events`~~ | Interaction tracking | `app/api/recommendation-events/route.ts` (kept) | `POST /recommendations/events` | ✅ **retargeted (2F)** | 🟡 fire-and-forget |
 
-Also: admin orders page links directly to `GET /api/admin/orders/export` (anchor href, not fetch) → `GET /admin/orders/export.csv` — 🟡.
+Also: admin orders page links to `GET /api/admin/orders/export` (anchor) — ⏳ Phase 3, untouched. The Google login button (`customer-auth-form.tsx`) now also uses `apiUrl()` from the shared client.
 
 ## B. Server-Action form bindings (convert with Phase 2/3, form-by-form)
 
