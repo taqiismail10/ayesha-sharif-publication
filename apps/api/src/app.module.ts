@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { PrismaExceptionFilter } from "./common/filters/prisma-exception.filter";
+import { CustomerAuthModule } from "./customer-auth/customer-auth.module";
+import { CustomersModule } from "./customers/customers.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 
@@ -15,6 +17,8 @@ import { PrismaModule } from "./prisma/prisma.module";
     }),
     PrismaModule,
     HealthModule,
+    CustomerAuthModule,
+    CustomersModule,
   ],
   providers: [
     // Maps Prisma known errors to proper HTTP codes (P2002→409, P2025→404).
