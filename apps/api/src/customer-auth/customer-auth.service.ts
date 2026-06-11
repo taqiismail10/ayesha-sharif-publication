@@ -37,8 +37,14 @@ function hashToken(token: string) {
 }
 
 function sessionSecret() {
-  // Same fallback as the Next app so dev ipHash values match.
-  return process.env.NEXTAUTH_SECRET || "development-only-change-this-secret";
+  const secret = process.env.NEXTAUTH_SECRET;
+  // Parity with the Next app's getSecret(): refuse to run on a known
+  // fallback secret in production (Phase 2 security verification fix).
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error("NEXTAUTH_SECRET is required in production.");
+  }
+  // Same dev fallback as the Next app so dev ipHash values match.
+  return secret || "development-only-change-this-secret";
 }
 
 function hashIp(ip: string | null) {

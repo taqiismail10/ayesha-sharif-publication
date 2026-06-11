@@ -51,11 +51,14 @@ export const checkoutSchema = z
     items: z
       .array(
         z.object({
-          bookId: z.string().min(1),
+          bookId: z.string().min(1).max(64),
           quantity: z.coerce.number().int().min(1).max(99),
         }),
       )
-      .min(1, "Your cart is empty."),
+      .min(1, "Your cart is empty.")
+      // Security hardening (Phase 2 verification): the old route accepted an
+      // unbounded array. 100 distinct titles is far above any real cart.
+      .max(100, "Too many items in the cart."),
   })
   .superRefine((value, ctx) => {
     if (

@@ -29,6 +29,10 @@ Local dev works with neither `NEXT_PUBLIC_API_*` set — the client falls back t
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | for Google login | route returns 503 without them |
 | `GOOGLE_CALLBACK_URL` | no (localhost default) | must match Google Console redirect URI |
 
+## Rate limiting (Phase 2 verification)
+
+Global: 100 req/min/IP (`@nestjs/throttler`, in-memory). Strict 10/min on `POST /auth/customer/register`, `POST /auth/customer/login`, `PUT /customers/me/password`. 429 on exceed. Production: add proxy/WAF-level limits for multi-instance deployments.
+
 ## Production checklist
 1. `NODE_ENV=production` on the API — enables `secure` cookies.
 2. Same-domain proxy (planned) so the session cookie covers both apps; until then `FRONTEND_ORIGIN` must list the exact frontend origin.

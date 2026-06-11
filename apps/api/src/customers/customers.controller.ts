@@ -1,4 +1,5 @@
 import { Body, Controller, Put, UseGuards } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { CustomerGuard } from "../common/guards/customer.guard";
 import { CurrentCustomer } from "../common/decorators/current-customer.decorator";
 import type { CurrentCustomer as CurrentCustomerType } from "../customer-auth/customer-auth.service";
@@ -31,6 +32,8 @@ export class CustomersController {
   }
 
   /** PUT /customers/me/password */
+  /** Strict limit — current-password verification is brute-forceable. */
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Put("password")
   changePassword(
     @CurrentCustomer() customer: CurrentCustomerType,
