@@ -92,5 +92,41 @@ WHERE "eventType"='purchase' ORDER BY "createdAt" DESC LIMIT 5;   -- weight=8, s
 SELECT title,"stockQuantity" FROM "Book" WHERE id='<BOOK>';
 ```
 
-### Verified automated run (2026-06-11)
-Guest COD (840/120/70/790 ✓), fallback charge 120 ✓, authenticated bkash (940/140/60/860, customerId + txn ✓), item snapshots ✓, unpaid/pending defaults ✓, 3 purchase events (1 anonymous + 2 customer) ✓, stock untouched ✓, all error paths byte-identical ✓. Test rows deleted afterwards.
+## Recommendations (2E)
+
+```bash
+BOOK=<published-book-id> ; ANON="anon-test-0123456789abc"
+
+# 1. No login, no anonymousId → popularity fallback, 8 books
+curl -s $API/recommendations
+
+# 2. Track an anonymous view (→ tracked:true; repeat within 30min → tracked:false dedupe)
+curl -s -X POST $API/recommendations/events -H "Content-Type: application/json" \
+  -d "{\"bookId\":\"$BOOK\",\"eventType\":\"view\",\"anonymousId\":\"$ANON\",\"source\":\"manual_test\"}"
+
+# 3. Personalized via anonymousId (excludes the evented book)
+curl -s "$API/recommendations?anonymousId=$ANON"
+
+# 4. Logged-in (cookie jar from auth section; requires personalizationConsent=true)
+curl -s -b $JAR -X POST $API/recommendations/events -H "Content-Type: application/json" \
+  -d "{\"bookId\":\"$BOOK\",\"eventType\":\"add_to_cart\"}"
+curl -s -b $JAR $API/recommendations
+
+# 5. Cart-based (4 books, cart book excluded); empty/unknown bookIds → fallback
+curl -s -X POST $API/recommendations/cart -H "Content-Type: application/json" -d "{\"bookIds\":[\"$BOOK\"]}"
+
+# 6. Error shapes (must match old routes byte-for-byte)
+curl -s -X POST $API/recommendations/cart   -H "Content-Type: application/json" -d '{"bookIds":"x"}'
+#   → 400 {"ok":false,"message":"Invalid recommendation request."}
+curl -s -X POST $API/recommendations/events -H "Content-Type: application/json" -d '{"bookId":"x","eventType":"bogus"}'
+#   → 400 {"ok":false,"tracked":false}
+```
+
+```sql
+-- Event verification: weights view=1, search_click=2, sample_open=3, add_to_cart=4, purchase=8
+SELECT "eventType",weight,source,"customerId","anonymousId" FROM "CustomerBookEvent" ORDER BY "createdAt" DESC LIMIT 5;
+```
+
+### Verified automated runs (2026-06-11)
+**2D:** Guest COD (840/120/70/790 ✓), fallback charge 120 ✓, authenticated bkash (940/140/60/860, customerId + txn ✓), item snapshots ✓, unpaid/pending defaults ✓, 3 purchase events (1 anonymous + 2 customer) ✓, stock untouched ✓, all error paths byte-identical ✓.
+**2E:** fallback 8 books ✓, anonymous view tracked + 30-min dedupe ✓, no-actor → tracked:false ✓, personalized via anonymousId/customer with evented-book exclusion ✓, cart recs exclude cart book ✓, empty/invalid cart → fallback 4 ✓, error bodies byte-identical ✓, BookCardData 16-field shape exact ✓, event weights (view 1, add_to_cart 4) in DB ✓. All test rows deleted afterwards.
