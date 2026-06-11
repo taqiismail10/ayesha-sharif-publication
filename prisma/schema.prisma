@@ -2,6 +2,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Second generator for the NestJS API (apps/api) — explicit output so the API
+// gets its own generated client instead of resolving the Next app's
+// node_modules. Additive only; the Next.js app's generator above is unchanged.
+generator apiClient {
+  provider = "prisma-client-js"
+  output   = "../apps/api/generated/prisma"
+}
+
 datasource db {
   provider = "postgresql"
 }
@@ -227,11 +235,29 @@ model Customer {
   events       CustomerBookEvent[]
   savedBooks   SavedBook[]
   orders       Order[]
+  authProviders CustomerAuthProvider[]
   createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
 
   @@index([email])
   @@index([phone])
+}
+
+// OAuth provider links for customers (Phase 2C). Additive only — customers
+// created via email/password have no rows here. Admin auth is unaffected.
+model CustomerAuthProvider {
+  id             String   @id @default(cuid())
+  customerId     String
+  provider       String
+  providerUserId String
+  providerEmail  String?
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([provider, providerUserId])
+  @@unique([customerId, provider])
+  @@index([providerEmail])
 }
 
 model CustomerProfile {
