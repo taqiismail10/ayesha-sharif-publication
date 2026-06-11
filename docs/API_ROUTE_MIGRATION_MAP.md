@@ -8,7 +8,7 @@ Roles: `public` (no auth) · `customer` · `optional-customer` (works anonymous,
 | Feature | Old Next.js route/function | Current frontend usage | New NestJS route | Auth required | Role | Migration status | Notes |
 |---|---|---|---|---|---|---|---|
 | Health | `GET /api/health` | none (ops only) | `GET /health` | no | public | **migrated** | NestJS version does a real `SELECT 1`; old route always said `not_checked`. Old route NOT yet removed. |
-| Checkout | `POST /api/orders` | `checkout-page-client.tsx` | `POST /orders` | no | optional-customer | planned (Phase 2) | Totals computed server-side; order number generator; records purchase events. |
+| Checkout | `POST /api/orders` | `checkout-page-client.tsx` | `POST /orders` | no | optional-customer | **migrated** (2D) | Byte-identical behavior + response JSON (see docs/API_ROUTES.md table). 12-case test battery passed against real DB. Frontend retarget pending (2F); old route still active. |
 | Customer session probe | `GET /api/account/me` | `account-menu.tsx` (header, every page) | `GET /auth/customer/me` | cookie | customer (null-safe) | **migrated** (2A) | NestJS endpoint live + tested; identical response shape. Frontend retarget pending (2F); old route still active. |
 | Personalized recs | `GET /api/recommendations?anonymousId=` | `client-recommendation-section.tsx` | `GET /recommendations` | no | optional-customer | planned (Phase 2) | |
 | Cart recs | `POST /api/recommendations` | `client-recommendation-section.tsx` | `POST /recommendations/cart` | no | public | planned (Phase 2) | Body: `bookIds[]` (max 30). |

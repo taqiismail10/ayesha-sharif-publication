@@ -1,0 +1,96 @@
+# API Testing Guide
+
+Prereqs: API running (`cd apps/api && npm run start:dev`), `apps/api/.env` with a valid `DATABASE_URL`. All examples use curl with a cookie jar.
+
+```bash
+JAR=/tmp/asp-cookies.txt
+API=http://localhost:4000
+```
+
+## Health
+```bash
+curl -s $API/health          # expect database:"ok"
+```
+
+## Customer auth (2A)
+```bash
+# register (sets session cookie)
+curl -s -c $JAR -X POST $API/auth/customer/register -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"me@example.com","password":"testpass123","confirmPassword":"testpass123"}'
+# me / logout / login
+curl -s -b $JAR $API/auth/customer/me
+curl -s -b $JAR -c $JAR -X POST $API/auth/customer/logout
+curl -s -c $JAR -X POST $API/auth/customer/login -H "Content-Type: application/json" \
+  -d '{"identifier":"me@example.com","password":"testpass123"}'
+```
+Phone login also works: `"identifier":"+8801712345678"` (normalized to `01712345678`).
+
+## Profile / password (2B)
+```bash
+curl -s -b $JAR -X PUT $API/customers/me/profile -H "Content-Type: application/json" \
+  -d '{"displayName":"Renamed","email":"me@example.com","personalizationConsent":true}'
+curl -s -b $JAR -X PUT $API/customers/me/password -H "Content-Type: application/json" \
+  -d '{"currentPassword":"testpass123","newPassword":"newpass456","confirmPassword":"newpass456"}'
+```
+
+## Google OAuth (2C)
+See `docs/GOOGLE_OAUTH_SETUP.md` (needs real Google credentials; browser flow).
+
+## Checkout (2D) — `POST /orders`
+
+Get a real published book id first:
+```sql
+SELECT id, title, "stockQuantity", "salePrice" FROM "Book" WHERE status='published' LIMIT 3;
+```
+
+```bash
+BOOK=<published-book-id>
+
+# 1. Guest COD checkout (expect {"ok":true,"orderNumber":"ASP-…"})
+curl -s -X POST $API/orders -H "Content-Type: application/json" -d "{
+  \"customerName\":\"Guest Tester\",\"customerPhone\":\"+880 1712-345678\",
+  \"shippingAddress\":\"House 1, Road 2, Dhanmondi, Dhaka\",\"district\":\"Dhaka\",
+  \"deliveryArea\":\"inside_dhaka\",\"paymentMethod\":\"cash_on_delivery\",
+  \"anonymousId\":\"anon-test-0123456789abc\",
+  \"items\":[{\"bookId\":\"$BOOK\",\"quantity\":2}]}"
+
+# 2. Invalid book → 400 "One or more books are no longer available."
+#    (same payload, bookId:"nonexistent")
+# 3. Excess quantity (e.g. 99 > stock) → 400 "<title> is not available in the requested quantity."
+# 4. bkash WITHOUT transactionId → 400 "Transaction ID is required for Manual bKash."
+# 5. Empty body {} → 400 {"ok":false,"message":"Required"}
+# 6. Unknown deliveryArea (e.g. "unknown_area") → succeeds with fallback charge 120
+
+# 7. Authenticated checkout (cookie from login above) → order gets customerId
+curl -s -b $JAR -X POST $API/orders -H "Content-Type: application/json" -d "{
+  \"customerName\":\"Test User\",\"customerPhone\":\"01912345678\",
+  \"shippingAddress\":\"Flat 3B, Green Tower, Chattogram\",\"district\":\"Chattogram\",
+  \"deliveryArea\":\"inside_chattogram\",\"paymentMethod\":\"bkash\",\"transactionId\":\"BKS-123\",
+  \"items\":[{\"bookId\":\"$BOOK\",\"quantity\":1}]}"
+```
+
+### Database records to verify after checkout
+
+```sql
+-- Order: totals math, defaults, linkage
+SELECT "orderNumber","customerId","customerPhone",subtotal,"discountTotal","deliveryCharge","grandTotal",
+       "paymentMethod","paymentStatus","orderStatus","stockReduced","transactionId"
+FROM "Order" ORDER BY "createdAt" DESC LIMIT 3;
+-- expect: subtotal=Σ regularPrice×qty · discount=subtotal−Σ salePrice×qty · grand=saleTotal+charge
+--         COD→paymentStatus=unpaid, bkash/nagad/rocket→pending · orderStatus=pending · stockReduced=false
+--         guest→customerId NULL · logged-in→customerId set · phone normalized 01XXXXXXXXX
+
+-- Items: snapshot + sale pricing
+SELECT "bookTitleSnapshot",quantity,"unitPrice","totalPrice" FROM "OrderItem"
+WHERE "orderId"=(SELECT id FROM "Order" ORDER BY "createdAt" DESC LIMIT 1);
+
+-- Purchase events (guest needs valid anonymousId; customer needs personalizationConsent=true)
+SELECT "eventType",weight,source,"customerId","anonymousId" FROM "CustomerBookEvent"
+WHERE "eventType"='purchase' ORDER BY "createdAt" DESC LIMIT 5;   -- weight=8, source='checkout'
+
+-- Stock must be UNCHANGED by checkout (admin confirm reduces it)
+SELECT title,"stockQuantity" FROM "Book" WHERE id='<BOOK>';
+```
+
+### Verified automated run (2026-06-11)
+Guest COD (840/120/70/790 ✓), fallback charge 120 ✓, authenticated bkash (940/140/60/860, customerId + txn ✓), item snapshots ✓, unpaid/pending defaults ✓, 3 purchase events (1 anonymous + 2 customer) ✓, stock untouched ✓, all error paths byte-identical ✓. Test rows deleted afterwards.

@@ -5,6 +5,7 @@ import { PrismaExceptionFilter } from "./common/filters/prisma-exception.filter"
 import { CustomerAuthModule } from "./customer-auth/customer-auth.module";
 import { CustomersModule } from "./customers/customers.module";
 import { HealthModule } from "./health/health.module";
+import { OrdersModule } from "./orders/orders.module";
 import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
@@ -19,6 +20,7 @@ import { PrismaModule } from "./prisma/prisma.module";
     HealthModule,
     CustomerAuthModule,
     CustomersModule,
+    OrdersModule,
   ],
   providers: [
     // Maps Prisma known errors to proper HTTP codes (P2002→409, P2025→404).
