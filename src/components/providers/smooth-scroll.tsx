@@ -1,7 +1,18 @@
 "use client";
 
 import { ReactLenis } from "@studio-freight/react-lenis";
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
+
+/**
+ * react-lenis bundles its own React 18 type definitions, whose ReactNode is
+ * incompatible with React 19's (bigint). Re-type the component locally —
+ * runtime behavior is unaffected.
+ */
+const Lenis = ReactLenis as unknown as ComponentType<{
+  root?: boolean;
+  options?: Record<string, unknown>;
+  children?: ReactNode;
+}>;
 
 /**
  * SmoothScrollProvider
@@ -33,7 +44,7 @@ import type { ReactNode } from "react";
  */
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   return (
-    <ReactLenis
+    <Lenis
       root
       options={{
         lerp: 0.07,
@@ -42,12 +53,13 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         orientation: "vertical",
         gestureOrientation: "vertical",
         smoothWheel: true,
-        smoothTouch: false,
+        // Touch smoothing is disabled by default in this Lenis version
+        // (native mobile momentum preserved) — no option needed.
         touchMultiplier: 2,
         wheelMultiplier: 1.2,
       }}
     >
       {children}
-    </ReactLenis>
+    </Lenis>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiFetch } from "@/lib/api-client";
 import { getAnonymousRecommendationId } from "@/lib/consent-client";
 
 type BookEventType =
@@ -29,7 +30,9 @@ export function trackBookEvent({
   if (recentlyTracked(bookId, eventType)) return;
   const anonymousId = getAnonymousRecommendationId();
 
-  fetch("/api/recommendation-events", {
+  // Phase 2F: retargeted to NestJS POST /recommendations/events. Cookies
+  // included so logged-in customers' consent gating works as before.
+  apiFetch("/recommendations/events", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
