@@ -1,101 +1,111 @@
 # Ayesha-Sharif Publication
 
-Low-budget MVP e-commerce bookstore for a new Bangladeshi publishing house. It supports a public book catalogue, guest checkout, manual payment, manual delivery updates, and a protected admin panel.
+E-commerce bookstore for a Bangladeshi publishing house. Public book catalogue with search/filters, customer accounts (email/phone + Google login), guest and authenticated checkout, manual payment verification (COD / bKash / Nagad / Rocket), consent-aware recommendations, and a protected admin panel with an editable site-content CMS.
+
+The backend is **mid-migration from Next.js API routes to a standalone NestJS service** (`apps/api`). Customer-facing APIs (Phase 2) are fully migrated and the frontend already talks to NestJS for them; admin APIs (Phase 3) still run inside Next.js. Old Next.js routes are kept alive as fallback until cutover.
+
+## Architecture
+
+```
+┌─ Next.js 15 (port 3000) ──────────────┐   ┌─ NestJS 11 (port 4000) ─────────────┐
+│ • Public storefront (RSC + client)    │   │ • Customer auth (email/phone +      │
+│ • Customer account pages              │──▶│   Google OAuth), profile, password  │
+│ • Admin panel (still owns admin API   │   │ • Checkout / order creation         │
+│   routes + server actions)            │   │ • Recommendations + event tracking  │
+│ • Legacy /api/* routes (fallback)     │   │ • Rate limiting, Helmet, CORS       │
+└──────────────┬────────────────────────┘   └──────────────┬──────────────────────┘
+               └────────────── shared PostgreSQL (Prisma 7) ┘
+```
+
+Customer sessions are DB-backed httpOnly cookies **valid across both backends**, so the migration is invisible to logged-in users.
 
 ## Tech stack
 
-- Next.js + TypeScript
-- Tailwind CSS
-- PostgreSQL
-- Prisma ORM
-- Custom admin-only cookie auth
-- Guest cart with localStorage
+- **Frontend:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS · Lenis smooth scroll
+- **Backend (new):** NestJS 11 · Zod validation · @nestjs/throttler · Helmet
+- **Database:** PostgreSQL · Prisma 7 (`@prisma/adapter-pg`), one shared schema with dual generators
+- **Auth:** separate Admin (HMAC cookie) and Customer (DB sessions) systems · Google OAuth via `CustomerAuthProvider`
+- **Cart:** client-side localStorage (no server cart)
+- **Design:** "Editorial Calm" system — Crimson Text + Inter + Noto Serif Bengali, sage/forest/cream/gold tokens
 
 ## Setup
 
-1. Install dependencies:
+### 1. Frontend (Next.js)
 
 ```bash
-npm install
-```
-
-2. Copy environment variables:
-
-```bash
-cp .env.example .env
-```
-
-3. Fill `DATABASE_URL`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL`.
-   Use `DIRECT_URL` for migrations if your production database provides a
-   separate direct connection and pooled runtime connection.
-
-4. Generate Prisma client and run migrations:
-
-```bash
+npm install --legacy-peer-deps      # react-lenis peer-dep flag needed under React 19
+cp .env.example .env                # fill DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL
 npm run prisma:generate
 npm run prisma:migrate
-```
-
-5. Seed the database:
-
-```bash
 npm run seed
+npm run dev                         # http://localhost:3000
 ```
 
-6. Start development server:
+### 2. Backend (NestJS)
 
 ```bash
-npm run dev
+cd apps/api
+npm install
+cp .env.example .env                # same DATABASE_URL as root — exactly ONE line
+npm run prisma:generate             # generates into apps/api/generated/prisma
+npm run start:dev                   # http://localhost:4000
 ```
+
+Both servers must run for customer features (account menu, checkout, recommendations). Health checks: `http://localhost:4000/health` (real DB ping) and legacy `http://localhost:3000/api/health`.
 
 ## Default admin
 
-- Email: `admin@ayeshasharif.com`
-- Password: `ChangeMe123!`
+- Email: `admin@ayeshasharif.com` · Password: `ChangeMe123!`
 
-Change the default admin password immediately after the first login. The seed script stores a hashed password in the database.
+Change it immediately after first login (seed stores a bcrypt hash).
 
 ## Environment variables
 
-See [.env.example](.env.example).
+Full reference: **[docs/ENVIRONMENT_VARIABLES.md](docs/ENVIRONMENT_VARIABLES.md)**. Highlights:
 
-- `DATABASE_URL`: PostgreSQL connection string
-- `DIRECT_URL`: optional direct PostgreSQL URL for Prisma migrations
-- `NEXTAUTH_SECRET`: secret used to sign admin sessions
-- `NEXTAUTH_URL`: public site URL
-- `ADMIN_SEED_EMAIL`: optional seed admin email
-- `ADMIN_SEED_PASSWORD`: optional seed admin password
-- `UPLOAD_PROVIDER`: currently `local`
-- `CLOUDINARY_*`: reserved for future hosted uploads
-- `NEXT_PUBLIC_IMAGE_CDN_HOST`: exact CDN/object-storage host allowed by Next Image
+| App | Key variables |
+|---|---|
+| Next.js (root `.env`) | `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `NEXT_PUBLIC_API_BASE_URL` (NestJS URL, **no `/api` prefix**) |
+| NestJS (`apps/api/.env`) | `DATABASE_URL`, `API_PORT`, `FRONTEND_ORIGIN`, `NEXTAUTH_SECRET` (required in production), `GOOGLE_CLIENT_ID/SECRET`, `GOOGLE_CALLBACK_URL`, `FRONTEND_URL` |
+
+Google login setup: **[docs/GOOGLE_OAUTH_SETUP.md](docs/GOOGLE_OAUTH_SETUP.md)** (returns 503 until configured — everything else works without it).
 
 ## Folder structure
 
-- `src/app/(site)`: public bookstore pages
-- `src/app/admin`: admin login and protected admin panel
-- `src/app/api`: checkout, upload, and export routes
-- `src/components`: shared public and admin UI components
-- `src/lib`: Prisma, auth, validation, cart totals, formatting, and data helpers
-- `prisma`: schema and seed data
-- `public`: logo, favicon, banners, book covers, sample pages, and uploads
+- `src/app/(site)` — public storefront + customer account pages
+- `src/app/admin` — admin login + protected panel (books, orders, customers, categories, tags, site content, settings)
+- `src/app/api` — legacy Next.js routes (kept as fallback during migration)
+- `src/components` — site, books, account, checkout, admin UI
+- `src/lib` — api-client (NestJS calls), cart/consent/tracking clients, Prisma readers, auth helpers
+- `apps/api/src` — NestJS: customer-auth (incl. Google OAuth), customers, orders, recommendations, health, prisma, common (guards/contracts/filters)
+- `prisma` — shared schema (15 models), migrations, seed
+- `docs` — migration plan, API reference, testing guide, verification reports
 
-## MVP notes
+## Key documentation
 
-- No customer accounts, login, wishlist, reviews, loyalty points, SMS automation, courier API, or real payment gateway.
-- Checkout is guest-only.
-- Manual bKash, Nagad, and Rocket require transaction IDs and remain pending until admin verifies payment.
-- Stock is reduced only when an admin changes an order to `confirmed`.
-- If an order is cancelled before delivery and stock was reduced, stock is restored.
-- Books with existing order items cannot be deleted; archive them instead.
+| Doc | Purpose |
+|---|---|
+| [NESTJS_BACKEND_MIGRATION_PLAN.md](docs/NESTJS_BACKEND_MIGRATION_PLAN.md) | Architecture, phases, risks, manual steps |
+| [API_ROUTES.md](docs/API_ROUTES.md) | NestJS endpoint reference + old-vs-new behavior tables |
+| [API_ROUTE_MIGRATION_MAP.md](docs/API_ROUTE_MIGRATION_MAP.md) | Every old route/action → new endpoint, with status |
+| [API_TESTING_GUIDE.md](docs/API_TESTING_GUIDE.md) | curl tests, SQL verification queries, browser checklist |
+| [PHASE_2_CUSTOMER_MIGRATION_VERIFICATION.md](docs/PHASE_2_CUSTOMER_MIGRATION_VERIFICATION.md) | Functional + OWASP-focused security verification report |
+| [CACHE_POLICY.md](CACHE_POLICY.md) / [PRODUCTION_SCALING.md](PRODUCTION_SCALING.md) | Caching and scaling notes |
+
+## Business rules
+
+- Checkout supports **guests and logged-in customers** (orders link to the customer via session cookie).
+- Manual bKash/Nagad/Rocket payments require a transaction ID and stay `pending` until an admin verifies; COD starts `unpaid`. Totals are always computed server-side.
+- **Stock is reduced only when an admin confirms an order**; cancelling before delivery restores it.
+- Books with order history cannot be deleted — archive instead.
+- Recommendations and event tracking are consent-aware (customers must opt in to personalization; guests use a validated anonymous ID).
+- Footer, contact, and about content are editable from Admin → Site Content.
 
 ## Deployment notes
 
-- Use a managed PostgreSQL database.
-- Use a pooled runtime `DATABASE_URL` when running multiple app instances.
-- Use `DIRECT_URL` for migrations when your provider separates direct and pooled URLs.
-- Set a strong `NEXTAUTH_SECRET`.
-- Keep `/admin` behind HTTPS.
-- For production uploads, replace local uploads with Cloudinary or object storage.
-- Add final phone, WhatsApp, email, Facebook, and office address before launch.
-- Health check endpoint: `/api/health`.
-- Cache and scaling docs: [CACHE_POLICY.md](CACHE_POLICY.md) and [PRODUCTION_SCALING.md](PRODUCTION_SCALING.md).
+- Managed PostgreSQL; pooled `DATABASE_URL` for multi-instance; `DIRECT_URL` for migrations if your provider separates them.
+- **Only ports 80/443 public** — reverse-proxy the Next app and the API; port 4000 and 5432 must not be directly exposed.
+- Same-domain (or same-site subdomain) deployment so the shared session cookie stays first-party.
+- `NODE_ENV=production` on the API enables secure cookies; the API **refuses to boot without `NEXTAUTH_SECRET`** in production.
+- Rate limiting: 100 req/min/IP global, 10/min on auth endpoints (in-memory — add proxy/WAF limits for multi-instance).
+- Set `NEXT_PUBLIC_API_BASE_URL` at build time; replace local uploads with object storage before Phase 3 (see migration plan §10).
