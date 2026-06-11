@@ -59,10 +59,10 @@ async function readSetting<T extends object>(key: string, defaults: T): Promise<
 
 // ─── Cached public readers ────────────────────────────────────────────────────
 
-const cacheOpts = {
+const cacheOpts: { revalidate: number; tags: string[] } = {
   revalidate: CACHE_REVALIDATE_SECONDS.settings,
   tags: [CACHE_TAGS.settings],
-} as const;
+};
 
 const cachedFooter = unstable_cache(
   () => readSetting("site_content.footer",  DEFAULT_FOOTER_CONTENT),

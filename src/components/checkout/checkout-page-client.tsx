@@ -10,6 +10,7 @@ import {
   paymentInstructions,
   paymentMethodLabels
 } from "@/lib/constants";
+import { apiFetch } from "@/lib/api-client";
 import { clearCart, useCart } from "@/lib/cart-client";
 import { getAnonymousRecommendationId } from "@/lib/consent-client";
 import { formatCurrency } from "@/lib/format";
@@ -67,7 +68,10 @@ export function CheckoutPageClient({
     };
 
     try {
-      const response = await fetch("/api/orders", {
+      // Phase 2F: retargeted to the NestJS API. Same request/response shape;
+      // credentials are included so a logged-in customer's session cookie
+      // attaches the order to their account (guest checkout unchanged).
+      const response = await apiFetch("/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

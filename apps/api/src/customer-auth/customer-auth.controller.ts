@@ -11,6 +11,7 @@ import {
   Res,
   UnauthorizedException,
 } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import type { Request, Response } from "express";
 import { Prisma } from "../../generated/prisma";
 import { PrismaService } from "../prisma/prisma.service";
@@ -36,7 +37,8 @@ export class CustomerAuthController {
     private readonly prisma: PrismaService,
   ) {}
 
-  /** POST /auth/customer/register — contract §1 */
+  /** POST /auth/customer/register — contract §1. Strict brute-force limit. */
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post("register")
   async register(
     @Body() body: unknown,
@@ -89,7 +91,8 @@ export class CustomerAuthController {
     }
   }
 
-  /** POST /auth/customer/login — contract §2 */
+  /** POST /auth/customer/login — contract §2. Strict brute-force limit. */
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post("login")
   @HttpCode(200)
   async login(

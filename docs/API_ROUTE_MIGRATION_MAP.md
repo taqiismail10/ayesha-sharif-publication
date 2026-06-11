@@ -8,11 +8,11 @@ Roles: `public` (no auth) · `customer` · `optional-customer` (works anonymous,
 | Feature | Old Next.js route/function | Current frontend usage | New NestJS route | Auth required | Role | Migration status | Notes |
 |---|---|---|---|---|---|---|---|
 | Health | `GET /api/health` | none (ops only) | `GET /health` | no | public | **migrated** | NestJS version does a real `SELECT 1`; old route always said `not_checked`. Old route NOT yet removed. |
-| Checkout | `POST /api/orders` | `checkout-page-client.tsx` | `POST /orders` | no | optional-customer | planned (Phase 2) | Totals computed server-side; order number generator; records purchase events. |
-| Customer session probe | `GET /api/account/me` | `account-menu.tsx` (header, every page) | `GET /auth/customer/me` | cookie | customer (null-safe) | **migrated** (2A) | NestJS endpoint live + tested; identical response shape. Frontend retarget pending (2F); old route still active. |
-| Personalized recs | `GET /api/recommendations?anonymousId=` | `client-recommendation-section.tsx` | `GET /recommendations` | no | optional-customer | planned (Phase 2) | |
-| Cart recs | `POST /api/recommendations` | `client-recommendation-section.tsx` | `POST /recommendations/cart` | no | public | planned (Phase 2) | Body: `bookIds[]` (max 30). |
-| Event tracking | `POST /api/recommendation-events` | `lib/tracking-client.ts` (product cards, detail tracker, sample link) | `POST /recommendations/events` | no | optional-customer | planned (Phase 2) | Consent-aware; silently no-ops without consent. |
+| Checkout | `POST /api/orders` | `checkout-page-client.tsx` | `POST /orders` | no | optional-customer | **migrated** (2D) | Byte-identical behavior + response JSON (see docs/API_ROUTES.md table). 12-case test battery passed against real DB. Frontend RETARGETED (2F); old route kept as fallback. |
+| Customer session probe | `GET /api/account/me` | `account-menu.tsx` (header, every page) | `GET /auth/customer/me` | cookie | customer (null-safe) | **migrated** (2A) | NestJS endpoint live + tested; identical response shape. Frontend RETARGETED (2F); old route kept as fallback. |
+| Personalized recs | `GET /api/recommendations?anonymousId=` | `client-recommendation-section.tsx` | `GET /recommendations` | no | optional-customer | **migrated** (2E) | 1:1 engine port; BookCardData shape exact. No sample-data demo mode (empty list instead). Frontend RETARGETED (2F). |
+| Cart recs | `POST /api/recommendations` | `client-recommendation-section.tsx` | `POST /recommendations/cart` | no | public | **migrated** (2E) | Body: `bookIds[]` (max 30); error body byte-identical. Frontend RETARGETED (2F). |
+| Event tracking | `POST /api/recommendation-events` | `lib/tracking-client.ts` (product cards, detail tracker, sample link) | `POST /recommendations/events` | no | optional-customer | **migrated** (2E) | Consent rules + 30-min view dedupe + weights identical; tested in DB. Frontend RETARGETED (2F). |
 | Admin upload | `POST /api/admin/upload` | `components/admin/upload-field.tsx` | `POST /admin/uploads` | cookie | super_admin/admin/editor* | planned (Phase 3) | *Old route checks login only, not role — tighten in NestJS. Writes to `public/uploads/books/` — storage decision blocks this. |
 | Orders CSV export | `GET /api/admin/orders/export` | link on admin orders page | `GET /admin/orders/export.csv` | cookie | super_admin, admin, order_manager | planned (Phase 3) | Streams CSV with filters q/orderStatus/paymentStatus. |
 
@@ -43,13 +43,13 @@ Roles: `public` (no auth) · `customer` · `optional-customer` (works anonymous,
 
 | Feature | Old action | Current frontend usage | New NestJS route | Auth required | Role | Migration status | Notes |
 |---|---|---|---|---|---|---|---|
-| Customer register | `registerCustomerAction` | `customer-auth-form.tsx` | `POST /auth/customer/register` | no | public | **migrated** (2A) | E2E tested incl. P2002→409 conflict + phone normalization. Frontend retarget pending (2F). |
-| Customer login | `loginCustomerAction` | `customer-auth-form.tsx` | `POST /auth/customer/login` | no | public | **migrated** (2A) | Email OR BD phone tested (`+880…` → `01…`). Generic 401 message preserved. |
-| Customer logout | `logoutCustomerAction` | account pages | `POST /auth/customer/logout` | cookie | customer | **migrated** (2A) | Deletes session row + cookie; tested. |
+| Customer register | `registerCustomerAction` | `customer-auth-form.tsx` | `POST /auth/customer/register` | no | public | **migrated** (2A) | E2E tested incl. P2002→409 + phone normalization. Form deliberately STILL uses the server action (2F decision: sessions are cross-backend valid, so converting the progressive-enhancement form adds risk for zero behavior gain; revisit at Phase 4 cleanup). |
+| Customer login | `loginCustomerAction` | `customer-auth-form.tsx` | `POST /auth/customer/login` | no | public | **migrated** (2A) | Same as register — form deliberately still on server action (2F decision). |
+| Customer logout | `logoutCustomerAction` / `GET /account/logout` route | header account-menu | `POST /auth/customer/logout` | cookie | customer | **migrated** (2A) | Header menu RETARGETED (2F) to the NestJS endpoint; old `/account/logout` route kept as fallback. |
 | Google OAuth start | — (new capability, no old route) | "Continue with Google" button on `customer-auth-form.tsx` | `GET /auth/customer/google` | no | public | **migrated** (2C) | 503 until GOOGLE_CLIENT_ID/SECRET configured; CSRF state cookie; safe-redirect param. |
 | Google OAuth callback | — (new capability) | browser redirect from Google | `GET /auth/customer/google/callback` | no | public | **migrated** (2C) | Links via `CustomerAuthProvider` (additive model); creates the same DB CustomerSession; errors → `/account/login?error=google_login_failed`. |
-| Profile update | `updateCustomerProfileAction` | `customer-profile-form.tsx` | `PUT /customers/me/profile` | cookie | customer | **migrated** (2B) | 3-op `$transaction` preserved; empty-default-skip quirk preserved; tested. |
-| Password change | `changeCustomerPasswordAction` | `customer-password-form.tsx` | `PUT /customers/me/password` | cookie | customer | **migrated** (2B) | Wrong-current → 400 with exact old message; tested. |
+| Profile update | `updateCustomerProfileAction` | `customer-profile-form.tsx` | `PUT /customers/me/profile` | cookie | customer | **migrated** (2B) | 3-op `$transaction` preserved; empty-default-skip quirk preserved; tested. Form still on server action (2F decision, same as register). |
+| Password change | `changeCustomerPasswordAction` | `customer-password-form.tsx` | `PUT /customers/me/password` | cookie | customer | **migrated** (2B) | Wrong-current → 400 with exact old message; tested. Form still on server action (2F decision). |
 
 ## E. RSC data readers + inline Prisma (no HTTP today → new endpoints)
 
