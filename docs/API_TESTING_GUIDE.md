@@ -127,6 +127,25 @@ curl -s -X POST $API/recommendations/events -H "Content-Type: application/json" 
 SELECT "eventType",weight,source,"customerId","anonymousId" FROM "CustomerBookEvent" ORDER BY "createdAt" DESC LIMIT 5;
 ```
 
+## Phase 2F — Frontend retarget browser checklist
+
+Run both servers (`npm run dev` at root; `npm run start:dev` in apps/api), then in a browser at `http://localhost:3000`:
+
+1. **Register** at `/account/register` → lands on profile; header shows your name *(server action — unchanged path, session valid for both backends)*
+2. **Login** at `/account/login` → same
+3. **Account menu** (header): shows logged-in name on every page — now served by `GET :4000/auth/customer/me` (check DevTools → Network)
+4. **Logout** from the header menu → calls `POST :4000/auth/customer/logout`, redirects home, menu shows Login again
+5. **/account/profile** loads customer data; **profile update** + **password change** still work *(server actions — unchanged)*
+6. **Guest checkout**: add a book → `/checkout` → submit COD → order-success page *(Network: `POST :4000/orders`)*
+7. **Authenticated checkout**: login first, checkout → verify in DB the new order has `customerId`
+8. **Checkout errors**: set a book's quantity above stock in cart → submit → inline error message shown (same UX)
+9. **Recommendations**: homepage/“Recommended for you” and cart “You may also like” sections load *(Network: `:4000/recommendations`, `:4000/recommendations/cart`)*
+10. **Event tracking**: click a product card → `POST :4000/recommendations/events` fires (consent banner accepted ⇒ anonymousId present)
+11. **Old routes still alive**: `curl -s localhost:3000/api/account/me` and `curl -s -X POST localhost:3000/api/orders -d '{}' -H "Content-Type: application/json"` still respond
+12. **Admin untouched**: `/admin` login + book edit + upload still hit Next routes only
+
+CORS preflight verified automatically (2026-06-11): `OPTIONS /orders` from origin `:3000` → 204 with `allow-origin: http://localhost:3000`, `allow-credentials: true`.
+
 ### Verified automated runs (2026-06-11)
 **2D:** Guest COD (840/120/70/790 ✓), fallback charge 120 ✓, authenticated bkash (940/140/60/860, customerId + txn ✓), item snapshots ✓, unpaid/pending defaults ✓, 3 purchase events (1 anonymous + 2 customer) ✓, stock untouched ✓, all error paths byte-identical ✓.
 **2E:** fallback 8 books ✓, anonymous view tracked + 30-min dedupe ✓, no-actor → tracked:false ✓, personalized via anonymousId/customer with evented-book exclusion ✓, cart recs exclude cart book ✓, empty/invalid cart → fallback 4 ✓, error bodies byte-identical ✓, BookCardData 16-field shape exact ✓, event weights (view 1, add_to_cart 4) in DB ✓. All test rows deleted afterwards.
