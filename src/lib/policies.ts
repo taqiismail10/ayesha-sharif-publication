@@ -102,7 +102,7 @@ export async function getPublishedPolicy(slug: PolicySlug): Promise<PublicPolicy
   }
 
   try {
-    return await unstable_cache(
+    const policy = await unstable_cache(
       () => readPublishedPolicy(slug),
       ["published-policy", slug],
       {
@@ -110,6 +110,9 @@ export async function getPublishedPolicy(slug: PolicySlug): Promise<PublicPolicy
         tags: [CACHE_TAGS.policies, policyCacheTag(slug)],
       },
     )();
+    return policy
+      ? { ...policy, publishedAt: new Date(policy.publishedAt) }
+      : null;
   } catch {
     // Keeps static builds and rolling deploys healthy until the migration runs.
     return { ...getDefaultPolicy(slug), publishedAt: new Date(0) };

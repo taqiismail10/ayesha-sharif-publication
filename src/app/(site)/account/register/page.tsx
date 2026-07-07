@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { getCurrentCustomer } from "@/lib/customer-auth";
-import { CustomerAuthForm } from "@/components/account/customer-auth-form";
+import { SignupOtpForm } from "@/components/account/signup-otp-form";
 
 export const metadata: Metadata = {
   title: "Create Customer Account",
@@ -33,7 +33,7 @@ export default async function CustomerRegisterPage() {
       </div>
 
       <div className="glass-card rounded-[10px] p-6 sm:p-8">
-        <CustomerAuthForm mode="register" />
+        <SignupOtpForm />
       </div>
     </div>
   );

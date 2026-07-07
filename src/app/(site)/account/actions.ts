@@ -16,7 +16,6 @@ import {
   customerLoginSchema,
   customerPasswordSchema,
   customerProfileSchema,
-  customerRegisterSchema,
   normalizeBangladeshPhone,
   normalizeEmail
 } from "@/lib/validators";
@@ -63,64 +62,12 @@ function databaseUnavailableState() {
 // exposes a stable rate-limit store. Login failures intentionally stay generic.
 export async function registerCustomerAction(
   _previousState: CustomerActionState,
-  formData: FormData
+  _formData: FormData
 ): Promise<CustomerActionState> {
-  if (!hasUsableDatabaseUrl()) return databaseUnavailableState();
-
-  const parsed = customerRegisterSchema.safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    phone: formData.get("phone"),
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword")
-  });
-
-  if (!parsed.success) {
-    return {
-      error: parsed.error.issues[0]?.message || "Invalid account details.",
-      fieldErrors: fieldErrorsFromZodIssues(parsed.error.issues)
-    };
-  }
-  const input = parsed.data as {
-    name: string;
-    email?: string;
-    phone?: string;
-    password: string;
+  return {
+    error:
+      "Email verification is required. Start again from the registration page."
   };
-
-  try {
-    const passwordHash = await hashPassword(input.password);
-    const customer = await prisma.customer.create({
-      data: {
-        name: input.name,
-        email: input.email,
-        phone: input.phone,
-        passwordHash,
-        profile: {
-          create: {
-            displayName: input.name,
-            email: input.email,
-            phone: input.phone
-          }
-        },
-        preferences: {
-          create: {}
-        }
-      }
-    });
-
-    await createCustomerSession(customer);
-  } catch (caught) {
-    if (
-      caught instanceof Prisma.PrismaClientKnownRequestError &&
-      caught.code === "P2002"
-    ) {
-      return { error: customerConflictMessage() };
-    }
-    return { error: "Could not create your account. Please try again." };
-  }
-
-  redirect("/account/profile");
 }
 
 export async function loginCustomerAction(
@@ -169,8 +116,15 @@ export async function loginCustomerAction(
     ? await verifyPassword(input.password, customer.passwordHash)
     : false;
 
-  if (!customer?.isActive || !validPassword) {
+  if (
+    !customer?.isActive ||
+    !customer.passwordLoginEnabled ||
+    !validPassword
+  ) {
     return { error: "Invalid email/phone or password." };
+  }
+  if (customer.email && !customer.emailVerifiedAt) {
+    return { error: "Verify your email before signing in." };
   }
 
   await prisma.customer.update({

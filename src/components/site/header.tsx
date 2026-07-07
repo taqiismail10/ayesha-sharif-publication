@@ -10,9 +10,31 @@ import { useCart } from "@/lib/cart-client";
 
 const HEADER_MORPH_THRESHOLD = 80;
 
+type HeaderAuthState = "loading" | "guest" | "customer" | "admin";
+
+function getAuthAction(pathname: string, authState: HeaderAuthState) {
+  if (authState === "customer") {
+    return { href: "/account/profile", label: "Account" };
+  }
+  if (authState === "admin") {
+    return { href: "/admin", label: "Admin" };
+  }
+  if (pathname === "/account/login") {
+    return { href: "/account/register", label: "Register" };
+  }
+  if (pathname === "/account/register") {
+    return { href: "/account/login", label: "Login" };
+  }
+  if (authState === "guest") {
+    return { href: "/account/login", label: "Login" };
+  }
+  return null;
+}
+
 export function Header() {
   const pathname  = usePathname();
   const { count: cartCount } = useCart();
+  const [authState, setAuthState] = useState<HeaderAuthState>("loading");
   /* Item 1 — cart bump: trigger a brief animation when count increments */
   const prevCountRef = useRef(cartCount);
   const [bumpKey, setBumpKey] = useState(0);
@@ -25,12 +47,39 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const authAction = getAuthAction(pathname, authState);
 
   /** True when `href` matches the current pathname */
   const isActive = (href: string) =>
     href === "/"
       ? pathname === "/"
       : pathname === href || pathname.startsWith(href + "/");
+
+  /* Read the existing HTTP-only customer/admin sessions without duplicating auth state. */
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch("/api/account/header", {
+      cache: "no-store",
+      credentials: "same-origin",
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Unable to read account state.");
+        return response.json() as Promise<{ kind?: HeaderAuthState }>;
+      })
+      .then((data) => {
+        setAuthState(
+          data.kind === "customer" || data.kind === "admin" ? data.kind : "guest",
+        );
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setAuthState("guest");
+      });
+
+    return () => controller.abort();
+  }, [pathname]);
 
   /* Toggle the shell only when native scrolling crosses the morph threshold. */
   useEffect(() => {
@@ -219,13 +268,21 @@ export function Header() {
               )}
             </Link>
 
-            {/* Login — desktop only, white pill button */}
-            <Link
-              href="/account/login"
-              className="hidden select-none items-center whitespace-nowrap rounded-full bg-white px-5 py-2 font-sans text-[11.5px] font-semibold uppercase tracking-[0.18em] text-forest transition-[background-color,transform] duration-150 hover:scale-[1.02] hover:bg-cream md:inline-flex"
-            >
-              Login
-            </Link>
+            {/* Route- and session-aware auth action — desktop only */}
+            {authAction ? (
+              <Link
+                href={authAction.href}
+                aria-label={authAction.label}
+                className="hidden select-none items-center whitespace-nowrap rounded-full bg-white px-5 py-2 font-sans text-[11.5px] font-semibold uppercase tracking-[0.18em] text-forest transition-[background-color,transform] duration-150 hover:scale-[1.02] hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 md:inline-flex"
+              >
+                {authAction.label}
+              </Link>
+            ) : (
+              <span
+                className="hidden h-[34px] w-[83px] rounded-full bg-white/70 md:inline-flex"
+                aria-hidden="true"
+              />
+            )}
 
             {/* Hamburger — mobile only */}
             <button
@@ -269,14 +326,17 @@ export function Header() {
               </Link>
             ))}
 
-            {/* Mobile: Login link */}
-            <Link
-              href="/account/login"
-              onClick={() => setMobileOpen(false)}
-              className="block font-sans text-base text-cream/70 px-6 py-[18px] transition-colors duration-150 hover:text-cream"
-            >
-              Login
-            </Link>
+            {/* Mobile: route- and session-aware auth link */}
+            {authAction ? (
+              <Link
+                href={authAction.href}
+                aria-label={authAction.label}
+                onClick={() => setMobileOpen(false)}
+                className="block min-h-11 px-6 py-[18px] font-sans text-base text-cream/70 transition-colors duration-150 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold"
+              >
+                {authAction.label}
+              </Link>
+            ) : null}
 
             {/* Mobile: search + cart row */}
             <div className="flex items-center gap-4 border-t border-cream/10 px-6 py-4">
