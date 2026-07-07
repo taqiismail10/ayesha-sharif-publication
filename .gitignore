@@ -1,11 +1,12 @@
-node_modules
-.next
+node_modules/
+.next/
 .env
 .env.local
-dist
-coverage
+dist/
+coverage/
 public/uploads
 *.log
+*.tsbuildinfo
 .chrome-debug
 .chrome-*
 homepage-*.png
