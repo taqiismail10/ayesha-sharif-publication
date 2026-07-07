@@ -8,6 +8,7 @@ type BookCoverProps = {
   priority?: boolean;
   sizes?: string;
   className?: string;
+  onImageError?: () => void;
 };
 
 export function BookCover({
@@ -16,7 +17,8 @@ export function BookCover({
   image,
   priority = false,
   sizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw",
-  className = ""
+  className = "",
+  onImageError
 }: BookCoverProps) {
   const displayTitle = title.length > 56 ? `${title.slice(0, 54)}...` : title;
   const unoptimized = image?.toLowerCase().endsWith(".svg") ?? false;
@@ -35,6 +37,7 @@ export function BookCover({
               sizes={sizes}
               priority={priority}
               unoptimized={unoptimized}
+              onError={onImageError}
               className="book-cover-image object-cover"
             />
             <div className="pointer-events-none absolute inset-y-0 left-0 w-9 bg-gradient-to-r from-black/32 via-black/10 to-transparent" />

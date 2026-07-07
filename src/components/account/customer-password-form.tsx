@@ -1,7 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { KeyRound } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
+import { Field, FieldControl, FieldError } from "@/components/ui/field";
+import { FormSuccess } from "@/components/forms/form-success";
 import {
   changeCustomerPasswordAction,
   type CustomerActionState
@@ -14,50 +17,71 @@ export function CustomerPasswordForm() {
     changeCustomerPasswordAction,
     initialState
   );
+  const toast = useToast();
+  const prevStateRef = useRef<CustomerActionState>(initialState);
+
+  useEffect(() => {
+    const prev = prevStateRef.current;
+    if (state.error && state.error !== prev.error) {
+      toast.error({
+        title: "Could not change password",
+        description: state.error
+      });
+    }
+    if (state.success && state.success !== prev.success) {
+      toast.success({
+        title: "Password updated",
+        description: state.success
+      });
+    }
+    prevStateRef.current = state;
+  }, [state, toast]);
 
   return (
     <form action={formAction} className="grid gap-4">
       {state.error ? (
-        <div className="rounded-md bg-danger/10 p-3 text-sm font-semibold text-danger">
+        <div role="alert" className="rounded-md bg-danger/10 p-3 text-sm font-semibold text-danger">
           {state.error}
         </div>
       ) : null}
-      {state.success ? (
-        <div className="rounded-md bg-emerald/10 p-3 text-sm font-semibold text-emerald">
-          {state.success}
-        </div>
-      ) : null}
+      <FormSuccess message={state.success} />
 
-      <label>
-        <span className="form-label">Current password</span>
-        <input
+      <Field name="currentPassword" error={state.fieldErrors?.currentPassword}>
+        <label className="form-label" htmlFor="customer-currentPassword">Current password</label>
+        <FieldControl
+          id="customer-currentPassword"
           name="currentPassword"
           type="password"
           autoComplete="current-password"
           required
-          className="form-input mt-1"
+          className="mt-1"
         />
-      </label>
-      <label>
-        <span className="form-label">New password</span>
-        <input
+        <FieldError />
+      </Field>
+      <Field name="newPassword" error={state.fieldErrors?.newPassword}>
+        <label className="form-label" htmlFor="customer-newPassword">New password</label>
+        <FieldControl
+          id="customer-newPassword"
           name="newPassword"
           type="password"
           autoComplete="new-password"
           required
-          className="form-input mt-1"
+          className="mt-1"
         />
-      </label>
-      <label>
-        <span className="form-label">Confirm new password</span>
-        <input
+        <FieldError />
+      </Field>
+      <Field name="confirmPassword" error={state.fieldErrors?.confirmPassword}>
+        <label className="form-label" htmlFor="customer-confirmPassword">Confirm new password</label>
+        <FieldControl
+          id="customer-confirmPassword"
           name="confirmPassword"
           type="password"
           autoComplete="new-password"
           required
-          className="form-input mt-1"
+          className="mt-1"
         />
-      </label>
+        <FieldError />
+      </Field>
       <button
         type="submit"
         disabled={isPending}

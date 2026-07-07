@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Minus, Plus, ShoppingBag, ShoppingCart, Trash2 } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
+import { ShoppingBag, ShoppingCart, Trash2 } from "lucide-react";
 import type { DeliveryAreaOption } from "@/lib/constants";
-import { useCart } from "@/lib/cart-client";
+import { useCart, type CartItem } from "@/lib/cart-client";
 import { formatCurrency } from "@/lib/format";
+import { AnimatedNumber } from "@/components/ui/animated-number";
+import { QuantityStepper } from "@/components/ui/quantity-stepper";
 import { calculateCartTotals } from "@/lib/order-utils";
 import { BookCover } from "@/components/books/book-cover";
 import { CartRecommendationSection } from "@/components/books/client-recommendation-section";
 import { EmptyState } from "@/components/site/empty-state";
-import { useState } from "react";
 
 export function CartPageClient({
   deliveryOptions
@@ -18,7 +20,14 @@ export function CartPageClient({
 }) {
   const cart = useCart();
   const [deliveryArea, setDeliveryArea] = useState("other");
-  const totals = calculateCartTotals(cart.items, deliveryArea, deliveryOptions);
+  const totals = useMemo(
+    () => calculateCartTotals(cart.items, deliveryArea, deliveryOptions),
+    [cart.items, deliveryArea, deliveryOptions],
+  );
+  const cartBookIds = useMemo(
+    () => cart.items.map((item) => item.bookId),
+    [cart.items],
+  );
 
   if (!cart.items.length) {
     return (
@@ -27,15 +36,8 @@ export function CartPageClient({
           icon={ShoppingCart}
           title="Your cart is empty"
           description="Browse the catalogue and add books to place a guest order."
+          action={{ label: "Browse Books", href: "/books" }}
         />
-        <div className="mt-5 text-center">
-          <Link
-            href="/books"
-            className="inline-flex rounded-md bg-navy px-5 py-3 text-sm font-extrabold text-white"
-          >
-            Browse Books
-          </Link>
-        </div>
       </div>
     );
   }
@@ -52,63 +54,12 @@ export function CartPageClient({
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="grid gap-3">
           {cart.items.map((item) => (
-            <div
+            <CartRow
               key={item.bookId}
-              className="grid grid-cols-[92px_1fr] gap-4 rounded-lg border border-line bg-white p-3 shadow-sm sm:grid-cols-[120px_1fr_auto]"
-            >
-              <BookCover title={item.title} author={item.author} image={item.coverImage} />
-              <div>
-                <Link
-                  href={`/books/${item.slug}`}
-                  className="font-extrabold leading-snug text-navy"
-                >
-                  {item.title}
-                </Link>
-                <p className="mt-1 text-sm text-muted">{item.author}</p>
-                <p className="mt-3 font-extrabold text-navy">
-                  {formatCurrency(item.salePrice)}
-                </p>
-                {item.salePrice < item.regularPrice ? (
-                  <p className="text-sm text-muted line-through">
-                    {formatCurrency(item.regularPrice)}
-                  </p>
-                ) : null}
-              </div>
-              <div className="col-span-2 flex items-center justify-between gap-3 sm:col-span-1 sm:flex-col sm:items-end">
-                <div className="flex items-center rounded-md border border-line bg-page">
-                  <button
-                    type="button"
-                    className="focus-ring inline-flex h-10 w-10 items-center justify-center text-navy"
-                    onClick={() => cart.setQuantity(item.bookId, item.quantity - 1)}
-                    aria-label="Decrease quantity"
-                    title="Decrease quantity"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <span className="w-10 text-center text-sm font-extrabold">
-                    {item.quantity}
-                  </span>
-                  <button
-                    type="button"
-                    className="focus-ring inline-flex h-10 w-10 items-center justify-center text-navy"
-                    onClick={() => cart.setQuantity(item.bookId, item.quantity + 1)}
-                    aria-label="Increase quantity"
-                    title="Increase quantity"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => cart.removeItem(item.bookId)}
-                  className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-md border border-line text-danger"
-                  aria-label={`Remove ${item.title}`}
-                  title="Remove item"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
+              item={item}
+              onQuantityChange={cart.setQuantity}
+              onRemove={cart.removeItem}
+            />
           ))}
         </div>
 
@@ -140,7 +91,7 @@ export function CartPageClient({
       </div>
 
       <div className="mt-8">
-        <CartRecommendationSection bookIds={cart.items.map((item) => item.bookId)} />
+        <CartRecommendationSection bookIds={cartBookIds} />
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white p-4 shadow-soft lg:hidden">
@@ -156,6 +107,81 @@ export function CartPageClient({
   );
 }
 
+/**
+ * CartRow — single line item.
+ * Memoised so unrelated state (delivery area, totals) does not re-render the row.
+ * Handlers are wrapped in useCallback inside so QuantityStepper + remove button
+ * see stable props between renders.
+ */
+const CartRow = memo(function CartRow({
+  item,
+  onQuantityChange,
+  onRemove
+}: {
+  item: CartItem;
+  onQuantityChange: (bookId: string, next: number) => void;
+  onRemove: (bookId: string) => void;
+}) {
+  const decreaseLabel = `Decrease quantity of ${item.title}`;
+  const increaseLabel = `Increase quantity of ${item.title}`;
+  const removeLabel = `Remove ${item.title}`;
+
+  const handleQuantity = useCallback(
+    (next: number) => onQuantityChange(item.bookId, next),
+    [onQuantityChange, item.bookId],
+  );
+  const handleRemove = useCallback(
+    () => onRemove(item.bookId),
+    [onRemove, item.bookId],
+  );
+
+  return (
+    <div
+      className="grid grid-cols-[92px_1fr] gap-4 rounded-lg border border-line bg-white p-3 shadow-sm sm:grid-cols-[120px_1fr_auto]"
+    >
+      <BookCover title={item.title} author={item.author} image={item.coverImage} />
+      <div>
+        <Link
+          href={`/books/${item.slug}`}
+          className="font-extrabold leading-snug text-navy"
+        >
+          {item.title}
+        </Link>
+        <p className="mt-1 text-sm text-muted">{item.author}</p>
+        <p className="mt-3 font-extrabold text-navy">
+          {formatCurrency(item.salePrice)}
+        </p>
+        {item.salePrice < item.regularPrice ? (
+          <p className="text-sm text-muted line-through">
+            {formatCurrency(item.regularPrice)}
+          </p>
+        ) : null}
+      </div>
+      <div className="col-span-2 flex items-center justify-between gap-3 sm:col-span-1 sm:flex-col sm:items-end">
+        <QuantityStepper
+          variant="plain"
+          size="sm"
+          value={item.quantity}
+          min={1}
+          max={Math.max(item.stockQuantity, 1)}
+          decreaseLabel={decreaseLabel}
+          increaseLabel={increaseLabel}
+          onChange={handleQuantity}
+        />
+        <button
+          type="button"
+          onClick={handleRemove}
+          className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-md border border-line text-danger transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-[rgba(176,168,156,0.12)] motion-safe:active:scale-[0.95]"
+          aria-label={removeLabel}
+          title="Remove item"
+        >
+          <Trash2 className="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+});
+
 function SummaryRows({
   totals
 }: {
@@ -170,24 +196,20 @@ function SummaryRows({
     <div className="mt-5 grid gap-3 text-sm">
       <div className="flex justify-between">
         <span className="text-muted">Subtotal</span>
-        <span className="font-bold">{formatCurrency(totals.subtotal)}</span>
+        <span className="font-bold"><AnimatedNumber value={totals.subtotal} format={formatCurrency} /></span>
       </div>
       <div className="flex justify-between">
         <span className="text-muted">Discount</span>
-        <span className="font-bold text-danger">
-          -{formatCurrency(totals.discountTotal)}
-        </span>
+        <span className="font-bold text-danger">-<AnimatedNumber value={totals.discountTotal} format={formatCurrency} /></span>
       </div>
       <div className="flex justify-between">
         <span className="text-muted">Delivery</span>
-        <span className="font-bold">{formatCurrency(totals.deliveryCharge)}</span>
+        <span className="font-bold"><AnimatedNumber value={totals.deliveryCharge} format={formatCurrency} /></span>
       </div>
       <div className="border-t border-line pt-3">
         <div className="flex justify-between text-base">
           <span className="font-extrabold text-navy">Grand total</span>
-          <span className="font-extrabold text-navy">
-            {formatCurrency(totals.grandTotal)}
-          </span>
+          <span className="font-extrabold text-navy"><AnimatedNumber value={totals.grandTotal} format={formatCurrency} /></span>
         </div>
       </div>
     </div>

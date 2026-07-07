@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import type { BookStatus } from "@prisma/client";
@@ -17,47 +17,98 @@ function initials(title: string): string {
   return title.replace(/\s+/g, "").slice(0, 2) || "—";
 }
 
-export function ProductCard({ book }: { book: BookCardData }) {
+export const ProductCard = memo(function ProductCard({ book }: { book: BookCardData }) {
   const isAvailable =
     purchasableStatuses.includes(book.status) && book.stockQuantity > 0;
   const isPreOrder = book.status === "pre_order";
-  const [coverError, setCoverError] = useState(false);
+  const isArchived = book.status === "archived";
+  const [failedCover, setFailedCover] = useState<string | null>(null);
+  const coverError = Boolean(
+    book.coverImage && failedCover === book.coverImage,
+  );
 
-  /* Preload the cover image; if it fails, switch to the initials fallback */
-  useEffect(() => {
-    if (!book.coverImage) return;
-    setCoverError(false); // reset on book change
-    const img = new window.Image();
-    img.src = book.coverImage;
-    img.onerror = () => setCoverError(true);
-  }, [book.coverImage]);
+  // Disable the card if it cannot be added to cart AND is not a published/pre-order
+  const isCardDisabled = !isAvailable && !isPreOrder;
+
+  const handleCoverClick = useCallback(() => {
+    trackBookEvent({
+      bookId: book.id,
+      eventType: "search_click",
+      source: "product_card_cover",
+    });
+  }, [book.id]);
+
+  const handleTitleClick = useCallback(() => {
+    trackBookEvent({
+      bookId: book.id,
+      eventType: "search_click",
+      source: "product_card_title",
+    });
+  }, [book.id]);
+
+  const handleAddToCart = useCallback(() => {
+    addCartItem({
+      bookId: book.id,
+      title: book.title,
+      slug: book.slug,
+      author: book.author,
+      coverImage: book.coverImage,
+      regularPrice: book.regularPrice,
+      salePrice: book.salePrice,
+      stockQuantity: book.stockQuantity,
+      quantity: 1,
+    });
+    trackBookEvent({
+      bookId: book.id,
+      eventType: "add_to_cart",
+      source: "product_card",
+    });
+  }, [
+    book.id,
+    book.title,
+    book.slug,
+    book.author,
+    book.coverImage,
+    book.regularPrice,
+    book.salePrice,
+    book.stockQuantity,
+  ]);
+
+  const buttonLabel = isPreOrder
+    ? "Pre-order"
+    : isAvailable
+      ? "Add to cart"
+      : isArchived
+        ? "Discontinued"
+        : "Currently unavailable";
+
+  const ariaLabel = `${isPreOrder ? "Pre-order" : "Add"} ${book.title} to cart`;
 
   return (
     <article
-      className="group flex h-full flex-col overflow-hidden rounded-[8px] hover:-translate-y-[6px]"
+      className="group book-card-hover cv-auto flex h-full flex-col overflow-hidden rounded-[8px]"
       style={{
+        /* Reserve the real rendered height so the SSR placeholder prevents CLS
+           when cards stream in on scroll. Tune to your actual final height. */
+        contentVisibility: "auto",
+        containIntrinsicSize: "0 480px",
         /* Glass card: frosted panel with translucent white + blur */
         background: "rgba(255, 255, 255, 0.78)",
         backdropFilter: "blur(12px) saturate(150%)",
         WebkitBackdropFilter: "blur(12px) saturate(150%)",
         border: "1px solid rgba(255, 255, 255, 0.55)",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.7)",
-        transition:
-          "transform 280ms cubic-bezier(0.4,0,0.2,1), box-shadow 280ms cubic-bezier(0.4,0,0.2,1), border-color 280ms cubic-bezier(0.4,0,0.2,1)",
+        boxShadow:
+          "0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.7)",
       }}
     >
       {/* Cover area */}
       <Link
         href={`/books/${book.slug}`}
-        onClick={() =>
-          trackBookEvent({
-            bookId: book.id,
-            eventType: "search_click",
-            source: "product_card_cover",
-          })
-        }
+        onClick={handleCoverClick}
         aria-label={`View ${book.title}`}
-        className="cover-zoom-container block"
+        tabIndex={isCardDisabled ? -1 : undefined}
+        aria-disabled={isCardDisabled || undefined}
+        className="cover-zoom-container block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A574] focus-visible:ring-offset-2 rounded-t-[8px]"
       >
         {coverError ? (
           /* Image load error → show initials fallback */
@@ -83,6 +134,7 @@ export function ProductCard({ book }: { book: BookCardData }) {
             author={book.author}
             image={book.coverImage}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            onImageError={() => setFailedCover(book.coverImage)}
           />
         )}
       </Link>
@@ -92,14 +144,10 @@ export function ProductCard({ book }: { book: BookCardData }) {
         {/* Title */}
         <Link
           href={`/books/${book.slug}`}
-          onClick={() =>
-            trackBookEvent({
-              bookId: book.id,
-              eventType: "search_click",
-              source: "product_card_title",
-            })
-          }
-          className="block"
+          onClick={handleTitleClick}
+          tabIndex={isCardDisabled ? -1 : undefined}
+          aria-disabled={isCardDisabled || undefined}
+          className="block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A574] focus-visible:ring-offset-2"
         >
           <h3
             className="line-clamp-2 transition-colors duration-150 hover:text-[#D4A574]"
@@ -159,40 +207,19 @@ export function ProductCard({ book }: { book: BookCardData }) {
           <button
             type="button"
             disabled={!isAvailable}
-            onClick={() => {
-              addCartItem({
-                bookId: book.id,
-                title: book.title,
-                slug: book.slug,
-                author: book.author,
-                coverImage: book.coverImage,
-                regularPrice: book.regularPrice,
-                salePrice: book.salePrice,
-                stockQuantity: book.stockQuantity,
-                quantity: 1,
-              });
-              trackBookEvent({
-                bookId: book.id,
-                eventType: "add_to_cart",
-                source: "product_card",
-              });
-            }}
-            className={`btn-lift mt-3 flex w-full select-none items-center justify-center gap-1.5 rounded-[4px] py-[10px] text-[12px] font-medium uppercase tracking-[0.06em] text-white disabled:cursor-not-allowed ${
+            onClick={handleAddToCart}
+            className={`btn-lift mt-3 flex w-full select-none items-center justify-center gap-1.5 rounded-[4px] py-[10px] text-[12px] font-medium uppercase tracking-[0.06em] text-white transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] motion-safe:active:scale-[0.97] disabled:cursor-not-allowed disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A574] focus-visible:ring-offset-2 ${
               isAvailable
                 ? "bg-[#6B8E6F] hover:bg-[#2D4A2B]"
                 : "bg-[#B0A89C]"
             }`}
-            aria-label={`${isPreOrder ? "Pre-order" : "Add"} ${book.title} to cart`}
+            aria-label={ariaLabel}
           >
             <ShoppingCart className="h-3.5 w-3.5" aria-hidden="true" />
-            {isPreOrder
-              ? "Pre-order"
-              : isAvailable
-                ? "Add to cart"
-                : "Out of stock"}
+            {buttonLabel}
           </button>
         </div>{/* /mt-auto */}
       </div>
     </article>
   );
-}
+});

@@ -45,6 +45,7 @@ export async function Footer() {
               alt="Ayesha-Sharif Publication"
               width={1510}
               height={272}
+              sizes="152px"
               loading="lazy"
               className="h-auto w-[152px] object-contain"
             />

@@ -30,9 +30,8 @@
   --transition-base: 280ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 450ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Bengali editorial serif — set by RootLayout via next/font.
-     Falls back to system Bengali serif if font fails to load. */
-  --font-bengali: var(--font-bengali, "Noto Serif Bengali"), serif;
+  /* --font-hero-bangla (Anek Bangla) is set by RootLayout via next/font;
+     the .hero-title class supplies the full fallback chain. */
 
   /* Legacy tokens — retained for existing component compatibility */
   --page: #F5F1E8;
@@ -55,6 +54,47 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+
+/* Phase A, Item 2 — global :focus-visible ring (gold on cream surfaces). */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid #D4A574;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* On dark surfaces (nav, hero) the gold still shows — only bump offset. */
+:where([data-surface="dark"], header, footer, [role="search"]) :focus-visible {
+  outline-offset: 3px;
+}
+/* Hide the ring on mouse focus (keeps click-outlines clean). */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+
+/* Phase A, Item 5 — skip-to-content link. */
+.skip-to-content {
+  position: fixed;
+  top: -64px;
+  left: 16px;
+  z-index: 100;
+  padding: 12px 18px;
+  background: #2D4A2B;
+  color: #F5F1E8;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  transition: top 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.skip-to-content:focus-visible {
+  top: 16px;
+  outline: 2px solid #D4A574;
+  outline-offset: 3px;
 }
 
 html {
@@ -112,12 +152,20 @@ body {
 }
 
 .literary-letterform {
-  font-family: "Crimson Text", Georgia, serif;
+  font-family:
+    var(--font-bengali-display),
+    "Noto Serif Bengali",
+    "Crimson Text",
+    Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .literary-phrase {
   font-family: "Crimson Text", Georgia, serif;
   font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 .site-footer {
@@ -1451,6 +1499,76 @@ button {
   animation: fadeInUp var(--transition-slow) both;
 }
 
+/* ── Hero title split treatment (outline + solid) ──────────────────────────
+   Reference composition: "SUST CSE / CARNIVAL 2026".
+   Font: Anek Bangla 800 — geometric Bengali DISPLAY sans (blocky, poster-
+   like; deliberately NOT the site's serif/traditional faces).
+
+   "আয়েশা-শরীফ"  → hollow: transparent fill + crisp 1.9–2.2px forest stroke.
+                    Atmosphere layer stays visible through the glyphs.
+   "পাবলিকেশন্স" → solid forest fill — the dominant anchor word.
+
+   Fallback: browsers without -webkit-text-stroke keep a solid 800 fill
+   (title can never disappear). No blurred shadows anywhere. */
+
+/* English poster title — Montserrat geometric capitals. Latin text-stroke
+   renders crisply (simple closed shapes); Bengali is NEVER stroked. */
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-display), "Montserrat", "Inter", sans-serif;
+  text-transform: uppercase;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--color-forest);
+  text-rendering: geometricPrecision;
+}
+
+/* Line 1 — hollow outline, like SUST / CARNIVAL */
+.hero-title-outline {
+  font-weight: 800;
+  font-size: clamp(1.8rem, 7.2vw, 5rem);
+}
+
+@supports (-webkit-text-stroke: 1px #000) {
+  .hero-title-outline {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: clamp(1.2px, 0.16vw, 2px) var(--color-forest);
+    paint-order: stroke fill;
+  }
+}
+
+/* Line 2 — solid anchor, slightly larger, dominates like CSE / 2026 */
+.hero-title-solid {
+  font-weight: 900;
+  font-size: clamp(1.95rem, 8.4vw, 5.9rem);
+  color: var(--color-forest);
+  -webkit-text-fill-color: var(--color-forest);
+}
+
+/* Line 3 — Bengali brand name: SOLID only, no outline, no stroke.
+   Editorial Bengali serif display (heavy) — matches the reference
+   poster composition: solid, heavy, slightly compressed. */
+.hero-title-bangla {
+  margin-top: clamp(0.4rem, 1vw, 0.7rem);
+  font-family:
+    var(--font-bengali-display),
+    "Noto Serif Bengali",
+    "Hind Siliguri",
+    serif;
+  font-weight: 900;
+  font-size: clamp(1.55rem, 4.4vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--color-forest);
+  text-align: center;
+  text-rendering: geometricPrecision;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
 .literary-fragments-hero .atm-layer2,
 .hero-hairline-layer,
 .hero-gold-layer {
@@ -1673,6 +1791,26 @@ button {
   transform: scaleX(1);
 }
 
+
+/* Phase A, Item 1 — cart bump + badge flash. */
+@keyframes cart-bump {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.18); }
+  70%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+.cart-bump {
+  animation: cart-bump 380ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes cart-badge-flash {
+  0%   { background-color: #D4A574; box-shadow: 0 0 0 0 rgba(212,165,116,0.55); }
+  60%  { background-color: #E8B98A; box-shadow: 0 0 0 8px rgba(212,165,116,0); }
+  100% { background-color: #D4A574; box-shadow: 0 0 0 0 rgba(212,165,116,0); }
+}
+.cart-badge-flash {
+  animation: cart-badge-flash 480ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* ── Primary button lift micro-interaction ── */
 .btn-lift {
   cursor: pointer;
@@ -1810,5 +1948,130 @@ button {
   /* Preserve serif headings */
   h1, h2, h3 {
     font-family: Georgia, serif !important;
+  }
+}
+
+
+/* ── Phase C utilities ── */
+
+/* Book card hover lift — used by ProductCard. Adds gentle elevation, shadow
+   growth, and a subtle border tint on hover/focus-within. */
+.book-card-hover {
+  transition:
+    transform 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 280ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.book-card-hover:hover,
+.book-card-hover:focus-within {
+  transform: translateY(-6px);
+  box-shadow:
+    0 12px 28px rgba(45, 74, 43, 0.12),
+    0 2px 6px rgba(45, 74, 43, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  border-color: rgba(107, 142, 111, 0.55);
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-card-hover,
+  .book-card-hover:hover,
+  .book-card-hover:focus-within {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* content-visibility for off-screen cards — lets the browser skip layout and
+   paint for cards outside the viewport until they scroll near. The
+   contain-intrinsic-size prevents layout shift by reserving the card's
+   approximate space. ScrollReveal's IntersectionObserver still fires because
+   IO observes intersection, not paint. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 360px;
+  contain: layout style;
+}
+
+/* Composable skeleton primitives — all reuse the global .shimmer animation.
+   Use SkeletonText for lines, SkeletonCircle for avatars/badges,
+   SkeletonBlock for cards/panels/buttons, SkeletonRow for list rows. */
+.skeleton-text {
+  background: linear-gradient(
+    90deg,
+    rgba(176, 168, 156, 0.12) 25%,
+    rgba(176, 168, 156, 0.22) 50%,
+    rgba(176, 168, 156, 0.12) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: 4px;
+}
+.skeleton-circle {
+  background: linear-gradient(
+    90deg,
+    rgba(176, 168, 156, 0.12) 25%,
+    rgba(176, 168, 156, 0.22) 50%,
+    rgba(176, 168, 156, 0.12) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: 9999px;
+}
+.skeleton-block {
+  background: linear-gradient(
+    90deg,
+    rgba(176, 168, 156, 0.12) 25%,
+    rgba(176, 168, 156, 0.22) 50%,
+    rgba(176, 168, 156, 0.12) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: 6px;
+}
+
+
+/* ── Phase D polish — global micro-tweaks ── */
+
+/* Disable iOS tap highlight on interactive elements so the gold/forest ring
+   on focus-visible is the only visual feedback. */
+a, button, [role="button"], summary, label[for], input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Typography: disable font-synthesis (the browser fake-bold fallback that
+   creates visual artefacts on headings). Optimize legibility rendering. */
+body {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scope `will-change: transform` on .book-card-hover to only when the user
+   is actively hovering or focusing. Idle cards don't need GPU promotion and
+   keeping will-change always-on hurts memory. */
+.book-card-hover:hover,
+.book-card-hover:focus-within {
+  will-change: transform;
+}
+
+/* Reduced-motion: disable the shimmer loop entirely. The skeleton blocks
+   stay visible but stop animating, which is the safe default for users who
+   have requested less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-text,
+  .skeleton-circle,
+  .skeleton-block {
+    animation: none;
+  }
+}
+
+/* Smooth scrolling for in-page anchors, but only when the user has not asked
+   to reduce motion. */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }

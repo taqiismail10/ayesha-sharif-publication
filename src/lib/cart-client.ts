@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { CartItem } from "@/types";
+
+export type { CartItem };
 
 const CART_KEY = "asp_guest_cart";
 const CART_EVENT = "asp_cart_changed";
@@ -57,32 +59,41 @@ export function useCart() {
     };
   }, []);
 
+  const setQuantity = useCallback((bookId: string, quantity: number) => {
+    const next = readCart()
+      .map((item) =>
+        item.bookId === bookId
+          ? {
+              ...item,
+              quantity: Math.max(
+                1,
+                Math.min(quantity, item.stockQuantity > 0 ? item.stockQuantity : 99)
+              )
+            }
+          : item
+      )
+      .filter((item) => item.quantity > 0);
+    writeCart(next);
+  }, []);
+
+  const removeItem = useCallback((bookId: string) => {
+    writeCart(readCart().filter((item) => item.bookId !== bookId));
+  }, []);
+
+  const count = useMemo(
+    () => items.reduce((sum, item) => sum + item.quantity, 0),
+    [items],
+  );
+
   const api = useMemo(
     () => ({
       items,
-      count: items.reduce((sum, item) => sum + item.quantity, 0),
-      setQuantity(bookId: string, quantity: number) {
-        const next = readCart()
-          .map((item) =>
-            item.bookId === bookId
-              ? {
-                  ...item,
-                  quantity: Math.max(
-                    1,
-                    Math.min(quantity, item.stockQuantity > 0 ? item.stockQuantity : 99)
-                  )
-                }
-              : item
-          )
-          .filter((item) => item.quantity > 0);
-        writeCart(next);
-      },
-      removeItem(bookId: string) {
-        writeCart(readCart().filter((item) => item.bookId !== bookId));
-      },
+      count,
+      setQuantity,
+      removeItem,
       clear: clearCart
     }),
-    [items]
+    [count, items, removeItem, setQuantity]
   );
 
   return api;

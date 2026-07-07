@@ -32,9 +32,10 @@ export function HeroParallaxLayer({
 
     let rafId = 0;
     let pending = false;
+    let active = true;
 
     const onScroll = () => {
-      if (pending) return;
+      if (!active || pending) return;
       pending = true;
       rafId = requestAnimationFrame(() => {
         if (el) {
@@ -45,15 +46,28 @@ export function HeroParallaxLayer({
       });
     };
 
+    const observer = "IntersectionObserver" in window
+      ? new IntersectionObserver(([entry]) => {
+          active = entry.isIntersecting;
+          el.style.willChange = active ? "transform" : "auto";
+          if (active) onScroll();
+        })
+      : null;
+
+    el.style.willChange = "transform";
+    observer?.observe(el);
     window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => {
       window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(rafId);
+      observer?.disconnect();
+      el.style.willChange = "auto";
     };
   }, []);
 
   return (
-    <div ref={ref} className={className} style={{ willChange: "transform" }}>
+    <div ref={ref} className={className}>
       {children}
     </div>
   );

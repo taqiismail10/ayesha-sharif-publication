@@ -24,7 +24,21 @@ import {
 export type CustomerActionState = {
   error?: string;
   success?: string;
+  fieldErrors?: Record<string, string>;
 };
+
+function fieldErrorsFromZodIssues(
+  issues: { path: (string | number)[]; message: string }[]
+) {
+  const out: Record<string, string> = {};
+  for (const issue of issues) {
+    const key = issue.path[0];
+    if (typeof key === "string" && !(key in out)) {
+      out[key] = issue.message;
+    }
+  }
+  return out;
+}
 
 function booleanFromForm(formData: FormData, key: string) {
   return formData.get(key) === "on";
@@ -62,7 +76,10 @@ export async function registerCustomerAction(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid account details." };
+    return {
+      error: parsed.error.issues[0]?.message || "Invalid account details.",
+      fieldErrors: fieldErrorsFromZodIssues(parsed.error.issues)
+    };
   }
   const input = parsed.data as {
     name: string;
@@ -119,7 +136,10 @@ export async function loginCustomerAction(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid login details." };
+    return {
+      error: parsed.error.issues[0]?.message || "Invalid login details.",
+      fieldErrors: fieldErrorsFromZodIssues(parsed.error.issues)
+    };
   }
   const input = parsed.data as {
     identifier: string;
@@ -191,7 +211,10 @@ export async function updateCustomerProfileAction(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid profile details." };
+    return {
+      error: parsed.error.issues[0]?.message || "Invalid profile details.",
+      fieldErrors: fieldErrorsFromZodIssues(parsed.error.issues)
+    };
   }
   const input = parsed.data as {
     displayName: string;
@@ -279,7 +302,10 @@ export async function changeCustomerPasswordAction(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid password details." };
+    return {
+      error: parsed.error.issues[0]?.message || "Invalid password details.",
+      fieldErrors: fieldErrorsFromZodIssues(parsed.error.issues)
+    };
   }
   const input = parsed.data as {
     currentPassword: string;

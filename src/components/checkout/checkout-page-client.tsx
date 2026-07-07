@@ -1,9 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AlertCircle, CheckCircle2, ShoppingCart } from "lucide-react";
+import { AlertCircle, CheckCircle2, History, ShoppingCart } from "lucide-react";
 import type { PaymentMethod } from "@prisma/client";
 import {
   type DeliveryAreaOption,
@@ -14,8 +14,15 @@ import { apiFetch } from "@/lib/api-client";
 import { clearCart, useCart } from "@/lib/cart-client";
 import { getAnonymousRecommendationId } from "@/lib/consent-client";
 import { formatCurrency } from "@/lib/format";
+import { AnimatedNumber } from "@/components/ui/animated-number";
+import { useToast } from "@/components/ui/toast";
+import {
+  clearCheckoutDraft,
+  useCheckoutDraftAutosave
+} from "@/lib/checkout-draft";
 import { calculateCartTotals } from "@/lib/order-utils";
 import { EmptyState } from "@/components/site/empty-state";
+import { Spinner } from "@/components/ui/spinner";
 
 type CheckoutCustomerDefaults = {
   name: string | null;
@@ -42,6 +49,19 @@ export function CheckoutPageClient({
     useState<PaymentMethod>("cash_on_delivery");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const toast = useToast();
+  const { draftRestored } = useCheckoutDraftAutosave(formRef);
+
+  useEffect(() => {
+    if (!draftRestored) return;
+    toast.info({
+      title: "Draft restored",
+      description:
+        "We filled in the details from your last visit. Edit anything you need before placing the order."
+    });
+  }, [draftRestored, toast]);
+
   const totals = calculateCartTotals(cart.items, deliveryArea, deliveryOptions);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -68,9 +88,6 @@ export function CheckoutPageClient({
     };
 
     try {
-      // Phase 2F: retargeted to the NestJS API. Same request/response shape;
-      // credentials are included so a logged-in customer's session cookie
-      // attaches the order to their account (guest checkout unchanged).
       const response = await apiFetch("/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,9 +102,12 @@ export function CheckoutPageClient({
         throw new Error(result.message || "Failed to create order.");
       }
       clearCart();
+      clearCheckoutDraft();
       router.push(`/order-success/${result.orderNumber}`);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Failed to create order.");
+      setError(
+        caught instanceof Error ? caught.message : "Failed to create order."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -126,7 +146,24 @@ export function CheckoutPageClient({
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <form
+        ref={formRef}
+        onSubmit={onSubmit}
+        className="grid gap-6 lg:grid-cols-[1fr_360px]"
+      >
+        {draftRestored ? (
+          <div className="flex items-start gap-2 rounded-md border border-emerald/30 bg-emerald/10 p-3 text-sm text-emerald lg:col-span-1">
+            <History className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <div className="leading-5">
+              <p className="font-semibold">Draft restored</p>
+              <p className="text-xs text-emerald/80">
+                We filled in the details from your last visit. Edit anything you need
+                to change before placing the order.
+              </p>
+            </div>
+          </div>
+        ) : null}
+
         <div className="grid gap-5 rounded-lg border border-line bg-white p-5 shadow-sm">
           {!initialCustomer ? (
             <div className="rounded-md border border-gold/40 bg-gold/10 p-3 text-sm leading-6 text-navy">
@@ -282,31 +319,43 @@ export function CheckoutPageClient({
           <div className="mt-5 grid gap-3 border-t border-line pt-4 text-sm">
             <div className="flex justify-between">
               <span className="text-muted">Subtotal</span>
-              <span className="font-bold">{formatCurrency(totals.subtotal)}</span>
+              <span className="font-bold">
+                <AnimatedNumber value={totals.subtotal} format={formatCurrency} />
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted">Discount</span>
               <span className="font-bold text-danger">
-                -{formatCurrency(totals.discountTotal)}
+                -<AnimatedNumber value={totals.discountTotal} format={formatCurrency} />
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted">Delivery</span>
-              <span className="font-bold">{formatCurrency(totals.deliveryCharge)}</span>
+              <span className="font-bold">
+                <AnimatedNumber value={totals.deliveryCharge} format={formatCurrency} />
+              </span>
             </div>
             <div className="flex justify-between border-t border-line pt-3 text-base">
               <span className="font-extrabold text-navy">Grand total</span>
               <span className="font-extrabold text-navy">
-                {formatCurrency(totals.grandTotal)}
+                <AnimatedNumber value={totals.grandTotal} format={formatCurrency} />
               </span>
             </div>
           </div>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="focus-ring mt-5 min-h-12 w-full rounded-md bg-emerald px-5 py-3 text-sm font-extrabold text-white disabled:bg-muted/40"
+            aria-busy={isSubmitting}
+            className="focus-ring mt-5 min-h-12 w-full rounded-md bg-emerald px-5 py-3 text-sm font-extrabold text-white disabled:cursor-progress disabled:bg-muted/40"
           >
-            {isSubmitting ? "Creating order..." : "Place order"}
+            {isSubmitting ? (
+              <>
+                <Spinner size="sm" className="mr-2 text-white" label="Creating order" />
+                Creating order…
+              </>
+            ) : (
+              "Place order"
+            )}
           </button>
         </aside>
       </form>

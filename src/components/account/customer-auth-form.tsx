@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
 import { apiUrl } from "@/lib/api-client";
+import { Spinner } from "@/components/ui/spinner";
+import { useToast } from "@/components/ui/toast";
+import {
+  Field,
+  FieldControl,
+  FieldError
+} from "@/components/ui/field";
 import {
   loginCustomerAction,
   registerCustomerAction,
@@ -15,29 +22,31 @@ const initialState: CustomerActionState = {};
 function PasswordInput({
   autoComplete,
   label,
-  name
+  name,
+  fieldError
 }: {
   autoComplete: string;
   label: string;
   name: string;
+  fieldError?: string;
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const id = `customer-${name}`;
   const Icon = isVisible ? EyeOff : Eye;
 
   return (
-    <div>
+    <Field name={name} error={fieldError}>
       <label className="form-label" htmlFor={id}>
         {label}
       </label>
       <div className="relative mt-1">
-        <input
+        <FieldControl
           id={id}
           name={name}
           type={isVisible ? "text" : "password"}
           autoComplete={autoComplete}
           required
-          className="form-input pr-12"
+          className="pr-12"
         />
         <button
           type="button"
@@ -48,7 +57,8 @@ function PasswordInput({
           <Icon className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
-    </div>
+      <FieldError />
+    </Field>
   );
 }
 
@@ -65,60 +75,72 @@ export function CustomerAuthForm({
     initialState
   );
   const Icon = isLogin ? LogIn : UserPlus;
+  const toast = useToast();
+  const prevStateRef = useRef<CustomerActionState>(initialState);
+
+  useEffect(() => {
+    const prev = prevStateRef.current;
+    if (state.error && state.error !== prev.error) {
+      toast.error({ title: isLogin ? "Sign-in failed" : "Could not create account", description: state.error });
+    }
+    if (state.success && state.success !== prev.success) {
+      toast.success({
+        title: isLogin ? "Signed in" : "Account created",
+        description: state.success
+      });
+    }
+    prevStateRef.current = state;
+  }, [state, toast, isLogin]);
 
   return (
     <form action={formAction} className="grid gap-4">
       {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
 
       {state.error ? (
-        <div className="rounded-md bg-danger/10 p-3 text-sm font-semibold text-danger">
+        <div role="alert" className="rounded-md bg-danger/10 p-3 text-sm font-semibold text-danger">
           {state.error}
         </div>
       ) : null}
 
       {!isLogin ? (
-        <label>
-          <span className="form-label">Name</span>
-          <input
-            name="name"
-            autoComplete="name"
-            required
-            className="form-input mt-1"
-          />
-        </label>
+        <Field name="name">
+          <label className="form-label" htmlFor="customer-name">Name</label>
+          <FieldControl id="customer-name" name="name" autoComplete="name" required className="mt-1" />
+          <FieldError />
+        </Field>
       ) : null}
 
       {isLogin ? (
-        <label>
-          <span className="form-label">Email or phone</span>
-          <input
+        <Field name="identifier">
+          <label className="form-label" htmlFor="customer-identifier">Email or phone</label>
+          <FieldControl
+            id="customer-identifier"
             name="identifier"
             autoComplete="username"
             required
-            className="form-input mt-1"
+            className="mt-1"
             placeholder="Email or 01XXXXXXXXX"
           />
-        </label>
+          <FieldError />
+        </Field>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          <label>
-            <span className="form-label">Email</span>
-            <input
-              name="email"
-              type="email"
-              autoComplete="email"
-              className="form-input mt-1"
-            />
-          </label>
-          <label>
-            <span className="form-label">Phone</span>
-            <input
+          <Field name="email">
+            <label className="form-label" htmlFor="customer-email">Email</label>
+            <FieldControl id="customer-email" name="email" type="email" autoComplete="email" className="mt-1" />
+            <FieldError />
+          </Field>
+          <Field name="phone">
+            <label className="form-label" htmlFor="customer-phone">Phone</label>
+            <FieldControl
+              id="customer-phone"
               name="phone"
               autoComplete="tel"
               placeholder="01XXXXXXXXX"
-              className="form-input mt-1"
+              className="mt-1"
             />
-          </label>
+            <FieldError />
+          </Field>
         </div>
       )}
 
@@ -139,16 +161,27 @@ export function CustomerAuthForm({
       <button
         type="submit"
         disabled={isPending}
-        className="btn-lift focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-sage px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-soft"
+        aria-busy={isPending}
+        className="btn-lift focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-sage px-5 py-3 text-sm font-medium text-white disabled:cursor-progress disabled:bg-gray-soft"
       >
-        <Icon className="h-4 w-4" aria-hidden="true" />
-        {isPending
-          ? isLogin
-            ? "Signing in..."
-            : "Creating account..."
-          : isLogin
-            ? "Sign in"
-            : "Create account"}
+        {isPending ? (
+          <Spinner
+            size="sm"
+            className="text-white"
+            label={isLogin ? "Signing in" : "Creating account"}
+          />
+        ) : (
+          <Icon className="h-4 w-4" aria-hidden="true" />
+        )}
+        <span>
+          {isPending
+            ? isLogin
+              ? "Signing in…"
+              : "Creating account…"
+            : isLogin
+              ? "Sign in"
+              : "Create account"}
+        </span>
       </button>
 
       {/* ── Google OAuth (Phase 2C) — additional method, password login unchanged ── */}
