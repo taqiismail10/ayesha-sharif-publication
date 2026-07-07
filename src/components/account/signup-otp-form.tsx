@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { CheckCircle2, MailCheck, UserPlus } from "lucide-react";
 import { GoogleAuthButton } from "@/components/account/google-auth-button";
+import { PasswordToggleButton } from "@/components/ui/password-toggle-button";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/toast";
 import { postAuth } from "@/lib/auth-api-client";
@@ -24,6 +25,8 @@ export function SignupOtpForm() {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
   const [cooldown, setCooldown] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (step === "otp") otpRef.current?.focus();
@@ -153,8 +156,20 @@ export function SignupOtpForm() {
       {error ? <p role="alert" className="rounded-md bg-danger/10 p-3 text-sm font-medium text-danger">{error}</p> : null}
       <label className="grid gap-1" htmlFor="signup-name"><span className="form-label">Name</span><input id="signup-name" name="name" autoComplete="name" required className="form-input" /></label>
       <label className="grid gap-1" htmlFor="signup-email"><span className="form-label">Email</span><input id="signup-email" name="email" type="email" autoComplete="email" required className="form-input" /></label>
-      <label className="grid gap-1" htmlFor="signup-password"><span className="form-label">Password</span><input id="signup-password" name="password" type="password" autoComplete="new-password" minLength={8} required className="form-input" /></label>
-      <label className="grid gap-1" htmlFor="signup-confirm-password"><span className="form-label">Confirm password</span><input id="signup-confirm-password" name="confirmPassword" type="password" autoComplete="new-password" minLength={8} required className="form-input" /></label>
+      <label className="grid gap-1" htmlFor="signup-password">
+        <span className="form-label">Password</span>
+        <div className="relative">
+          <input id="signup-password" name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={8} required className="form-input pr-12" />
+          <PasswordToggleButton isVisible={showPassword} label="Password" onToggle={() => setShowPassword((current) => !current)} />
+        </div>
+      </label>
+      <label className="grid gap-1" htmlFor="signup-confirm-password">
+        <span className="form-label">Confirm password</span>
+        <div className="relative">
+          <input id="signup-confirm-password" name="confirmPassword" type={showConfirmPassword ? "text" : "password"} autoComplete="new-password" minLength={8} required className="form-input pr-12" />
+          <PasswordToggleButton isVisible={showConfirmPassword} label="Confirm password" onToggle={() => setShowConfirmPassword((current) => !current)} />
+        </div>
+      </label>
       <button type="submit" disabled={isPending} className="btn-lift focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-[4px] bg-sage px-5 py-3 text-sm font-medium text-white disabled:opacity-60">
         {isPending ? <Spinner size="sm" label="Sending verification code" /> : <UserPlus className="h-4 w-4" aria-hidden="true" />}
         {isPending ? "Sending code…" : "Create account"}

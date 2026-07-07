@@ -1,6 +1,7 @@
 import {
   Injectable,
   Logger,
+  OnModuleInit,
   ServiceUnavailableException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -9,7 +10,7 @@ import nodemailer, { type Transporter } from "nodemailer";
 type OtpEmailKind = "signup" | "password-reset";
 
 @Injectable()
-export class MailService {
+export class MailService implements OnModuleInit {
   private readonly logger = new Logger(MailService.name);
   private readonly transporter: Transporter | null;
   private readonly fromEmail: string;
@@ -19,7 +20,7 @@ export class MailService {
   constructor(private readonly config: ConfigService) {
     this.fromEmail = this.config.get<string>("SMTP_FROM_EMAIL")?.trim() ?? "";
     this.fromName =
-      this.config.get<string>("SMTP_FROM_NAME")?.trim() || "AS Publications";
+      this.config.get<string>("SMTP_FROM_NAME")?.trim() || "Ayesha Sharif Publications";
     this.isDevelopment =
       (this.config.get<string>("NODE_ENV") || "development") !== "production";
 
@@ -46,6 +47,26 @@ export class MailService {
     if (!this.transporter && !this.isDevelopment) {
       throw new ServiceUnavailableException(
         "Email delivery is temporarily unavailable.",
+      );
+    }
+  }
+
+  async onModuleInit() {
+    if (!this.transporter) {
+      if (this.isDevelopment) {
+        this.logger.warn(
+          "SMTP transport is not configured. OTP emails will be logged locally in development.",
+        );
+      }
+      return;
+    }
+
+    try {
+      await this.transporter.verify();
+      this.logger.log(`SMTP transport ready for ${this.fromEmail}.`);
+    } catch (error) {
+      this.logger.error(
+        `SMTP transport verification failed: ${error instanceof Error ? error.message : "unknown error"}`,
       );
     }
   }

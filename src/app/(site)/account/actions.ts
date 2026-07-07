@@ -61,9 +61,11 @@ function databaseUnavailableState() {
 // TODO: Add per-IP and per-identifier rate limiting once the deployment layer
 // exposes a stable rate-limit store. Login failures intentionally stay generic.
 export async function registerCustomerAction(
-  _previousState: CustomerActionState,
-  _formData: FormData
+  previousState: CustomerActionState,
+  formData: FormData
 ): Promise<CustomerActionState> {
+  void previousState;
+  void formData;
   return {
     error:
       "Email verification is required. Start again from the registration page."

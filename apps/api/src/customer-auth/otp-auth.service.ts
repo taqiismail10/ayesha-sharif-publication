@@ -150,12 +150,16 @@ export class OtpAuthService {
       customer.passwordLoginEnabled &&
       customer.isActive
     ) {
-      const issued = await this.otp.issue(email, "PASSWORD_RESET");
-      await this.mail.sendPasswordResetOtpEmail(
-        email,
-        issued.otp,
-        OTP_EXPIRES_MINUTES,
-      );
+      try {
+        const issued = await this.otp.issue(email, "PASSWORD_RESET");
+        await this.mail.sendPasswordResetOtpEmail(
+          email,
+          issued.otp,
+          OTP_EXPIRES_MINUTES,
+        );
+      } catch {
+        // Keep the response neutral for forgot-password requests.
+      }
     }
 
     return {

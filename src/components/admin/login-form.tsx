@@ -1,13 +1,15 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { LogIn } from "lucide-react";
 import { loginAction, type ActionState } from "@/app/admin/actions";
+import { PasswordToggleButton } from "@/components/ui/password-toggle-button";
 
 const initialState: ActionState = {};
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, initialState);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
     <form action={formAction} className="grid gap-4">
@@ -28,13 +30,20 @@ export function LoginForm() {
       </label>
       <label>
         <span className="form-label">Password</span>
-        <input
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          className="form-input mt-1"
-        />
+        <div className="relative mt-1">
+          <input
+            name="password"
+            type={isPasswordVisible ? "text" : "password"}
+            autoComplete="current-password"
+            required
+            className="form-input pr-12"
+          />
+          <PasswordToggleButton
+            isVisible={isPasswordVisible}
+            label="Password"
+            onToggle={() => setIsPasswordVisible((current) => !current)}
+          />
+        </div>
       </label>
       <button
         type="submit"

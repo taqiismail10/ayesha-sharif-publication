@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 import { GoogleAuthButton } from "@/components/account/google-auth-button";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/toast";
+import { PasswordToggleButton } from "@/components/ui/password-toggle-button";
 import {
   Field,
   FieldControl,
@@ -32,7 +33,6 @@ function PasswordInput({
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const id = `customer-${name}`;
-  const Icon = isVisible ? EyeOff : Eye;
 
   return (
     <Field name={name} error={fieldError}>
@@ -48,14 +48,11 @@ function PasswordInput({
           required
           className="pr-12"
         />
-        <button
-          type="button"
-          aria-label={isVisible ? `Hide ${label}` : `Show ${label}`}
-          className="focus-ring absolute right-1.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-gray-soft transition hover:bg-cream hover:text-forest"
-          onClick={() => setIsVisible((current) => !current)}
-        >
-          <Icon className="h-4 w-4" aria-hidden="true" />
-        </button>
+        <PasswordToggleButton
+          isVisible={isVisible}
+          label={label}
+          onToggle={() => setIsVisible((current) => !current)}
+        />
       </div>
       <FieldError />
     </Field>
