@@ -93,7 +93,11 @@ export default async function AdminBooksPage({ searchParams }: PageProps) {
                     <p className="text-xs text-muted">{book.author}</p>
                   </td>
                   <td>{book.category?.name || "No category"}</td>
-                  <td>{bookStatusLabels[book.status]}</td>
+                  <td>
+                    <span className="admin-status-badge">
+                      {bookStatusLabels[book.status]}
+                    </span>
+                  </td>
                   <td>
                     <p className="font-bold">{formatCurrency(book.salePrice)}</p>
                     {Number(book.salePrice) < Number(book.regularPrice) ? (

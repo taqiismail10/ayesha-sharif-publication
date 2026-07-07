@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function UnauthorizedPage() {
   return (
-    <main className="container-px grid min-h-screen place-items-center bg-page py-10">
+    <main className="admin-theme container-px grid min-h-screen place-items-center bg-page py-10">
       <div className="max-w-md rounded-lg border border-line bg-white p-8 text-center">
         <h1 className="text-2xl font-extrabold text-danger">Unauthorized</h1>
         <p className="mt-2 text-sm leading-6 text-muted">

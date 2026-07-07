@@ -1,5 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache";
-import { CACHE_TAGS, bookCacheTag } from "@/lib/cache-tags";
+import { CACHE_TAGS, bookCacheTag, policyCacheTag } from "@/lib/cache-tags";
 
 function revalidatePublicRoutes(slugs: string[] = []) {
   revalidatePath("/");
@@ -33,4 +33,10 @@ export function revalidatePublicSettings() {
   revalidateTag(CACHE_TAGS.settings);
   revalidatePath("/cart");
   revalidatePath("/checkout");
+}
+
+export function revalidatePublicPolicy(slug: string) {
+  revalidateTag(CACHE_TAGS.policies);
+  revalidateTag(policyCacheTag(slug));
+  revalidatePath(`/${slug}`);
 }

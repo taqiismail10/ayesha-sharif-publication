@@ -8,9 +8,7 @@ import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { publicNav } from "@/lib/constants";
 import { useCart } from "@/lib/cart-client";
 
-/* ─── Morph thresholds ─── */
-const MORPH_START = 40;
-const MORPH_END   = 80;
+const HEADER_MORPH_THRESHOLD = 80;
 
 export function Header() {
   const pathname  = usePathname();
@@ -34,77 +32,36 @@ export function Header() {
       ? pathname === "/"
       : pathname === href || pathname.startsWith(href + "/");
 
-  /* ── Morphing scroll driver ── */
+  /* Toggle the shell only when native scrolling crosses the morph threshold. */
   useEffect(() => {
     const header = document.getElementById("morph-header");
     if (!header) return;
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let rafId = 0;
     let framePending = false;
-    let forceNextFrame = true;
-    let lastProgress = -1;
-    let lastState = "";
+    let isScrolled: boolean | null = null;
 
-    const setMorphVars = (progress: number, viewportWidth: number) => {
-      const clamped = Math.min(Math.max(progress, 0), 1);
-      header.style.setProperty("--morph-progress", String(clamped));
-      header.style.setProperty("--morph-pad-top", `${20 * (1 - clamped)}px`);
-      header.style.setProperty("--morph-pad-inline", `${16 * (1 - clamped)}px`);
-      header.style.setProperty("--nav-radius", `${9999 * (1 - clamped)}px`);
-      header.style.setProperty("--nav-height", `${56 + 4 * clamped}px`);
-      header.style.setProperty(
-        "--nav-max-width",
-        clamped >= 1
-          ? `${viewportWidth}px`
-          : `${1000 + (viewportWidth - 1000) * clamped}px`,
-      );
+    const updateHeaderState = () => {
+      framePending = false;
+      const nextIsScrolled = window.scrollY >= HEADER_MORPH_THRESHOLD;
+      if (nextIsScrolled === isScrolled) return;
+
+      isScrolled = nextIsScrolled;
+      header.dataset.state = isScrolled ? "locked" : "resting";
     };
 
-    const applyMorph = (force: boolean) => {
-      const y = window.scrollY;
-      const progress = prefersReduced
-        ? y >= MORPH_START ? 1 : 0
-        : Math.min(Math.max((y - MORPH_START) / (MORPH_END - MORPH_START), 0), 1);
-      const state = prefersReduced
-        ? y >= MORPH_START ? "locked" : "resting"
-        :
-        y < MORPH_START ? "resting" : y >= MORPH_END ? "locked" : "morphing";
-      // Avoid rewriting six inline variables for every scroll frame once
-      // the header is fully resting or locked.
-      const roundedProgress = Math.round(progress * 1000) / 1000;
-      if (!force && roundedProgress === lastProgress && state === lastState) return;
-
-      if (force || roundedProgress !== lastProgress) {
-        setMorphVars(roundedProgress, window.innerWidth);
-        lastProgress = roundedProgress;
-      }
-      if (state !== lastState) {
-        header.dataset.state = state;
-        lastState = state;
-      }
-    };
-
-    const scheduleMorph = (force = false) => {
-      forceNextFrame = forceNextFrame || force;
+    const handleScroll = () => {
       if (framePending) return;
       framePending = true;
       rafId = window.requestAnimationFrame(() => {
-        const shouldForce = forceNextFrame;
-        forceNextFrame = false;
-        framePending = false;
-        applyMorph(shouldForce);
+        updateHeaderState();
       });
     };
 
-    const handleScroll = () => scheduleMorph();
-    const handleResize = () => scheduleMorph(true);
-
     window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleResize, { passive: true });
-    scheduleMorph(true);
+    updateHeaderState();
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
       window.cancelAnimationFrame(rafId);
     };
   }, []);

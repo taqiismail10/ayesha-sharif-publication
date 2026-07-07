@@ -4,10 +4,11 @@ import Link from "next/link";
 import { memo, useCallback, useMemo, useState } from "react";
 import { ShoppingBag, ShoppingCart, Trash2 } from "lucide-react";
 import type { DeliveryAreaOption } from "@/lib/constants";
-import { useCart, type CartItem } from "@/lib/cart-client";
+import { getItemQuantity, useCart, type CartItem } from "@/lib/cart-client";
 import { formatCurrency } from "@/lib/format";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { QuantityStepper } from "@/components/ui/quantity-stepper";
+import { useToast } from "@/components/ui/toast";
 import { calculateCartTotals } from "@/lib/order-utils";
 import { BookCover } from "@/components/books/book-cover";
 import { CartRecommendationSection } from "@/components/books/client-recommendation-section";
@@ -57,7 +58,8 @@ export function CartPageClient({
             <CartRow
               key={item.bookId}
               item={item}
-              onQuantityChange={cart.setQuantity}
+              onIncrement={cart.incrementItem}
+              onDecrement={cart.decrementItem}
               onRemove={cart.removeItem}
             />
           ))}
@@ -115,24 +117,49 @@ export function CartPageClient({
  */
 const CartRow = memo(function CartRow({
   item,
-  onQuantityChange,
+  onIncrement,
+  onDecrement,
   onRemove
 }: {
   item: CartItem;
-  onQuantityChange: (bookId: string, next: number) => void;
+  onIncrement: (bookId: string) => number;
+  onDecrement: (bookId: string) => number;
   onRemove: (bookId: string) => void;
 }) {
-  const decreaseLabel = `Decrease quantity of ${item.title}`;
-  const increaseLabel = `Increase quantity of ${item.title}`;
-  const removeLabel = `Remove ${item.title}`;
+  const toast = useToast();
+  const decreaseLabel = `Decrease quantity for ${item.title}`;
+  const increaseLabel = `Increase quantity for ${item.title}`;
+  const removeLabel = `Remove ${item.title} from cart`;
 
-  const handleQuantity = useCallback(
-    (next: number) => onQuantityChange(item.bookId, next),
-    [onQuantityChange, item.bookId],
+  const handleIncrement = useCallback(
+    () => onIncrement(item.bookId),
+    [onIncrement, item.bookId],
+  );
+  const handleDecrement = useCallback(
+    () => {
+      const previousQuantity = getItemQuantity(item.bookId);
+      const nextQuantity = onDecrement(item.bookId);
+      if (previousQuantity === 1 && nextQuantity === 0) {
+        toast.info({
+          title: "Removed from cart",
+          description: item.title,
+          duration: 2200,
+        });
+      }
+    },
+    [item.bookId, item.title, onDecrement, toast],
   );
   const handleRemove = useCallback(
-    () => onRemove(item.bookId),
-    [onRemove, item.bookId],
+    () => {
+      if (getItemQuantity(item.bookId) === 0) return;
+      onRemove(item.bookId);
+      toast.info({
+        title: "Removed from cart",
+        description: item.title,
+        duration: 2200,
+      });
+    },
+    [item.bookId, item.title, onRemove, toast],
   );
 
   return (
@@ -159,24 +186,34 @@ const CartRow = memo(function CartRow({
       </div>
       <div className="col-span-2 flex items-center justify-between gap-3 sm:col-span-1 sm:flex-col sm:items-end">
         <QuantityStepper
-          variant="plain"
-          size="sm"
           value={item.quantity}
-          min={1}
-          max={Math.max(item.stockQuantity, 1)}
+          min={0}
+          max={Math.max(item.stockQuantity, item.quantity)}
+          size="md"
+          active
+          valueLabel={`Quantity for ${item.title}`}
           decreaseLabel={decreaseLabel}
           increaseLabel={increaseLabel}
-          onChange={handleQuantity}
+          onDecrement={handleDecrement}
+          onIncrement={handleIncrement}
         />
-        <button
-          type="button"
-          onClick={handleRemove}
-          className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-md border border-line text-danger transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-[rgba(176,168,156,0.12)] motion-safe:active:scale-[0.95]"
-          aria-label={removeLabel}
-          title="Remove item"
-        >
-          <Trash2 className="h-4 w-4" aria-hidden="true" />
-        </button>
+        <div className="flex items-center gap-2 sm:flex-col sm:items-end">
+          <p
+            className="whitespace-nowrap text-sm font-bold text-navy"
+            aria-label={`Subtotal for ${item.title}: ${formatCurrency(item.salePrice * item.quantity)}`}
+          >
+            Subtotal: {formatCurrency(item.salePrice * item.quantity)}
+          </p>
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="cart-remove-button inline-flex h-11 w-11 items-center justify-center"
+            aria-label={removeLabel}
+            title="Remove item"
+          >
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
   );

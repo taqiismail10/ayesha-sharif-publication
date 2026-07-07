@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
+import { DEFAULT_POLICIES } from "../src/lib/policy-definitions";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required to seed the database.");
@@ -36,6 +37,23 @@ async function main() {
       isActive: true
     }
   });
+
+  const publishedAt = new Date();
+  await Promise.all(
+    DEFAULT_POLICIES.map((policy) =>
+      prisma.policy.upsert({
+        where: { slug: policy.slug },
+        update: {},
+        create: {
+          ...policy,
+          publishedTitle: policy.title,
+          publishedContent: policy.content,
+          status: "published",
+          publishedAt
+        }
+      })
+    )
+  );
 
   const categoryNames = [
     "Academic Books",

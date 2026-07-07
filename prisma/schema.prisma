@@ -63,6 +63,11 @@ enum CustomerBookEventType {
   sample_open
 }
 
+enum PolicyStatus {
+  draft
+  published
+}
+
 model Admin {
   id           String    @id @default(cuid())
   name         String
@@ -70,8 +75,27 @@ model Admin {
   passwordHash String
   role         AdminRole @default(admin)
   isActive     Boolean   @default(true)
+  policies     Policy[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+}
+
+model Policy {
+  id               String       @id @default(cuid())
+  title            String
+  publishedTitle   String?
+  slug             String       @unique
+  content          String       @db.Text
+  publishedContent String?      @db.Text
+  status           PolicyStatus @default(draft)
+  updatedById      String?
+  updatedBy        Admin?       @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  publishedAt      DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([status])
+  @@index([updatedById])
 }
 
 model Book {

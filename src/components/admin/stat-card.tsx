@@ -10,7 +10,7 @@ export function StatCard({
   icon: LucideIcon;
 }) {
   return (
-    <div className="rounded-lg border border-[rgba(176,168,156,0.2)] bg-white p-4 shadow-card">
+    <div className="admin-stat-card rounded-lg border border-[rgba(176,168,156,0.2)] bg-white p-4 shadow-card">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[12px] font-medium uppercase tracking-[0.06em] text-gray-soft">

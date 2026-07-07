@@ -36,7 +36,7 @@ export default async function BookPreviewPage({ params }: PageProps) {
       <div className="grid gap-7 lg:grid-cols-[360px_1fr]">
         <BookCover title={book.title} author={book.author} image={book.coverImage} />
         <div className="rounded-lg border border-line bg-white p-5 shadow-sm">
-          <p className="mb-3 inline-flex rounded-sm bg-cream px-2 py-1 text-xs font-bold text-navy">
+          <p className="admin-status-badge mb-3">
             {bookStatusLabels[book.status]}
           </p>
           <h2 className="text-3xl font-extrabold text-navy">{book.title}</h2>
