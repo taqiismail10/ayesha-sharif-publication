@@ -56,7 +56,7 @@ This is the current cleanup inventory after the completed low-risk cleanup phase
 
 | File/folder | Why it may be unnecessary | Delete now? | Risk level | Reason |
 |---|---|---|---|---|
-| `src/app/audit/` (audit-content.tsx, audit.css …) | Internal design-audit page; not linked from the site | **No** | 🟢 low | Dev tooling; owner call. Unrelated to backend migration. |
+| `src/app/audit/` + `LLM_PROJECT_CONTEXT.md` | Removed in Phase 3D after reference checks confirmed the audit page was isolated internal tooling with no public/admin links, tests, or script usage | Phase 3D | ✅ |
 | `src/lib/sample-data.ts` | Demo/no-DB fallback data | **No** | 🟡 low | Part of the "works without DB" mode; drop together with that mode (Phase 4 decision). |
 
 ## Cleanup sequencing rule
