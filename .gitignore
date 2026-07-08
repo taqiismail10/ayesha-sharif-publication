@@ -9,5 +9,6 @@ public/uploads
 *.tsbuildinfo
 .chrome-debug
 .chrome-*
+.claude/
 homepage-*.png
 phase34-*.png
