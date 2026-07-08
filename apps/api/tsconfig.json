@@ -5,6 +5,7 @@
     "moduleResolution": "node16",
     "rootDir": "./src",
     "outDir": "./dist",
+    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
     "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
