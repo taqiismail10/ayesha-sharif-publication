@@ -2,7 +2,7 @@
 
 E-commerce bookstore for a Bangladeshi publishing house. Public book catalogue with search/filters, customer accounts (email/phone + Google login), guest and authenticated checkout, manual payment verification (COD / bKash / Nagad / Rocket), consent-aware recommendations, and a protected admin panel with an editable site-content CMS.
 
-The backend is **mid-migration from Next.js API routes to a standalone NestJS service** (`apps/api`). Customer-facing APIs (Phase 2) are fully migrated and the frontend already talks to NestJS for them; admin APIs (Phase 3) still run inside Next.js. Old Next.js routes are kept alive as fallback until cutover.
+The backend is **split between a Next.js frontend and a standalone NestJS service** (`apps/api`). Customer-facing APIs already run on NestJS, while some admin APIs and a small set of compatibility routes still live in Next.js during the remaining migration work.
 
 ## Architecture
 
@@ -21,7 +21,7 @@ Customer sessions are DB-backed httpOnly cookies **valid across both backends**,
 
 ## Tech stack
 
-- **Frontend:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS · Lenis smooth scroll
+- **Frontend:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS
 - **Backend (new):** NestJS 11 · Zod validation · @nestjs/throttler · Helmet
 - **Database:** PostgreSQL · Prisma 7 (`@prisma/adapter-pg`), one shared schema with dual generators
 - **Auth:** separate Admin (HMAC cookie) and Customer (DB sessions) systems · Google OAuth via `CustomerAuthProvider`
@@ -33,7 +33,7 @@ Customer sessions are DB-backed httpOnly cookies **valid across both backends**,
 ### 1. Frontend (Next.js)
 
 ```bash
-npm install --legacy-peer-deps      # react-lenis peer-dep flag needed under React 19
+npm install
 cp .env.example .env                # fill DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL
 npm run prisma:generate
 npm run prisma:migrate
@@ -51,7 +51,17 @@ npm run prisma:generate             # generates into apps/api/generated/prisma
 npm run start:dev                   # http://localhost:4000
 ```
 
-Both servers must run for customer features (account menu, checkout, recommendations). Health checks: `http://localhost:4000/health` (real DB ping) and legacy `http://localhost:3000/api/health`.
+Both servers must run for customer features (account menu, checkout, recommendations). The primary health check is `http://localhost:4000/health` (real DB ping). The legacy Next.js route `http://localhost:3000/api/health` remains only as a compatibility endpoint until external monitors are migrated.
+
+## Compatibility route status
+
+| Route | Status | Replacement | Notes |
+|---|---|---|---|
+| `/api/health` | Compatibility | `GET /health` | Remove after monitor / hosting probe migration |
+| `/api/account/me` | Compatibility | `GET /auth/customer/me` | Remove after external verification |
+| `/api/recommendations` | Compatibility | `GET /recommendations`, `POST /recommendations/cart` | Remove after external verification |
+| `/api/recommendation-events` | Compatibility | `POST /recommendations/events` | Remove after external verification |
+| `/api/policies/[slug]` | Retained public JSON API | None | Keep unless product explicitly retires the public JSON surface |
 
 ## Default admin
 
@@ -74,7 +84,7 @@ Google login setup: **[docs/GOOGLE_OAUTH_SETUP.md](docs/GOOGLE_OAUTH_SETUP.md)**
 
 - `src/app/(site)` — public storefront + customer account pages
 - `src/app/admin` — admin login + protected panel (books, orders, customers, categories, tags, site content, settings)
-- `src/app/api` — legacy Next.js routes (kept as fallback during migration)
+- `src/app/api` — remaining Next.js compatibility routes plus admin upload/export bridges
 - `src/components` — site, books, account, checkout, admin UI
 - `src/lib` — api-client (NestJS calls), cart/consent/tracking clients, Prisma readers, auth helpers
 - `apps/api/src` — NestJS: customer-auth (incl. Google OAuth), customers, orders, recommendations, health, prisma, common (guards/contracts/filters)

@@ -30,7 +30,7 @@ Reads cookie → deletes the matching `CustomerSession` row (`deleteMany` by tok
 - **Session row:** `customerId`, `tokenHash` (unique), `expiresAt`, `userAgent`, `ipHash` (HMAC-sha256 of first `x-forwarded-for` entry or `x-real-ip`, keyed by `NEXTAUTH_SECRET`, dev fallback `"development-only-change-this-secret"`)
 - **Resolution** (`getCurrentCustomer`): hash cookie token → lookup session incl. customer{profile, preferences} → invalid/expired/inactive ⇒ delete session row + cookie, return null.
 
-## 5. `GET /api/account/me` response shape
+## 5. Legacy compatibility shape — `GET /api/account/me` / Nest `GET /auth/customer/me`
 
 Always **HTTP 200** (guests are not an error):
 ```json
@@ -74,13 +74,13 @@ Per item: book must be `published|pre_order` AND `stockQuantity ≥ quantity`, e
 
 `deliveryChargeFor(area, options)` → match on `DeliveryAreaOption.value`, fallback **120**. Options = constants overridden by `SiteSetting["delivery_charges"]` (per-area numbers). Charged only when cart non-empty.
 
-## 11. Recommendation response shapes
+## 11. Legacy compatibility shapes — recommendations
 
-- `GET /api/recommendations?anonymousId=` → `{ ok: true, books: BookCardData[] }` (8 max, personalized via events+preferences; falls back to popular).
-- `POST /api/recommendations` `{bookIds: string[≤30]}` → `{ ok: true, books: BookCardData[4] }` (cart-based).
+- `GET /api/recommendations?anonymousId=` / `GET /recommendations?anonymousId=` → `{ ok: true, books: BookCardData[] }` (8 max, personalized via events+preferences; falls back to popular).
+- `POST /api/recommendations` / `POST /recommendations/cart` `{bookIds: string[≤30]}` → `{ ok: true, books: BookCardData[4] }` (cart-based).
 - `anonymousId` valid iff `^[a-zA-Z0-9_-]{16,80}$`.
 
-## 12. Event tracking request shape (`POST /api/recommendation-events`)
+## 12. Legacy compatibility shape — event tracking (`POST /api/recommendation-events` / Nest `POST /recommendations/events`)
 
 `{ bookId, eventType ∈ {view,add_to_cart,purchase,search_click,sample_open}, anonymousId?, source? (≤80) }` → always `{ok:true, tracked:boolean}` (400 only on shape errors).
 **Server rules:** logged-in customer **without personalizationConsent ⇒ not tracked**; guest without valid anonymousId ⇒ not tracked; book must exist in visible statuses; `view` deduped per actor+book within 30 min; weights: view 1, search_click 2, sample_open 3, add_to_cart 4, purchase 8. Client additionally dedupes `view` per session and uses `keepalive`.

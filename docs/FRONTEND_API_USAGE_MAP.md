@@ -2,19 +2,19 @@
 
 Every frontend dependency on the old backend, by mechanism. Risk level = blast radius if the migration of that call breaks (🔴 checkout/auth-critical · 🟠 visible feature · 🟡 degraded-gracefully).
 
-**Phase 2F status:** all customer-facing `fetch()` call-sites now go through `src/lib/api-client.ts` (`NEXT_PUBLIC_API_BASE_URL`, `credentials:"include"`) to the NestJS API. Admin calls untouched. Old Next routes remain live as fallback.
+**Phase 2F status:** all customer-facing `fetch()` call-sites now go through `src/lib/api-client.ts` (`NEXT_PUBLIC_API_BASE_URL`, `credentials:"include"`) to the NestJS API. Admin calls untouched. The remaining old Next routes listed below are now compatibility endpoints that need external verification before deletion.
 
 ## A. Client-side `fetch()` (5 call sites — the only true HTTP dependencies)
 
 | Frontend file | API called | Feature | Old route/function | NestJS endpoint | Status | Risk level |
 |---|---|---|---|---|---|---|
 | `src/components/checkout/checkout-page-client.tsx` | ~~`POST /api/orders`~~ | Checkout submit | `app/api/orders/route.ts` (kept) | `POST /orders` | ✅ **retargeted (2F)** | 🔴 revenue path |
-| `src/components/site/account-menu.tsx` | ~~`GET /api/account/me`~~ + logout link | Header login state + logout | `app/api/account/me/route.ts`, `/account/logout` (both kept) | `GET /auth/customer/me`, `POST /auth/customer/logout` | ✅ **retargeted (2F)** | 🟠 every-page header |
+| `src/components/site/account-menu.tsx` | ~~`GET /api/account/me`~~ + logout link | Header login state + logout | `app/api/account/me/route.ts`, `/account/logout` (compatibility only) | `GET /auth/customer/me`, `POST /auth/customer/logout` | ✅ **retargeted (2F)** | 🟠 every-page header |
 | `src/components/admin/upload-field.tsx` | `POST /api/admin/upload` | Book cover/gallery/PDF upload | `app/api/admin/upload/route.ts` | `POST /admin/uploads` | ⏳ Phase 3 — **not touched** | 🟠 admin workflow |
-| `src/components/books/client-recommendation-section.tsx` | ~~`GET/POST /api/recommendations`~~ | Personalized + cart recommendations | `app/api/recommendations/route.ts` (kept) | `GET /recommendations`, `POST /recommendations/cart` | ✅ **retargeted (2F)** | 🟡 self-hides on failure |
-| `src/lib/tracking-client.ts` | ~~`POST /api/recommendation-events`~~ | Interaction tracking | `app/api/recommendation-events/route.ts` (kept) | `POST /recommendations/events` | ✅ **retargeted (2F)** | 🟡 fire-and-forget |
+| `src/components/books/client-recommendation-section.tsx` | ~~`GET/POST /api/recommendations`~~ | Personalized + cart recommendations | `app/api/recommendations/route.ts` (compatibility only) | `GET /recommendations`, `POST /recommendations/cart` | ✅ **retargeted (2F)** | 🟡 self-hides on failure |
+| `src/lib/tracking-client.ts` | ~~`POST /api/recommendation-events`~~ | Interaction tracking | `app/api/recommendation-events/route.ts` (compatibility only) | `POST /recommendations/events` | ✅ **retargeted (2F)** | 🟡 fire-and-forget |
 
-Also: admin orders page links to `GET /api/admin/orders/export` (anchor) — ⏳ Phase 3, untouched. The Google login button (`customer-auth-form.tsx`) now also uses `apiUrl()` from the shared client.
+Also: admin orders page links to `GET /api/admin/orders/export` (anchor) — ⏳ Phase 3, untouched. The Google login button (`customer-auth-form.tsx`) now also uses `apiUrl()` from the shared client. The old admin policy JSON API routes were removed in Phase 2A because the policy editor already uses server actions.
 
 ## B. Server-Action form bindings (convert with Phase 2/3, form-by-form)
 
@@ -31,6 +31,7 @@ Also: admin orders page links to `GET /api/admin/orders/export` (anchor) — ⏳
 | `src/app/admin/(protected)/orders/[id]/page.tsx` | `updateOrderAction` | Order status + stock | `PATCH /admin/orders/:id` | 🔴 stock integrity |
 | `src/app/admin/(protected)/settings/page.tsx` | `updateDeliverySettingsAction` | Delivery charges | `PUT /admin/settings/delivery-charges` | 🟠 |
 | `src/app/admin/(protected)/site-content/page.tsx` + `components/admin/content-form-section.tsx` | 3 site-content actions | CMS editing | `PUT /admin/site-content/*` | 🟡 |
+| `src/components/admin/policy-editor-form.tsx` | `savePolicyDraftAction`, `publishPolicyAction` | Policy management | no HTTP route yet | 🟡 |
 
 ## C. RSC pages calling readers / Prisma directly (switch to API fetch in Phase 1/2)
 
