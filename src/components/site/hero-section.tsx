@@ -3,12 +3,23 @@ import { ScrollReveal } from "@/components/site/scroll-reveal";
 import { HeroAtmosphere } from "@/components/site/hero-atmosphere";
 import { HeroParallaxLayer } from "@/components/site/hero-parallax-layer";
 
-export function HeroSection() {
+type HeroSectionProps = {
+  eyebrow: string;
+  subtitle: string;
+  meta: string;
+};
+
+export function HeroSection({
+  eyebrow,
+  subtitle,
+  meta,
+}: HeroSectionProps) {
   return (
     <section
       aria-label="Ayesha-Sharif Publication"
-      className="relative isolate flex min-h-[520px] items-center justify-center overflow-hidden py-16 sm:min-h-[560px] md:h-[72vh] md:min-h-[620px] md:max-h-[780px]"
+      className="relative isolate flex items-center justify-center overflow-hidden py-16"
       style={{
+        minHeight: "clamp(520px, 72vh, 800px)",
         background:
           "linear-gradient(160deg, rgba(45, 74, 43, 0.025) 0%, rgba(176, 168, 156, 0.10) 54%, rgba(212, 165, 116, 0.055) 100%), #F5F1E8",
       }}
@@ -70,14 +81,15 @@ export function HeroSection() {
           <p
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "11px",
-              letterSpacing: "0.14em",
+              fontSize: "12px",
+              fontWeight: 500,
+              letterSpacing: "0.22em",
               textTransform: "uppercase",
               color: "#B0A89C",
               marginBottom: "2px",
             }}
           >
-            Est. — Bangladeshi Literary Press
+            {eyebrow || "EST. — BANGLADESHI LITERARY PRESS"}
           </p>
         </ScrollReveal>
 
@@ -95,35 +107,26 @@ export function HeroSection() {
 
         {/* Bengali headline */}
         <ScrollReveal variant="rise" delay={120}>
-          <h1
-            className="mx-auto max-w-[760px] text-[34px] sm:text-[44px] md:text-[56px]"
-            style={{
-              /* Noto Serif Bengali → premium Bengali editorial serif
-                 Falls back through Crimson Text (Latin) → Georgia → system serif */
-              fontFamily: "var(--font-bengali), var(--font-serif), Georgia, serif",
-              fontWeight: 400,
-              lineHeight: 1.08,
-              color: "#2D4A2B",
-            }}
-          >
-
-            <span className="block sm:inline">আয়েশা-শরীফ</span>{" "}
-            <span className="block sm:inline">পাবলিকেশন্স</span>
+          <h1 className="hero-title-bangla" lang="bn">
+            আয়েশা-শরীফ পাবলিকেশন্স
           </h1>
         </ScrollReveal>
 
         {/* English sub-headline — Crimson Text italic (approved use) */}
         <ScrollReveal variant="rise" delay={200}>
           <p
-            className="text-[16px] sm:text-lg md:text-[22px]"
+            className="text-[18px] sm:text-[20px] md:text-[24px]"
             style={{
               fontFamily: "var(--font-serif)",
+              fontWeight: 400,
               fontStyle: "italic",
+              lineHeight: 1.3,
+              letterSpacing: "0.005em",
               color: "#B0A89C",
-              marginTop: "2px",
+              marginTop: "4px",
             }}
           >
-            Quality books, delivered to your doorstep.
+            {subtitle || "Quality books, delivered to your doorstep."}
           </p>
         </ScrollReveal>
 
@@ -131,7 +134,7 @@ export function HeroSection() {
         <ScrollReveal variant="rise" delay={280}>
           <Link
             href="/books"
-            className="btn-lift inline-flex items-center rounded-[4px] bg-[#6B8E6F] px-9 py-[14px] text-sm font-medium uppercase tracking-[0.04em] text-white hover:bg-[#2D4A2B]"
+            className="btn-lift inline-flex items-center rounded-[4px] bg-[#6B8E6F] px-9 py-[14px] text-[13px] font-semibold uppercase tracking-[0.18em] text-white transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-[#2D4A2B] motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A574] focus-visible:ring-offset-4 focus-visible:ring-offset-[#F5F1E8]"
           >
             Browse Books
           </Link>
@@ -139,8 +142,16 @@ export function HeroSection() {
 
         {/* Secondary caption */}
         <ScrollReveal variant="rise" delay={340}>
-          <p className="text-[13px]" style={{ color: "#B0A89C" }}>
-            400+ books · Free delivery above ৳500
+          <p
+            className="text-[13px]"
+            style={{
+              color: "#B0A89C",
+              fontFamily: "var(--font-sans)",
+              fontWeight: 400,
+              letterSpacing: "0.02em",
+            }}
+          >
+            {meta || "400+ books · Free delivery above ৳500"}
           </p>
         </ScrollReveal>
 

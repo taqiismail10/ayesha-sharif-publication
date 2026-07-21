@@ -165,6 +165,13 @@ export class GoogleOAuthService {
       if (!existingLink.customer.isActive) {
         throw new UnauthorizedException("This account has been disabled.");
       }
+      if (!existingLink.customer.emailVerifiedAt) {
+        return db.customer.update({
+          where: { id: existingLink.customer.id },
+          data: { emailVerifiedAt: new Date() },
+          include: customerInclude,
+        });
+      }
       return existingLink.customer;
     }
 
@@ -178,14 +185,20 @@ export class GoogleOAuthService {
         throw new UnauthorizedException("This account has been disabled.");
       }
       try {
-        await db.customerAuthProvider.create({
-          data: {
-            customerId: existingCustomer.id,
-            provider: "google",
-            providerUserId: profile.sub,
-            providerEmail: email,
-          },
-        });
+        await db.$transaction([
+          db.customerAuthProvider.create({
+            data: {
+              customerId: existingCustomer.id,
+              provider: "google",
+              providerUserId: profile.sub,
+              providerEmail: email,
+            },
+          }),
+          db.customer.update({
+            where: { id: existingCustomer.id },
+            data: { emailVerifiedAt: new Date() },
+          }),
+        ]);
       } catch (caught) {
         // @@unique([customerId, provider]) — this customer is already linked
         // to a DIFFERENT Google account. Refuse rather than overwrite.
@@ -199,7 +212,7 @@ export class GoogleOAuthService {
         }
         throw caught;
       }
-      return existingCustomer;
+      return { ...existingCustomer, emailVerifiedAt: new Date() };
     }
 
     // 3. New customer. passwordHash is REQUIRED by the schema and the old
@@ -215,6 +228,8 @@ export class GoogleOAuthService {
         name: displayName,
         email,
         passwordHash,
+        passwordLoginEnabled: false,
+        emailVerifiedAt: new Date(),
         profile: {
           create: { displayName, email },
         },

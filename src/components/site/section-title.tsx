@@ -18,8 +18,9 @@ export function SectionTitle({ title, subtitle, overline }: SectionTitleProps) {
           <p
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "10px",
-              letterSpacing: "0.16em",
+              fontSize: "11px",
+              fontWeight: 500,
+              letterSpacing: "0.22em",
               textTransform: "uppercase",
               color: "#B0A89C",
               marginBottom: "10px",
@@ -35,10 +36,11 @@ export function SectionTitle({ title, subtitle, overline }: SectionTitleProps) {
         <h2
           style={{
             fontFamily: "var(--font-serif)",
-            fontSize: "32px",
-            fontWeight: 400,
+            fontSize: "34px",
+            fontWeight: 600,
             color: "#2D4A2B",
-            lineHeight: 1.2,
+            lineHeight: 1.18,
+            letterSpacing: "-0.01em",
             margin: 0,
           }}
         >
@@ -66,6 +68,9 @@ export function SectionTitle({ title, subtitle, overline }: SectionTitleProps) {
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: "15px",
+              fontWeight: 400,
+              lineHeight: 1.55,
+              letterSpacing: "0.005em",
               color: "#B0A89C",
               marginTop: "12px",
             }}

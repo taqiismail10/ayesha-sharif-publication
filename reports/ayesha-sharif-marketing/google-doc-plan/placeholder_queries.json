@@ -1,0 +1,100 @@
+[
+  {
+    "id": "TABLE_01",
+    "kind": "table",
+    "text_to_find": "[[TABLE_01]]",
+    "start": 2253,
+    "end": 2265
+  },
+  {
+    "id": "TABLE_02",
+    "kind": "table",
+    "text_to_find": "[[TABLE_02]]",
+    "start": 2312,
+    "end": 2324
+  },
+  {
+    "id": "TABLE_03",
+    "kind": "table",
+    "text_to_find": "[[TABLE_03]]",
+    "start": 3594,
+    "end": 3606
+  },
+  {
+    "id": "TABLE_04",
+    "kind": "table",
+    "text_to_find": "[[TABLE_04]]",
+    "start": 4135,
+    "end": 4147
+  },
+  {
+    "id": "TABLE_05",
+    "kind": "table",
+    "text_to_find": "[[TABLE_05]]",
+    "start": 4179,
+    "end": 4191
+  },
+  {
+    "id": "CHART_DATA_06",
+    "kind": "chart_data",
+    "text_to_find": "[[CHART_DATA_06]]",
+    "start": 5218,
+    "end": 5235
+  },
+  {
+    "id": "TABLE_07",
+    "kind": "table",
+    "text_to_find": "[[TABLE_07]]",
+    "start": 5290,
+    "end": 5302
+  },
+  {
+    "id": "TABLE_08",
+    "kind": "table",
+    "text_to_find": "[[TABLE_08]]",
+    "start": 6059,
+    "end": 6071
+  },
+  {
+    "id": "TABLE_09",
+    "kind": "table",
+    "text_to_find": "[[TABLE_09]]",
+    "start": 6539,
+    "end": 6551
+  },
+  {
+    "id": "TABLE_10",
+    "kind": "table",
+    "text_to_find": "[[TABLE_10]]",
+    "start": 6781,
+    "end": 6793
+  },
+  {
+    "id": "TABLE_11",
+    "kind": "table",
+    "text_to_find": "[[TABLE_11]]",
+    "start": 10721,
+    "end": 10733
+  },
+  {
+    "id": "TABLE_12",
+    "kind": "table",
+    "text_to_find": "[[TABLE_12]]",
+    "start": 11025,
+    "end": 11037
+  },
+  {
+    "id": "TABLE_13",
+    "kind": "table",
+    "text_to_find": "[[TABLE_13]]",
+    "start": 11070,
+    "end": 11082
+  },
+  {
+    "id": "TABLE_14",
+    "kind": "table",
+    "text_to_find": "[[TABLE_14]]",
+    "start": 11247,
+    "end": 11259
+  }
+]

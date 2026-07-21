@@ -114,7 +114,6 @@ To build: `AdminAuthModule`, `CustomerAuthModule`, `BooksModule`, `CategoriesMod
 | 5 | `Decimal` → number serialization (`serializeBookCard/Detail`) must match exactly | 🟠 |
 | 6 | Server-action forms (admin + account) rely on Next redirects/`useActionState` — conversion is UI-touching; do it form-by-form | 🟠 |
 | 7 | Duplicate `DATABASE_URL` pattern in root `.env` (see §5) | 🟡 |
-| 8 | Root installs require `--legacy-peer-deps` (react-lenis vs React 19) | 🟡 |
 
 ## 9. Assumptions
 

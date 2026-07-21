@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { getCurrentCustomer } from "@/lib/customer-auth";
 import { publicNav } from "@/lib/constants";
 import { getFooterContent, getContactContent } from "@/lib/site-content";
 
@@ -12,9 +13,10 @@ const navLinkClass =
 
 export async function Footer() {
   // Both columns now come from the DB (with constants as fallback)
-  const [footer, contact] = await Promise.all([
+  const [footer, contact, currentCustomer] = await Promise.all([
     getFooterContent(),
     getContactContent(),
+    getCurrentCustomer(),
   ]);
 
   // WhatsApp href uses the editable contact.whatsapp field
@@ -45,6 +47,7 @@ export async function Footer() {
               alt="Ayesha-Sharif Publication"
               width={1510}
               height={272}
+              sizes="152px"
               loading="lazy"
               className="h-auto w-[152px] object-contain"
             />
@@ -126,12 +129,14 @@ export async function Footer() {
         {/* ── Bottom bar ── */}
         <div className="flex flex-col gap-2 text-xs text-[rgba(245,241,232,0.48)] sm:flex-row sm:items-center sm:justify-between">
           <p>{footer.copyright}</p>
-          <Link
-            href="/admin/login"
-            className="w-fit transition-colors duration-150 hover:text-[#D4A574]"
-          >
-            Admin Login
-          </Link>
+          {!currentCustomer ? (
+            <Link
+              href="/admin/login"
+              className="w-fit transition-colors duration-150 hover:text-[#D4A574]"
+            >
+              Admin Login
+            </Link>
+          ) : null}
         </div>
 
       </div>

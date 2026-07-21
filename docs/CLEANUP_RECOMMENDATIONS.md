@@ -1,16 +1,25 @@
 # Cleanup Recommendations
 
-**Nothing is deleted yet.** This is the inventory of what becomes removable as migration phases complete. Every row stays `No` until its replacement is verified in production-like testing; rows flip phase-by-phase, never in bulk.
+This is the current cleanup inventory after the completed low-risk cleanup phases. Some low-risk artifacts and unused routes have already been removed; everything listed below still requires verification or migration work before deletion.
+
+## Already removed
+
+| File/folder | Why it was removed | Phase |
+|---|---|---|
+| `src/app/api/admin/policies/route.ts` | Unused internal admin JSON route; policy editor already used server actions | Phase 2A |
+| `src/app/api/admin/policies/[slug]/route.ts` | Unused internal admin JSON route; policy editor already used server actions | Phase 2A |
+| `src/app/api/admin/policies/[slug]/publish/route.ts` | Unused internal admin JSON route; policy editor already used server actions | Phase 2A |
 
 ## Next.js backend code (removable after the phase that replaces it)
 
 | File/folder | Why it may be unnecessary | Delete now? | Risk level | Reason |
 |---|---|---|---|---|
-| `src/app/api/health/route.ts` | NestJS `/health` already superior (real DB ping) | **No** | 🟢 low | Harmless duplicate; remove in Phase 4 sweep. May be referenced by uptime monitors — check before removal. |
+| `src/app/api/health/route.ts` | NestJS `/health` already superior (real DB ping) | **No** | 🟢 low | Compatibility route only. Remove after uptime monitors / hosting probes are migrated. |
 | `src/app/api/orders/route.ts` | Replaced by `POST /orders` (Phase 2) | **No** | 🔴 high | Revenue path. Remove only after checkout E2E passes against NestJS. |
-| `src/app/api/account/me/route.ts` | Replaced by `GET /auth/customer/me` (Phase 2) | **No** | 🟠 med | Header on every page depends on it. |
-| `src/app/api/recommendations/route.ts` | Replaced by recommendations module (Phase 2) | **No** | 🟡 low | Sections fail gracefully. |
-| `src/app/api/recommendation-events/route.ts` | Replaced (Phase 2) | **No** | 🟡 low | Fire-and-forget. |
+| `src/app/api/account/me/route.ts` | Replaced by `GET /auth/customer/me` (Phase 2) | **No** | 🟠 med | Frontend is already retargeted; keep only until external verification is complete. |
+| `src/app/api/recommendations/route.ts` | Replaced by recommendations module (Phase 2) | **No** | 🟡 low | Frontend is already retargeted; keep only until external verification is complete. |
+| `src/app/api/recommendation-events/route.ts` | Replaced (Phase 2) | **No** | 🟡 low | Frontend is already retargeted; keep only until external verification is complete. |
+| `src/app/api/policies/[slug]/route.ts` | Unused internally, but it is a public JSON API with no NestJS replacement | **No** | 🟠 med | Keep unless product explicitly retires the public JSON surface. |
 | `src/app/api/admin/upload/route.ts` | Replaced by `POST /admin/uploads` (Phase 3) | **No** | 🟠 med | Blocked on storage decision; old uploads in `public/uploads/books/` must keep serving. |
 | `src/app/api/admin/orders/export/route.ts` | Replaced by CSV endpoint (Phase 3) | **No** | 🟡 low | |
 | `src/app/admin/actions.ts` | All 14 actions become admin REST endpoints (Phase 3) | **No** | 🔴 high | Contains the stock-transaction logic; last to go. |
@@ -47,9 +56,8 @@
 
 | File/folder | Why it may be unnecessary | Delete now? | Risk level | Reason |
 |---|---|---|---|---|
-| `src/app/audit/` (audit-content.tsx, audit.css …) | Internal design-audit page; not linked from the site | **No** | 🟢 low | Dev tooling; owner call. Unrelated to backend migration. |
+| `src/app/audit/` + `LLM_PROJECT_CONTEXT.md` | Removed in Phase 3D after reference checks confirmed the audit page was isolated internal tooling with no public/admin links, tests, or script usage | Phase 3D | ✅ |
 | `src/lib/sample-data.ts` | Demo/no-DB fallback data | **No** | 🟡 low | Part of the "works without DB" mode; drop together with that mode (Phase 4 decision). |
-| `src/components/home/premium-hero.tsx` | Unmounted since homepage redesign (replaced by `hero-section.tsx`) | **No** | 🟢 low | Frontend, not backend — listed for completeness only. Verify no imports first. |
 
 ## Cleanup sequencing rule
 

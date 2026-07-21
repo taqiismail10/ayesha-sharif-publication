@@ -141,7 +141,7 @@ Run both servers (`npm run dev` at root; `npm run start:dev` in apps/api), then 
 8. **Checkout errors**: set a book's quantity above stock in cart → submit → inline error message shown (same UX)
 9. **Recommendations**: homepage/“Recommended for you” and cart “You may also like” sections load *(Network: `:4000/recommendations`, `:4000/recommendations/cart`)*
 10. **Event tracking**: click a product card → `POST :4000/recommendations/events` fires (consent banner accepted ⇒ anonymousId present)
-11. **Old routes still alive**: `curl -s localhost:3000/api/account/me` and `curl -s -X POST localhost:3000/api/orders -d '{}' -H "Content-Type: application/json"` still respond
+11. **Compatibility routes intentionally still alive**: `curl -s localhost:3000/api/account/me`, `curl -s localhost:3000/api/health`, `curl -s "localhost:3000/api/recommendations?anonymousId=test_compat_1234567890"`, and `curl -s -X POST localhost:3000/api/recommendation-events -H "Content-Type: application/json" -d '{"bookId":"x","eventType":"view"}'` still respond while external verification is pending
 12. **Admin untouched**: `/admin` login + book edit + upload still hit Next routes only
 
 CORS preflight verified automatically (2026-06-11): `OPTIONS /orders` from origin `:3000` → 204 with `allow-origin: http://localhost:3000`, `allow-credentials: true`.

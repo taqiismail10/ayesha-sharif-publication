@@ -16,7 +16,6 @@ import {
   customerLoginSchema,
   customerPasswordSchema,
   customerProfileSchema,
-  customerRegisterSchema,
   normalizeBangladeshPhone,
   normalizeEmail
 } from "@/lib/validators";
@@ -24,7 +23,21 @@ import {
 export type CustomerActionState = {
   error?: string;
   success?: string;
+  fieldErrors?: Record<string, string>;
 };
+
+function fieldErrorsFromZodIssues(
+  issues: { path: (string | number)[]; message: string }[]
+) {
+  const out: Record<string, string> = {};
+  for (const issue of issues) {
+    const key = issue.path[0];
+    if (typeof key === "string" && !(key in out)) {
+      out[key] = issue.message;
+    }
+  }
+  return out;
+}
 
 function booleanFromForm(formData: FormData, key: string) {
   return formData.get(key) === "on";
@@ -48,62 +61,15 @@ function databaseUnavailableState() {
 // TODO: Add per-IP and per-identifier rate limiting once the deployment layer
 // exposes a stable rate-limit store. Login failures intentionally stay generic.
 export async function registerCustomerAction(
-  _previousState: CustomerActionState,
+  previousState: CustomerActionState,
   formData: FormData
 ): Promise<CustomerActionState> {
-  if (!hasUsableDatabaseUrl()) return databaseUnavailableState();
-
-  const parsed = customerRegisterSchema.safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    phone: formData.get("phone"),
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword")
-  });
-
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid account details." };
-  }
-  const input = parsed.data as {
-    name: string;
-    email?: string;
-    phone?: string;
-    password: string;
+  void previousState;
+  void formData;
+  return {
+    error:
+      "Email verification is required. Start again from the registration page."
   };
-
-  try {
-    const passwordHash = await hashPassword(input.password);
-    const customer = await prisma.customer.create({
-      data: {
-        name: input.name,
-        email: input.email,
-        phone: input.phone,
-        passwordHash,
-        profile: {
-          create: {
-            displayName: input.name,
-            email: input.email,
-            phone: input.phone
-          }
-        },
-        preferences: {
-          create: {}
-        }
-      }
-    });
-
-    await createCustomerSession(customer);
-  } catch (caught) {
-    if (
-      caught instanceof Prisma.PrismaClientKnownRequestError &&
-      caught.code === "P2002"
-    ) {
-      return { error: customerConflictMessage() };
-    }
-    return { error: "Could not create your account. Please try again." };
-  }
-
-  redirect("/account/profile");
 }
 
 export async function loginCustomerAction(
@@ -119,7 +85,10 @@ export async function loginCustomerAction(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid login details." };
+    return {
+      error: parsed.error.issues[0]?.message || "Invalid login details.",
+      fieldErrors: fieldErrorsFromZodIssues(parsed.error.issues)
+    };
   }
   const input = parsed.data as {
     identifier: string;
@@ -149,8 +118,15 @@ export async function loginCustomerAction(
     ? await verifyPassword(input.password, customer.passwordHash)
     : false;
 
-  if (!customer?.isActive || !validPassword) {
+  if (
+    !customer?.isActive ||
+    !customer.passwordLoginEnabled ||
+    !validPassword
+  ) {
     return { error: "Invalid email/phone or password." };
+  }
+  if (customer.email && !customer.emailVerifiedAt) {
+    return { error: "Verify your email before signing in." };
   }
 
   await prisma.customer.update({
@@ -162,7 +138,7 @@ export async function loginCustomerAction(
   const redirectTo =
     input.redirectTo && isSafeAccountRedirect(input.redirectTo)
       ? input.redirectTo
-      : "/account/profile";
+      : "/account";
   redirect(redirectTo);
 }
 
@@ -191,7 +167,10 @@ export async function updateCustomerProfileAction(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid profile details." };
+    return {
+      error: parsed.error.issues[0]?.message || "Invalid profile details.",
+      fieldErrors: fieldErrorsFromZodIssues(parsed.error.issues)
+    };
   }
   const input = parsed.data as {
     displayName: string;
@@ -263,6 +242,8 @@ export async function updateCustomerProfileAction(
     return { error: "Could not update your profile. Please try again." };
   }
 
+  revalidatePath("/account");
+  revalidatePath("/account/settings");
   revalidatePath("/account/profile");
   return { success: "Profile saved." };
 }
@@ -279,7 +260,10 @@ export async function changeCustomerPasswordAction(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid password details." };
+    return {
+      error: parsed.error.issues[0]?.message || "Invalid password details.",
+      fieldErrors: fieldErrorsFromZodIssues(parsed.error.issues)
+    };
   }
   const input = parsed.data as {
     currentPassword: string;

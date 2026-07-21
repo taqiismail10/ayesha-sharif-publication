@@ -1,7 +1,5 @@
 import {
-  BadRequestException,
   Body,
-  ConflictException,
   Controller,
   Get,
   Header,
@@ -13,22 +11,16 @@ import {
 } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import type { Request, Response } from "express";
-import { Prisma } from "../../generated/prisma";
 import { PrismaService } from "../prisma/prisma.service";
 import { parseOrThrow } from "../common/validation/zod";
 import {
   customerLoginSchema,
-  customerRegisterSchema,
   type CustomerLoginInput,
-  type CustomerRegisterInput,
 } from "../common/contracts/customer.schemas";
 import {
   CustomerAuthService,
   customerSummary,
 } from "./customer-auth.service";
-
-const CONFLICT_MESSAGE =
-  "An account with this email or phone may already exist.";
 
 @Controller("auth/customer")
 export class CustomerAuthController {
@@ -36,60 +28,6 @@ export class CustomerAuthController {
     private readonly auth: CustomerAuthService,
     private readonly prisma: PrismaService,
   ) {}
-
-  /** POST /auth/customer/register — contract §1. Strict brute-force limit. */
-  @Throttle({ default: { limit: 10, ttl: 60_000 } })
-  @Post("register")
-  async register(
-    @Body() body: unknown,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    // Cast mirrors the old action's `parsed.data as {...}` (zod preprocess
-    // infers `unknown` for normalized fields).
-    const input = parseOrThrow(
-      customerRegisterSchema,
-      body,
-      "Invalid account details.",
-    ) as CustomerRegisterInput;
-
-    let customerId: string;
-    try {
-      const passwordHash = await this.auth.hashPassword(input.password);
-      const customer = await this.prisma.client.customer.create({
-        data: {
-          name: input.name,
-          email: input.email,
-          phone: input.phone,
-          passwordHash,
-          profile: {
-            create: {
-              displayName: input.name,
-              email: input.email,
-              phone: input.phone,
-            },
-          },
-          preferences: { create: {} },
-        },
-        include: { profile: true, preferences: true },
-      });
-      customerId = customer.id;
-
-      await this.auth.createSession(req, res, customerId);
-      return { ok: true, customer: customerSummary(customer) };
-    } catch (caught) {
-      if (
-        caught instanceof Prisma.PrismaClientKnownRequestError &&
-        caught.code === "P2002"
-      ) {
-        throw new ConflictException(CONFLICT_MESSAGE);
-      }
-      if (caught instanceof ConflictException) throw caught;
-      throw new BadRequestException(
-        "Could not create your account. Please try again.",
-      );
-    }
-  }
 
   /** POST /auth/customer/login — contract §2. Strict brute-force limit. */
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
@@ -120,8 +58,17 @@ export class CustomerAuthController {
       ? await this.auth.verifyPassword(input.password, customer.passwordHash)
       : false;
 
-    if (!customer?.isActive || !validPassword) {
+    if (
+      !customer?.isActive ||
+      !customer.passwordLoginEnabled ||
+      !validPassword
+    ) {
       throw new UnauthorizedException("Invalid email/phone or password.");
+    }
+    if (customer.email && !customer.emailVerifiedAt) {
+      throw new UnauthorizedException(
+        "Verify your email before signing in.",
+      );
     }
 
     await this.prisma.client.customer.update({

@@ -18,6 +18,7 @@ import {
   Truck
 } from "lucide-react";
 import { defaultContact } from "@/lib/constants";
+import type { HomepageFeature } from "@/lib/homepage-content-definitions";
 import { SectionTitle } from "@/components/site/section-title";
 import { ScrollReveal } from "@/components/site/scroll-reveal";
 
@@ -297,14 +298,23 @@ export function CategoriesSection({ categories }: { categories: HomeCategory[] }
   );
 }
 
-const trustItems = [
-  { icon: BookOpen,   label: "400+ Books" },
-  { icon: HandCoins,  label: "Cash on Delivery" },
-  { icon: RotateCcw,  label: "Easy Returns" },
-  { icon: Truck,      label: "Nationwide Shipping" },
-] as const;
+const trustIcons = {
+  "book-open": BookOpen,
+  "hand-coins": HandCoins,
+  "rotate-ccw": RotateCcw,
+  truck: Truck,
+  "shield-check": ShieldCheck,
+  "package-check": PackageCheck,
+  "book-check": BookCheck,
+} as const;
 
-export function TrustStrip() {
+export function TrustStrip({ items }: { items: HomepageFeature[] }) {
+  const visibleItems = [...items]
+    .filter((item) => item.enabled)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+
+  if (!visibleItems.length) return null;
+
   return (
     <section
       className="py-12"
@@ -315,26 +325,29 @@ export function TrustStrip() {
       }}
     >
       <div className="mx-auto flex max-w-[1200px] flex-wrap justify-center gap-x-12 gap-y-8 px-6">
-        {trustItems.map(({ icon: Icon, label }, i) => (
-          <ScrollReveal key={label} variant="rise" delay={i * 80}>
-            <div className="flex flex-col items-center gap-2">
-              <Icon
-                className="h-5 w-5"
-                aria-hidden="true"
-                style={{ color: "#6B8E6F" }}
-              />
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "13px",
-                  color: "#B0A89C",
-                }}
-              >
-                {label}
-              </span>
-            </div>
-          </ScrollReveal>
-        ))}
+        {visibleItems.map(({ iconKey, label }, i) => {
+          const Icon = trustIcons[iconKey];
+          return (
+            <ScrollReveal key={label} variant="rise" delay={i * 80}>
+              <div className="flex flex-col items-center gap-2">
+                <Icon
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                  style={{ color: "#6B8E6F" }}
+                />
+                <span
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "13px",
+                    color: "#B0A89C",
+                  }}
+                >
+                  {label}
+                </span>
+              </div>
+            </ScrollReveal>
+          );
+        })}
       </div>
     </section>
   );

@@ -5,6 +5,7 @@ This guide lists the manual assets Ayesha-Sharif Publication should add or repla
 ## Logo Assets
 
 ### `public/logo/logo.png`
+
 - Use: Header, favicon-adjacent brand moments, light backgrounds.
 - Recommended format: transparent PNG.
 - Recommended size: `512x512` or `640x640`.
@@ -12,6 +13,7 @@ This guide lists the manual assets Ayesha-Sharif Publication should add or repla
 - Style: clean publishing-house mark, deep navy and royal gold, readable at small sizes.
 
 ### `public/logo/logo-white.png`
+
 - Use: Footer and dark navy backgrounds.
 - Recommended format: transparent PNG.
 - Recommended size: `512x512` or `640x640`.
@@ -19,6 +21,7 @@ This guide lists the manual assets Ayesha-Sharif Publication should add or repla
 - Style: white/gold version of the same logo, no extra shadow baked into the file.
 
 ### Optional `public/logo/logo-mark.svg`
+
 - Use: Small icon moments, badges, loading states, and future app-style UI.
 - Recommended format: SVG.
 - Recommended size: square artboard, `512x512` viewBox.
@@ -27,6 +30,7 @@ This guide lists the manual assets Ayesha-Sharif Publication should add or repla
 ## Homepage Hero Image
 
 ### `public/banners/homepage-banner.webp`
+
 - Use: Optional hero/editorial background or future promotional banner.
 - Recommended dimensions: `1920x1080`.
 - Minimum dimensions: `1600x900`.
@@ -36,11 +40,13 @@ This guide lists the manual assets Ayesha-Sharif Publication should add or repla
 - Avoid: generic ecommerce stock images, dark unreadable images, low-resolution book piles, heavy blur, crypto/SaaS-style gradients.
 
 Current fallback asset:
+
 - `public/banners/homepage-banner.png` exists, but a compressed WebP replacement is recommended.
 
 ## Book Cover Images
 
 ### `public/book-covers/*.webp` or `public/book-covers/*.jpg`
+
 - Use: Product cards, book details, cart, related books.
 - Recommended ratio: portrait `3:4`.
 - Recommended dimensions: `900x1200`.
@@ -54,6 +60,7 @@ Current fallback asset:
 ## Future Learning Teaser
 
 ### `public/banners/learning-platform-teaser.svg`
+
 - Use: Future learning platform teaser section.
 - Recommended format: SVG for crisp CSS-friendly illustration.
 - Recommended artboard: `1200x800`.
@@ -63,6 +70,7 @@ Current fallback asset:
 - Do not imply active AI features, fake modules, or fake statistics.
 
 ### Alternative `public/banners/learning-platform-teaser.webp`
+
 - Recommended dimensions: `1400x900`.
 - Target weight: `160-280 KB`.
 - Use if a bitmap editorial illustration fits the brand better than SVG.
@@ -70,6 +78,7 @@ Current fallback asset:
 ## Optional Lightweight Animation
 
 ### Optional `public/animations/hero-books.json` or `public/animations/learning-teaser.svg`
+
 - Use only one lightweight animation if added.
 - Recommended format: Lottie JSON or animated SVG.
 - Target weight: under `120 KB`.

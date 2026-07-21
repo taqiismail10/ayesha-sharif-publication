@@ -146,11 +146,15 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
                   <td>{formatCurrency(order.grandTotal)}</td>
                   <td>
                     <p>{paymentMethodLabels[order.paymentMethod]}</p>
-                    <p className="text-xs font-bold text-muted">
+                    <p className="admin-status-badge mt-1">
                       {paymentStatusLabels[order.paymentStatus]}
                     </p>
                   </td>
-                  <td>{orderStatusLabels[order.orderStatus]}</td>
+                  <td>
+                    <span className="admin-status-badge">
+                      {orderStatusLabels[order.orderStatus]}
+                    </span>
+                  </td>
                   <td>{formatDate(order.createdAt)}</td>
                   <td>
                     <Link

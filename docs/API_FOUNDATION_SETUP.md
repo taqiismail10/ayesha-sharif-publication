@@ -1,6 +1,6 @@
 # API Foundation Setup (Phase 0)
 
-Standalone NestJS backend skeleton at `apps/api`. **No business features migrated yet** — the Next.js app still owns all real backend behavior. This service only proves the foundation: boot, config, Prisma wiring, health check, CORS, validation.
+Historical Phase 0 note for the original NestJS foundation at `apps/api`. The current repository has progressed beyond this snapshot: customer-facing APIs already run on NestJS, while some admin APIs and compatibility routes still remain in Next.js. Use `README.md` and `docs/API_ROUTE_MIGRATION_MAP.md` for the current state.
 
 ---
 
@@ -80,12 +80,11 @@ Unlike the old Next `/api/health` (which always said `not_checked`), this runs a
 
 1. **Dual Prisma generators**: `prisma generate` from the root now also writes `apps/api/generated/prisma`. If `apps/api/` were ever deleted, remove the `apiClient` generator block from `prisma/schema.prisma` too.
 2. **Schema drift discipline**: there is ONE schema. Never copy it into `apps/api`; always regenerate both clients after schema changes.
-3. **Peer-dep install flag**: `@studio-freight/react-lenis` in the root app requires `npm install --legacy-peer-deps` for root installs (React 19 peer mismatch) — unrelated to the API but affects anyone reinstalling root deps.
-4. **No production hardening yet**: no rate limiting, no request logging, no graceful-shutdown hooks beyond Prisma disconnect. Planned for later phases.
-5. **Port 4000** must be free locally; change `API_PORT` if it collides.
+3. **No production hardening yet**: no rate limiting, no request logging, no graceful-shutdown hooks beyond Prisma disconnect. Planned for later phases.
+4. **Port 4000** must be free locally; change `API_PORT` if it collides.
 
 ## What is intentionally NOT done (Phase 0 scope)
 
-- No auth, books, orders, customers, recommendations, uploads, settings, or site-content endpoints
-- No frontend changes — every page/component/API route in the Next app is untouched
+- No admin APIs, uploads, or site-content endpoints
+- At Phase 0 there were no frontend changes — this is no longer true in the current repository state
 - No env renames, no file deletions, no workspace conversion

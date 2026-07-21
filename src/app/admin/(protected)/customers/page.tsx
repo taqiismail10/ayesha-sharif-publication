@@ -87,7 +87,11 @@ export default async function AdminCustomersPage({ searchParams }: PageProps) {
                   </td>
                   <td>{customer._count.orders}</td>
                   <td>{customer._count.savedBooks}</td>
-                  <td>{customer.isActive ? "Active" : "Inactive"}</td>
+                  <td>
+                    <span className="admin-status-badge">
+                      {customer.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
                   <td>{formatDate(customer.createdAt)}</td>
                   <td>
                     <Link

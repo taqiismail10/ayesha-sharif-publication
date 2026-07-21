@@ -132,7 +132,7 @@ export default async function AdminDashboardPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-extrabold">{formatCurrency(order.grandTotal)}</p>
-                    <p className="text-xs font-bold text-muted">
+                    <p className="admin-status-badge mt-1">
                       {orderStatusLabels[order.orderStatus]}
                     </p>
                   </div>

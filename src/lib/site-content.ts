@@ -5,6 +5,11 @@ import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from "@/lib/cache-tags";
 import { hasUsableDatabaseUrl } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { defaultContact } from "@/lib/constants";
+import {
+  DEFAULT_HOMEPAGE_CONTENT,
+  type HomepageContent,
+  type HomepageFeature,
+} from "@/lib/homepage-content-definitions";
 
 // ─── Default values (match current hardcoded site content) ───────────────────
 
@@ -44,6 +49,46 @@ export const DEFAULT_ABOUT_CONTENT = {
 export type FooterContent  = typeof DEFAULT_FOOTER_CONTENT;
 export type ContactContent = typeof DEFAULT_CONTACT_CONTENT;
 export type AboutContent   = typeof DEFAULT_ABOUT_CONTENT;
+export type { HomepageContent, HomepageFeature } from "@/lib/homepage-content-definitions";
+
+function normalizeHomepageFeature(feature: Partial<HomepageFeature>): HomepageFeature {
+  return {
+    id: String(feature.id ?? "").trim() || crypto.randomUUID(),
+    label: String(feature.label ?? "").trim(),
+    iconKey: feature.iconKey ?? DEFAULT_HOMEPAGE_CONTENT.features[0].iconKey,
+    enabled: Boolean(feature.enabled ?? true),
+    sortOrder: Number.isFinite(feature.sortOrder) ? Number(feature.sortOrder) : 0,
+  };
+}
+
+function normalizeHomepageContent(value: unknown): HomepageContent {
+  const source = (value && typeof value === "object" ? value : {}) as Partial<HomepageContent> & {
+    features?: Array<Partial<HomepageFeature>>;
+  };
+
+  const features = Array.isArray(source.features)
+    ? source.features.map((feature, index) =>
+        normalizeHomepageFeature({
+          ...feature,
+          id: feature.id ?? DEFAULT_HOMEPAGE_CONTENT.features[index]?.id ?? crypto.randomUUID(),
+          iconKey:
+            feature.iconKey &&
+            DEFAULT_HOMEPAGE_CONTENT.features.some((item) => item.iconKey === feature.iconKey)
+              ? feature.iconKey
+              : DEFAULT_HOMEPAGE_CONTENT.features[index % DEFAULT_HOMEPAGE_CONTENT.features.length].iconKey,
+          enabled: feature.enabled ?? true,
+          sortOrder: Number.isFinite(feature.sortOrder) ? Number(feature.sortOrder) : index + 1,
+        }),
+      )
+    : DEFAULT_HOMEPAGE_CONTENT.features;
+
+  return {
+    heroEyebrow: String(source.heroEyebrow ?? DEFAULT_HOMEPAGE_CONTENT.heroEyebrow).trim(),
+    heroSubtitle: String(source.heroSubtitle ?? DEFAULT_HOMEPAGE_CONTENT.heroSubtitle).trim(),
+    heroMeta: String(source.heroMeta ?? DEFAULT_HOMEPAGE_CONTENT.heroMeta).trim(),
+    features: features.length ? features : DEFAULT_HOMEPAGE_CONTENT.features,
+  };
+}
 
 // ─── Internal DB reader ───────────────────────────────────────────────────────
 
@@ -54,6 +99,18 @@ async function readSetting<T extends object>(key: string, defaults: T): Promise<
     return { ...defaults, ...(row.value as Partial<T>) };
   } catch {
     return defaults;
+  }
+}
+
+async function readHomepageSetting(): Promise<HomepageContent> {
+  try {
+    const row = await prisma.siteSetting.findUnique({
+      where: { key: "site_content.homepage" },
+    });
+    if (!row) return DEFAULT_HOMEPAGE_CONTENT;
+    return normalizeHomepageContent(row.value);
+  } catch {
+    return DEFAULT_HOMEPAGE_CONTENT;
   }
 }
 
@@ -82,6 +139,15 @@ const cachedAbout = unstable_cache(
   cacheOpts,
 );
 
+const cachedHomepage = unstable_cache(
+  readHomepageSetting,
+  ["site-content-homepage"],
+  {
+    revalidate: CACHE_REVALIDATE_SECONDS.homepage,
+    tags: [CACHE_TAGS.homepage],
+  },
+);
+
 export async function getFooterContent(): Promise<FooterContent> {
   if (!hasUsableDatabaseUrl()) return DEFAULT_FOOTER_CONTENT;
   return cachedFooter();
@@ -95,4 +161,9 @@ export async function getContactContent(): Promise<ContactContent> {
 export async function getAboutContent(): Promise<AboutContent> {
   if (!hasUsableDatabaseUrl()) return DEFAULT_ABOUT_CONTENT;
   return cachedAbout();
+}
+
+export async function getHomepageContent(): Promise<HomepageContent> {
+  if (!hasUsableDatabaseUrl()) return DEFAULT_HOMEPAGE_CONTENT;
+  return cachedHomepage();
 }

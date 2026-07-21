@@ -63,6 +63,16 @@ enum CustomerBookEventType {
   sample_open
 }
 
+enum PolicyStatus {
+  draft
+  published
+}
+
+enum OtpPurpose {
+  SIGNUP
+  PASSWORD_RESET
+}
+
 model Admin {
   id           String    @id @default(cuid())
   name         String
@@ -70,8 +80,27 @@ model Admin {
   passwordHash String
   role         AdminRole @default(admin)
   isActive     Boolean   @default(true)
+  policies     Policy[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+}
+
+model Policy {
+  id               String       @id @default(cuid())
+  title            String
+  publishedTitle   String?
+  slug             String       @unique
+  content          String       @db.Text
+  publishedContent String?      @db.Text
+  status           PolicyStatus @default(draft)
+  updatedById      String?
+  updatedBy        Admin?       @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  publishedAt      DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([status])
+  @@index([updatedById])
 }
 
 model Book {
@@ -222,25 +251,55 @@ model SiteSetting {
 }
 
 model Customer {
-  id           String              @id @default(cuid())
-  name         String
-  email        String?             @unique
-  phone        String?             @unique
-  passwordHash String
-  isActive     Boolean             @default(true)
-  lastLoginAt  DateTime?
-  profile      CustomerProfile?
-  sessions     CustomerSession[]
-  preferences  CustomerPreference?
-  events       CustomerBookEvent[]
-  savedBooks   SavedBook[]
-  orders       Order[]
-  authProviders CustomerAuthProvider[]
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  id                   String                 @id @default(cuid())
+  name                 String
+  email                String?                @unique
+  phone                String?                @unique
+  passwordHash         String
+  passwordLoginEnabled Boolean                @default(true)
+  emailVerifiedAt      DateTime?
+  isActive             Boolean                @default(true)
+  lastLoginAt          DateTime?
+  profile              CustomerProfile?
+  sessions             CustomerSession[]
+  preferences          CustomerPreference?
+  events               CustomerBookEvent[]
+  savedBooks           SavedBook[]
+  orders               Order[]
+  authProviders        CustomerAuthProvider[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
 
   @@index([email])
   @@index([phone])
+}
+
+model OtpVerification {
+  id          String     @id @default(cuid())
+  email       String
+  otpHash     String
+  purpose     OtpPurpose
+  attempts    Int        @default(0)
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  resendAfter DateTime
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([email, purpose])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  tokenHash  String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([expiresAt])
 }
 
 // OAuth provider links for customers (Phase 2C). Additive only — customers

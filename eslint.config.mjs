@@ -13,8 +13,11 @@ const eslintConfig = [
   {
     ignores: [
       ".next/**",
+      "apps/api/dist/**",
+      "apps/api/generated/**",
       ".chrome-debug/**",
       ".chrome-*/**",
+      "generated/**",
       "node_modules/**",
       "public/**",
       "next-env.d.ts"

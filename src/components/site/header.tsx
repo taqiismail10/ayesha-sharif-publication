@@ -7,17 +7,54 @@ import { usePathname } from "next/navigation";
 import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { publicNav } from "@/lib/constants";
 import { useCart } from "@/lib/cart-client";
+import { apiFetch } from "@/lib/api-client";
+import { AccountMenu } from "@/components/site/account-menu";
 
-/* ─── Morph thresholds ─── */
-const MORPH_START = 40;
-const MORPH_END   = 80;
+const HEADER_MORPH_THRESHOLD = 80;
+
+type HeaderAuthState = "loading" | "guest" | "customer" | "admin";
+
+function getAuthAction(pathname: string, authState: HeaderAuthState) {
+  if (authState === "admin") {
+    return { href: "/admin", label: "Admin" };
+  }
+  if (pathname === "/account/login") {
+    return { href: "/account/register", label: "Register" };
+  }
+  if (pathname === "/account/register") {
+    return { href: "/account/login", label: "Login" };
+  }
+  if (authState === "guest") {
+    return { href: "/account/login", label: "Login" };
+  }
+  return null;
+}
 
 export function Header() {
   const pathname  = usePathname();
   const { count: cartCount } = useCart();
+  const [authState, setAuthState] = useState<HeaderAuthState>("loading");
+  /* Item 1 — cart bump: trigger a brief animation when count increments */
+  const prevCountRef = useRef(cartCount);
+  const [bumpKey, setBumpKey] = useState(0);
+  useEffect(() => {
+    if (cartCount > prevCountRef.current) {
+      setBumpKey((k) => k + 1);
+    }
+    prevCountRef.current = cartCount;
+  }, [cartCount]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const authAction = getAuthAction(pathname, authState);
+  const customerMenuItems = [
+    { href: "/account", label: "My Account" },
+    { href: "/account/orders", label: "Orders" },
+    { href: "/account/saved-books", label: "Saved Books" },
+    { href: "/cart", label: "Cart" },
+    { href: "/account/settings#profile", label: "Profile & Delivery" },
+    { href: "/account/security", label: "Security" },
+  ];
 
   /** True when `href` matches the current pathname */
   const isActive = (href: string) =>
@@ -25,47 +62,63 @@ export function Header() {
       ? pathname === "/"
       : pathname === href || pathname.startsWith(href + "/");
 
-  /* ── Morphing scroll driver ── */
+  /* Read the existing HTTP-only customer/admin sessions without duplicating auth state. */
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch("/api/account/header", {
+      cache: "no-store",
+      credentials: "same-origin",
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Unable to read account state.");
+        return response.json() as Promise<{ kind?: HeaderAuthState }>;
+      })
+      .then((data) => {
+        setAuthState(
+          data.kind === "customer" || data.kind === "admin" ? data.kind : "guest",
+        );
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setAuthState("guest");
+      });
+
+    return () => controller.abort();
+  }, [pathname]);
+
+  /* Toggle the shell only when native scrolling crosses the morph threshold. */
   useEffect(() => {
     const header = document.getElementById("morph-header");
     if (!header) return;
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let rafId = 0;
+    let framePending = false;
+    let isScrolled: boolean | null = null;
 
-    const setMorphVars = (progress: number) => {
-      const clamped = Math.min(Math.max(progress, 0), 1);
-      header.style.setProperty("--morph-progress", String(clamped));
-      header.style.setProperty("--morph-pad-top", `${20 * (1 - clamped)}px`);
-      header.style.setProperty("--morph-pad-inline", `${16 * (1 - clamped)}px`);
-      header.style.setProperty("--nav-radius", `${9999 * (1 - clamped)}px`);
-      header.style.setProperty("--nav-height", `${56 + 4 * clamped}px`);
-      header.style.setProperty(
-        "--nav-max-width",
-        clamped >= 1
-          ? `${window.innerWidth}px`
-          : `${1000 + (window.innerWidth - 1000) * clamped}px`,
-      );
+    const updateHeaderState = () => {
+      framePending = false;
+      const nextIsScrolled = window.scrollY >= HEADER_MORPH_THRESHOLD;
+      if (nextIsScrolled === isScrolled) return;
+
+      isScrolled = nextIsScrolled;
+      header.dataset.state = isScrolled ? "locked" : "resting";
     };
 
     const handleScroll = () => {
-      const y = window.scrollY;
-      if (prefersReduced) {
-        const locked = y >= MORPH_START;
-        setMorphVars(locked ? 1 : 0);
-        header.dataset.state = locked ? "locked" : "resting";
-        return;
-      }
-      const progress = Math.min(Math.max((y - MORPH_START) / (MORPH_END - MORPH_START), 0), 1);
-      setMorphVars(progress);
-      header.dataset.state =
-        y < MORPH_START ? "resting" : y >= MORPH_END ? "locked" : "morphing";
+      if (framePending) return;
+      framePending = true;
+      rafId = window.requestAnimationFrame(() => {
+        updateHeaderState();
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
-    handleScroll();
+    updateHeaderState();
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
+      window.cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -83,6 +136,15 @@ export function Header() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [searchOpen]);
+
+  const handleCustomerLogout = () => {
+    setMobileOpen(false);
+    apiFetch("/auth/customer/logout", { method: "POST" })
+      .catch(() => undefined)
+      .finally(() => {
+        window.location.href = "/";
+      });
+  };
 
   return (
     <>
@@ -158,6 +220,7 @@ export function Header() {
               alt="Ayesha-Sharif Publication"
               width={1510}
               height={272}
+              sizes="(max-width: 767px) 124px, 184px"
               priority
               className="header-logo-image object-contain"
             />
@@ -174,7 +237,7 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive(item.href) ? "page" : undefined}
-                className={`nav-link relative px-3 py-2 font-sans text-[12px] font-medium uppercase tracking-[0.07em] transition-colors duration-150 hover:text-white ${
+                className={`nav-link relative px-3 py-2 font-sans text-[12.5px] font-semibold uppercase tracking-[0.14em] transition-colors duration-150 hover:text-white ${
                   isActive(item.href) ? "nav-link-active text-white" : "text-white/85"
                 }`}
               >
@@ -184,46 +247,59 @@ export function Header() {
           </nav>
 
           {/* Right: icons + CTA (desktop) / hamburger (mobile) */}
-          <div className="header-actions flex flex-shrink-0 items-center gap-2">
+          <div className="header-actions flex flex-shrink-0 items-center gap-2 md:gap-3">
 
             {/* Search — desktop */}
             <button
               type="button"
               aria-label="Open search"
               onClick={() => setSearchOpen(true)}
-              className="hidden h-9 w-9 items-center justify-center text-white/85 transition-colors duration-150 hover:text-white md:inline-flex"
+              className="hidden h-11 w-11 items-center justify-center text-white/85 transition-colors duration-150 hover:text-white md:inline-flex"
             >
               <Search className="h-[18px] w-[18px]" aria-hidden="true" />
             </button>
 
             {/* Cart — desktop */}
             <Link
+              key={`cart-bump-${bumpKey}`}
               href="/cart"
               aria-label={
                 cartCount > 0
                   ? `Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`
                   : "Open cart"
               }
-              className="relative hidden h-9 w-9 items-center justify-center text-white/85 transition-colors duration-150 hover:text-white md:inline-flex"
+              className={
+                `relative hidden h-11 w-11 items-center justify-center text-white/85 transition-colors duration-150 hover:text-white md:inline-flex ${bumpKey > 0 ? "cart-bump" : ""}`
+              }
             >
               <ShoppingCart className="h-[18px] w-[18px]" aria-hidden="true" />
               {cartCount > 0 && (
                 <span
+                  key={`cart-badge-${bumpKey}`}
                   aria-hidden="true"
-                  className="absolute -right-0.5 -top-0.5 flex h-[14px] w-[14px] items-center justify-center rounded-full bg-gold text-[9px] font-bold leading-none text-white"
+                  className={`absolute -right-0.5 -top-0.5 flex h-[14px] w-[14px] items-center justify-center rounded-full bg-gold text-[9px] font-bold leading-none text-white ${bumpKey > 0 ? "cart-badge-flash" : ""}`}
                 >
                   {cartCount > 9 ? "9+" : cartCount}
                 </span>
               )}
             </Link>
 
-            {/* Login — desktop only, white pill button */}
-            <Link
-              href="/account/login"
-              className="hidden select-none items-center whitespace-nowrap rounded-full bg-white px-5 py-2 font-sans text-[11px] font-medium uppercase tracking-[0.07em] text-forest transition-[background-color,transform] duration-150 hover:scale-[1.02] hover:bg-cream md:inline-flex"
-            >
-              Login
-            </Link>
+            {authState === "customer" ? (
+              <AccountMenu />
+            ) : authAction ? (
+              <Link
+                href={authAction.href}
+                aria-label={authAction.label}
+                className="hidden select-none items-center whitespace-nowrap rounded-full bg-white px-5 py-2 font-sans text-[11.5px] font-semibold uppercase tracking-[0.18em] text-forest transition-[background-color,transform] duration-150 hover:scale-[1.02] hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 md:inline-flex"
+              >
+                {authAction.label}
+              </Link>
+            ) : (
+              <span
+                className="hidden h-[34px] w-[83px] rounded-full bg-white/70 md:inline-flex"
+                aria-hidden="true"
+              />
+            )}
 
             {/* Hamburger — mobile only */}
             <button
@@ -232,7 +308,7 @@ export function Header() {
               aria-expanded={mobileOpen}
               aria-controls="mobile-nav"
               onClick={() => setMobileOpen((v) => !v)}
-              className="site-mobile-menu-button h-10 w-10 items-center justify-center text-white"
+              className="site-mobile-menu-button h-11 w-11 items-center justify-center text-white"
             >
               {mobileOpen
                 ? <X className="h-[22px] w-[22px]" aria-hidden="true" />
@@ -267,14 +343,41 @@ export function Header() {
               </Link>
             ))}
 
-            {/* Mobile: Login link */}
-            <Link
-              href="/account/login"
-              onClick={() => setMobileOpen(false)}
-              className="block font-sans text-base text-cream/70 px-6 py-[18px] transition-colors duration-150 hover:text-cream"
-            >
-              Login
-            </Link>
+            {authState === "customer"
+              ? customerMenuItems
+                  .filter((item) => item.href !== "/cart")
+                  .map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block min-h-11 px-6 py-[18px] font-sans text-base text-cream/70 transition-colors duration-150 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold"
+                  >
+                    {item.label}
+                  </Link>
+                  ))
+              : null}
+
+            {authAction ? (
+              <Link
+                href={authAction.href}
+                aria-label={authAction.label}
+                onClick={() => setMobileOpen(false)}
+                className="block min-h-11 px-6 py-[18px] font-sans text-base text-cream/70 transition-colors duration-150 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold"
+              >
+                {authAction.label}
+              </Link>
+            ) : null}
+
+            {authState === "customer" ? (
+              <button
+                type="button"
+                onClick={handleCustomerLogout}
+                className="block min-h-11 px-6 py-[18px] text-left font-sans text-base text-cream/70 transition-colors duration-150 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold"
+              >
+                Logout
+              </button>
+            ) : null}
 
             {/* Mobile: search + cart row */}
             <div className="flex items-center gap-4 border-t border-cream/10 px-6 py-4">

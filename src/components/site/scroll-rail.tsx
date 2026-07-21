@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const TRACK_HEIGHT = 120; // px
 const FADE_THRESHOLD = 200; // px scrolled before rail appears
@@ -12,33 +12,97 @@ const FADE_THRESHOLD = 200; // px scrolled before rail appears
  * Fades in after FADE_THRESHOLD px of scroll.
  */
 export function ScrollRail() {
-  const [progress, setProgress] = useState(0);  // 0–1
-  const [visible, setVisible] = useState(false);
+  const railRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => {
-      const scrollY = window.scrollY;
-      const maxScroll =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const footer = document.querySelector(".site-footer");
-      const footerRect = footer?.getBoundingClientRect();
-      const footerInView = footerRect
-        ? footerRect.top < window.innerHeight && footerRect.bottom > 0
-        : false;
+    const rail = railRef.current;
+    const fill = fillRef.current;
+    if (!rail || !fill) return;
 
-      setVisible(scrollY > FADE_THRESHOLD && !footerInView);
-      setProgress(maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0);
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const footer = document.querySelector<HTMLElement>(".site-footer");
+    const sizeTarget =
+      document.querySelector<HTMLElement>(".site-canvas") ?? document.body;
+    let rafId = 0;
+    let framePending = false;
+    let listening = false;
+    let maxScroll = 0;
+    let footerTop = Number.POSITIVE_INFINITY;
+
+    const measure = () => {
+      maxScroll = Math.max(
+        document.documentElement.scrollHeight - window.innerHeight,
+        0,
+      );
+      footerTop = footer
+        ? footer.getBoundingClientRect().top + window.scrollY
+        : Number.POSITIVE_INFINITY;
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll(); // compute initial state
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const render = () => {
+      const scrollY = window.scrollY;
+      const footerInView = scrollY + window.innerHeight > footerTop;
+      const progress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
+      rail.style.opacity = scrollY > FADE_THRESHOLD && !footerInView ? "1" : "0";
+      fill.style.transform = `scaleY(${progress})`;
+    };
 
-  const fillHeight = Math.round(progress * TRACK_HEIGHT);
+    const scheduleRender = () => {
+      if (framePending) return;
+      framePending = true;
+      rafId = window.requestAnimationFrame(() => {
+        framePending = false;
+        render();
+      });
+    };
+
+    const handleResize = () => {
+      measure();
+      scheduleRender();
+    };
+    const sizeObserver = "ResizeObserver" in window
+      ? new ResizeObserver(handleResize)
+      : null;
+
+    const start = () => {
+      if (listening) return;
+      listening = true;
+      measure();
+      window.addEventListener("scroll", scheduleRender, { passive: true });
+      window.addEventListener("resize", handleResize, { passive: true });
+      sizeObserver?.observe(sizeTarget);
+      render();
+    };
+
+    const stop = () => {
+      if (!listening) return;
+      listening = false;
+      window.removeEventListener("scroll", scheduleRender);
+      window.removeEventListener("resize", handleResize);
+      sizeObserver?.disconnect();
+      window.cancelAnimationFrame(rafId);
+      framePending = false;
+      rail.style.opacity = "0";
+      fill.style.transform = "scaleY(0)";
+    };
+
+    const handleBreakpoint = () => {
+      if (desktop.matches) start();
+      else stop();
+    };
+
+    desktop.addEventListener("change", handleBreakpoint);
+    handleBreakpoint();
+    return () => {
+      desktop.removeEventListener("change", handleBreakpoint);
+      stop();
+    };
+  }, []);
 
   return (
     <div
+      ref={railRef}
       id="scroll-rail"
       aria-hidden="true"
       className="fixed hidden md:block"
@@ -47,7 +111,7 @@ export function ScrollRail() {
         top: "50%",
         transform: "translateY(-50%)",
         zIndex: 30,
-        opacity: visible ? 1 : 0,
+        opacity: 0,
         transition: "opacity 280ms cubic-bezier(0.4, 0, 0.2, 1)",
         pointerEvents: "none",
       }}
@@ -63,14 +127,17 @@ export function ScrollRail() {
       >
         {/* Fill — grows downward */}
         <div
+          ref={fillRef}
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             width: "1px",
-            height: `${fillHeight}px`,
+            height: `${TRACK_HEIGHT}px`,
             backgroundColor: "#D4A574",
-            transition: "height 80ms ease-out",
+            transform: "scaleY(0)",
+            transformOrigin: "top",
+            transition: "transform 80ms ease-out",
           }}
         />
       </div>

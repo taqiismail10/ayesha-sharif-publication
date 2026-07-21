@@ -11,8 +11,8 @@ export default async function AdminLoginPage() {
   if (admin) redirect("/admin");
 
   return (
-    <main className="container-px grid min-h-screen place-items-center bg-page py-10">
-      <div className="w-full max-w-md rounded-lg border border-line bg-white p-6 shadow-soft">
+    <main className="admin-theme admin-login container-px grid min-h-screen place-items-center bg-page py-10">
+      <div className="admin-login-card w-full max-w-md rounded-lg border border-line bg-white p-6 shadow-soft">
         <div className="mb-6 text-center">
           <Image
             src="/logo/logo-horizontal-forest-transparent-trimmed.png"
