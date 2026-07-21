@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
+  LayoutGrid,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -26,6 +27,7 @@ const links = [
   { href: "/admin/customers",    label: "Customers",    icon: Users,           exact: false },
   { href: "/admin/categories",   label: "Categories",   icon: Ticket,          exact: false },
   { href: "/admin/tags",         label: "Tags",         icon: Tags,            exact: false },
+  { href: "/admin/homepage",     label: "Homepage Content", icon: LayoutGrid,  exact: false },
   { href: "/admin/site-content", label: "Site Content", icon: FileText,        exact: false },
   { href: "/admin/policies",     label: "Policies",     icon: ScrollText,       exact: false },
   { href: "/admin/settings",     label: "Settings",     icon: Settings,        exact: false },

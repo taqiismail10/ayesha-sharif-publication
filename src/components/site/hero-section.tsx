@@ -3,7 +3,17 @@ import { ScrollReveal } from "@/components/site/scroll-reveal";
 import { HeroAtmosphere } from "@/components/site/hero-atmosphere";
 import { HeroParallaxLayer } from "@/components/site/hero-parallax-layer";
 
-export function HeroSection() {
+type HeroSectionProps = {
+  eyebrow: string;
+  subtitle: string;
+  meta: string;
+};
+
+export function HeroSection({
+  eyebrow,
+  subtitle,
+  meta,
+}: HeroSectionProps) {
   return (
     <section
       aria-label="Ayesha-Sharif Publication"
@@ -79,7 +89,7 @@ export function HeroSection() {
               marginBottom: "2px",
             }}
           >
-            Est. — Bangladeshi Literary Press
+            {eyebrow || "EST. — BANGLADESHI LITERARY PRESS"}
           </p>
         </ScrollReveal>
 
@@ -116,7 +126,7 @@ export function HeroSection() {
               marginTop: "4px",
             }}
           >
-            Quality books, delivered to your doorstep.
+            {subtitle || "Quality books, delivered to your doorstep."}
           </p>
         </ScrollReveal>
 
@@ -141,7 +151,7 @@ export function HeroSection() {
               letterSpacing: "0.02em",
             }}
           >
-            400+ books · Free delivery above ৳500
+            {meta || "400+ books · Free delivery above ৳500"}
           </p>
         </ScrollReveal>
 

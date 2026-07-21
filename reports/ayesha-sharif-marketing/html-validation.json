@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "sourceArtifactUrl": "https://mcp-server-dataanalyticswidgets-d90d6b74b2c37858.web-sandbox.oaiusercontent.com/?app=skybridge",
+  "generatedAt": "2026-07-21T00:00:00+06:00",
+  "stages": {
+    "validation": "passed",
+    "package": "passed",
+    "verification": "passed"
+  },
+  "counts": {
+    "blocks": 12,
+    "charts": 1,
+    "html": 0,
+    "metrics": 0,
+    "tables": 0
+  },
+  "sourceDialog": "passed",
+  "sourceInteraction": "keyboard_menu_semantic_click",
+  "viewports": [1440, 390]
+}

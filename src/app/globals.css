@@ -2070,6 +2070,32 @@ button {
   outline-offset: 2px;
 }
 
+.cart-view-link {
+  border: 1px solid rgba(176, 168, 156, 0.48);
+  background-color: rgba(255, 255, 255, 0.72);
+  color: var(--color-forest);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.cart-view-link:hover {
+  border-color: rgba(107, 142, 111, 0.48);
+  background-color: rgba(245, 241, 232, 0.88);
+  color: var(--color-sage);
+  box-shadow: 0 2px 6px rgba(45, 74, 43, 0.06);
+}
+
+.cart-view-link:active {
+  background-color: rgba(245, 241, 232, 0.96);
+  box-shadow: none;
+  transform: scale(0.98);
+}
+
 .product-book-card {
   border: 1px solid rgba(176, 168, 156, 0.3);
 }
@@ -2077,12 +2103,14 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .quantity-stepper,
   .quantity-stepper__button,
-  .cart-remove-button {
+  .cart-remove-button,
+  .cart-view-link {
     transition: none;
   }
 
   .quantity-stepper__button:active:not(:disabled),
-  .cart-remove-button:active {
+  .cart-remove-button:active,
+  .cart-view-link:active {
     transform: none;
   }
 }

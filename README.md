@@ -55,13 +55,13 @@ Both servers must run for customer features (account menu, checkout, recommendat
 
 ## Compatibility route status
 
-| Route | Status | Replacement | Notes |
-|---|---|---|---|
-| `/api/health` | Compatibility | `GET /health` | Remove after monitor / hosting probe migration |
-| `/api/account/me` | Compatibility | `GET /auth/customer/me` | Remove after external verification |
-| `/api/recommendations` | Compatibility | `GET /recommendations`, `POST /recommendations/cart` | Remove after external verification |
-| `/api/recommendation-events` | Compatibility | `POST /recommendations/events` | Remove after external verification |
-| `/api/policies/[slug]` | Retained public JSON API | None | Keep unless product explicitly retires the public JSON surface |
+| Route                          | Status                   | Replacement                                              | Notes                                                          |
+| ------------------------------ | ------------------------ | -------------------------------------------------------- | -------------------------------------------------------------- |
+| `/api/health`                | Compatibility            | `GET /health`                                          | Remove after monitor / hosting probe migration                 |
+| `/api/account/me`            | Compatibility            | `GET /auth/customer/me`                                | Remove after external verification                             |
+| `/api/recommendations`       | Compatibility            | `GET /recommendations`, `POST /recommendations/cart` | Remove after external verification                             |
+| `/api/recommendation-events` | Compatibility            | `POST /recommendations/events`                         | Remove after external verification                             |
+| `/api/policies/[slug]`       | Retained public JSON API | None                                                     | Keep unless product explicitly retires the public JSON surface |
 
 ## Default admin
 
@@ -73,9 +73,9 @@ Change it immediately after first login (seed stores a bcrypt hash).
 
 Full reference: **[docs/ENVIRONMENT_VARIABLES.md](docs/ENVIRONMENT_VARIABLES.md)**. Highlights:
 
-| App | Key variables |
-|---|---|
-| Next.js (root `.env`) | `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `NEXT_PUBLIC_API_BASE_URL` (NestJS URL, **no `/api` prefix**) |
+| App                        | Key variables                                                                                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Next.js (root`.env`)     | `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `NEXT_PUBLIC_API_BASE_URL` (NestJS URL, **no `/api` prefix**)                                          |
 | NestJS (`apps/api/.env`) | `DATABASE_URL`, `API_PORT`, `FRONTEND_ORIGIN`, `NEXTAUTH_SECRET` (required in production), `GOOGLE_CLIENT_ID/SECRET`, `GOOGLE_CALLBACK_URL`, `FRONTEND_URL` |
 
 Google login setup: **[docs/GOOGLE_OAUTH_SETUP.md](docs/GOOGLE_OAUTH_SETUP.md)** (returns 503 until configured — everything else works without it).
@@ -93,14 +93,14 @@ Google login setup: **[docs/GOOGLE_OAUTH_SETUP.md](docs/GOOGLE_OAUTH_SETUP.md)**
 
 ## Key documentation
 
-| Doc | Purpose |
-|---|---|
-| [NESTJS_BACKEND_MIGRATION_PLAN.md](docs/NESTJS_BACKEND_MIGRATION_PLAN.md) | Architecture, phases, risks, manual steps |
-| [API_ROUTES.md](docs/API_ROUTES.md) | NestJS endpoint reference + old-vs-new behavior tables |
-| [API_ROUTE_MIGRATION_MAP.md](docs/API_ROUTE_MIGRATION_MAP.md) | Every old route/action → new endpoint, with status |
-| [API_TESTING_GUIDE.md](docs/API_TESTING_GUIDE.md) | curl tests, SQL verification queries, browser checklist |
+| Doc                                                                                          | Purpose                                                 |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| [NESTJS_BACKEND_MIGRATION_PLAN.md](docs/NESTJS_BACKEND_MIGRATION_PLAN.md)                     | Architecture, phases, risks, manual steps               |
+| [API_ROUTES.md](docs/API_ROUTES.md)                                                           | NestJS endpoint reference + old-vs-new behavior tables  |
+| [API_ROUTE_MIGRATION_MAP.md](docs/API_ROUTE_MIGRATION_MAP.md)                                 | Every old route/action → new endpoint, with status     |
+| [API_TESTING_GUIDE.md](docs/API_TESTING_GUIDE.md)                                             | curl tests, SQL verification queries, browser checklist |
 | [PHASE_2_CUSTOMER_MIGRATION_VERIFICATION.md](docs/PHASE_2_CUSTOMER_MIGRATION_VERIFICATION.md) | Functional + OWASP-focused security verification report |
-| [CACHE_POLICY.md](CACHE_POLICY.md) / [PRODUCTION_SCALING.md](PRODUCTION_SCALING.md) | Caching and scaling notes |
+| [CACHE_POLICY.md](CACHE_POLICY.md) / [PRODUCTION_SCALING.md](PRODUCTION_SCALING.md)            | Caching and scaling notes                               |
 
 ## Business rules
 

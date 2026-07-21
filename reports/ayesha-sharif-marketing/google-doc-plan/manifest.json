@@ -1,0 +1,5136 @@
+{
+  "source_html": "F:\\Project\\AS_Publications\\reports\\ayesha-sharif-marketing\\report-for-doc.html",
+  "title": "Ayesha Sharif Publication Marketing Information Report",
+  "skeleton_text": "Ayesha Sharif Publication Marketing Information Report\nExecutive Summary — Marketing Summary\n[Confirmed from repository] A distinctive “Editorial Calm” identity already exists. The storefront combines forest green, sage, cream, gold, Crimson Text, Inter, and a Bengali serif display treatment. The result feels literary, minimal, elegant, culturally rooted, modern, and reader-focused. Sources: README.md; src/app/globals.css; src/app/layout.tsx; src/components/site/hero-section.tsx. \n[Confirmed from repository] The strongest marketing-ready elements are the logo family, Bengali-first hero, clear catalogue navigation, book-detail merchandising, direct purchase CTAs, WhatsApp support pathway, Open Graph setup, and responsive editorial UI. Sources: public/logo/; src/app/layout.tsx; src/components/books/product-card.tsx; src/components/books/book-purchase-panel.tsx; src/components/site/footer.tsx. \n[Owner confirmation required] The repository is not a reliable source for the real catalogue or proof claims. Seed and fallback books explicitly call themselves sample content; ISBNs are generated; policies identify themselves as placeholders; contact values include placeholders; and “400+ Books,” “Free delivery above ৳500,” “Easy Returns,” “Original publication,” “Best sellers,” and “Nationwide Shipping” lack sufficient repository proof. Sources: prisma/seed.ts; src/lib/sample-data.ts; src/lib/policy-definitions.ts; src/lib/homepage-content-definitions.ts; src/lib/site-content.ts. \n[Inferred from available content] The intended market is Bangladesh-based readers seeking printed books through a straightforward online ordering journey. Student, parent, children’s, religious, admission, and literary segments are plausible, but the category evidence comes from demo data and cannot yet drive public campaigns. \n\nBottom line: the visual identity and storefront can support future marketing, but factual content, proof, rights-cleared photography, real books/authors, and owner-approved positioning must be collected before campaigns are produced.\n2. Confirmed Marketing Information\n“Confirmed” means present in repository content or implemented as a website capability; it does not independently verify a legal or real-world business fact.\n[[TABLE_01]]\n\n3. Existing Visual Theme\nMarketing character\n[[TABLE_02]]\n\nUI and image style\nLayout: centred editorial sections, generous whitespace, responsive grids, 1,200–1,440 px content widths.\nCards: white or translucent “glass” surfaces; typically 8–10 px radius; soft shadows such as 0 2px 8px rgba(0,0,0,.06).\nButtons: compact 4–6 px radius; sage fill, forest hover, gold focus; uppercase/tracked labels in major CTAs.\nGradients/backgrounds: cream base with low-opacity forest, soft grey and gold gradients; literary fragments, hairlines and subtle dust.\nIcons: consistent Lucide outline icons, generally small and functional.\nPhotography: effectively absent. Book cards generate fallback covers; there are no owned author, office, event or production photographs.\nDesktop/mobile consistency: responsive component classes and mobile breakpoints preserve the same palette and hierarchy. The current visual identity is suited to square and vertical social templates, but dedicated templates do not exist.\n\nTypography audit and marketing system\n[Confirmed] Loaded families: Crimson Text 400/600 normal/italic; Inter 400/500; Noto Serif Bengali 700/900; Montserrat 800/900; Anek Bangla 800. Source: src/app/layout.tsx. Tailwind defines Crimson/Georgia for serif and Inter/Noto Sans Bengali/system for sans/heading in tailwind.config.ts.\n[[TABLE_03]]\n\nIssues: five font families are loaded, but Montserrat and Anek are not clearly active in current public sections; Inter 600 is used in styling without being loaded; “Noto Sans Bengali” is named as fallback but not loaded; small low-contrast text and wide uppercase tracking reduce readability; no font-licence documentation was found. For promotional graphics, use Crimson + Inter + Noto Serif Bengali and drop Montserrat unless a specific campaign needs it.\n4. Recommended Marketing Colour Palette\nRepository colour inventory\n[[TABLE_04]]\n\nRecommended marketing palette\n[[TABLE_05]]\n\nContrast cautions: #B0A89C is approximately 2.09:1 on cream and 2.35:1 on white; white on #6B8E6F is approximately 3.67:1; white on #D4A574 is approximately 2.23:1. These combinations should not carry small marketing copy. Duplicate legacy colours—#F7F1E3/#FFFCF6 creams, #C9A227 gold, #10233F navy, #0F766E emerald and #111827 ink—should be consolidated where they act as brand colours.\nMarketing applications: cream/forest/gold for premium and literary posts; cream/sage/forest for educational explainers; deep forest/cream/gold for book launches; forest CTA panels for advertisements. Preserve generous whitespace and avoid multi-colour discount styling.\nThe chart below counts exact six-digit HEX occurrences across inspected TS, TSX, CSS and SVG files. It confirms forest, soft grey, gold, white, sage and cream as the dominant implemented system; frequency does not imply that every combination is accessible.\nMost-used implemented brand colours\nExact six-digit HEX occurrences in inspected TS, TSX, CSS and SVG files.\n[[CHART_DATA_06]]\n\n5. Marketing Asset Inventory\nUsable and risky assets\n[[TABLE_07]]\n\nChannel readiness\nFacebook/Instagram profile: simplified icon is usable after padding verification.\nFacebook/LinkedIn cover: no dedicated asset; horizontal logo alone is insufficient.\nInstagram posts/stories/reels: no templates, book assets, video, portraits or frame system.\nYouTube thumbnails/TikTok: no video identity or thumbnail templates.\nBook-release/author campaigns: logo and palette are ready; factual content, covers, portraits and campaign templates are missing.\nWebsite advertisements/email: OG banner is stale; no modular campaign banner or newsletter design exists.\nPrint posters/event banners: SVG logos are suitable, but CMYK/Pantone values, minimum size, clear space and print templates are missing.\n\nWebsite marketing-section checklist\n[[TABLE_08]]\n\nTrust-building status\nUsable after verification: book metadata structure, ISBN field, payment-method UI, delivery-area UI, policies framework, office/contact fields. Unsupported or absent: real ISBN records, customer/author counts, years, reviews, awards, partnerships, media mentions, event photographs and secure-payment certification. Never turn repository placeholders into advertising claims.\n6. Audience and Product Map\nProduct and service marketing inventory\n[[TABLE_09]]\n\nThe named titles, authors, prices, dates, ISBNs and bestseller flags in prisma/seed.ts and src/lib/sample-data.ts are explicitly sample/demo content. They are excluded from the promotional inventory.\nEvidence-based audience map\n[[TABLE_10]]\n\nPreliminary priority: direct-to-reader Bangladeshi customers are the clearest repository-supported audience. Student, parent, religious, literary and B2B campaigns should wait for owner-confirmed catalogue and priorities.\n7. Marketing Message Draft\nCurrent message and positioning\nRepository messages: “Quality books, delivered to your doorstep,” “Browse Books,” “Original publications for readers, students, and lifelong learners across Bangladesh,” “simple, useful, and reader-friendly books,” and “Search, filter, and order books.”\nClarity assessment:\nWhat it offers: reasonably clear—an online book catalogue and ordering flow.\nWho it serves: weak—“readers and students” appears, but audience priorities are unverified.\nWhy choose it: weak—quality, originality, convenience and delivery are asserted without proof.\nDifferentiation: not established.\nNext action: clear—browse, add to cart, buy, checkout or contact via WhatsApp.\n\nPreliminary drafts\nThese drafts use only repository-supported capabilities. The preferred legal name and Bangladesh positioning still require owner approval.\nShort tagline: Books made easier to discover and order.\nLonger tagline: A clear, reader-friendly way to browse printed books and order online.\nPositioning statement: Ayesha Sharif Publication provides a direct online catalogue where readers can discover printed books, review key details and place an order through a straightforward checkout.\nHero headline: Browse books. Order online.\nHero subheading: Explore the catalogue, check availability and choose the ordering option that works for you.\nThirty-word description: Ayesha Sharif Publication offers an online catalogue for discovering printed books, viewing essential publication details and placing orders through a clear, practical checkout experience.\nFifty-word social bio: Discover printed books from Ayesha Sharif Publication through a simple online catalogue. Browse titles, check prices and availability, save books for later, or place an order through guest or account checkout. Official catalogue, author and delivery information will be added after owner verification.\nOne-hundred-word introduction: Ayesha Sharif Publication is developing a reader-friendly online home for discovering and ordering printed books. The website allows visitors to browse the catalogue, search by title or author, review book information, save books, add available titles to a cart and complete an order as a guest or registered customer. The current repository also supports pre-orders, manual payment options and delivery-area selection. Before public marketing begins, the publication’s official name, catalogue, authors, delivery terms, contact details and brand story should be verified by the owner so that every campaign is accurate, consistent and trustworthy.\n\nTone-of-voice guide\nRecommended voice: calm, clear, culturally aware, reader-first and evidence-led.\nBe specific: name the book, audience, format, price and availability.\nBe warm, not exaggerated: invite discovery without “best,” “number one” or unsupported superlatives.\nRespect both languages: write natural Bengali and English rather than literal translation.\nMake action easy: short CTAs with one clear next step.\nShow proof: attach ISBN, author, excerpt, review source or delivery terms whenever claimed.\n\nUse: discover, browse, printed book, author, edition, available, pre-order, read a sample, order online, verified review. Avoid until proven: 400+ books, bestseller, original, award-winning, nationwide, guaranteed, easy returns, free delivery, premium quality.\nBengali headline: সহজে বই খুঁজুন, অনলাইনে অর্ডার করুন\nEnglish headline: Discover books and order online\nBengali caption: বইয়ের তথ্য, মূল্য ও প্রাপ্যতা দেখে আপনার পছন্দের বইটি বেছে নিন।\nEnglish caption: Review the details, check availability and choose your next book.\nBengali CTA: বই দেখুন\nEnglish CTA: Browse books\n\nCustomer-facing CTA inventory\n[[TABLE_11]]\n\nMissing CTAs: subscribe for releases, meet authors, read verified reviews, download catalogue, wholesale enquiry, submit manuscript, follow verified social accounts and register for events. Add only when the underlying offer exists.\n8. Social-Media Content Pillars\nCurrent social readiness\n[[TABLE_12]]\n\nEvidence-based content pillars\n[[TABLE_13]]\n\nDiscounts, giveaways, events and seasonal posts are possible only after the owner supplies real terms, budget, dates and fulfilment rules.\nContent opportunity map\n[[TABLE_14]]\n\n9. Missing Information Questionnaire\nWhat is the exact legal and public English name, including hyphenation and singular/plural? Needed to resolve repository/wordmark inconsistency.\nWhat is the approved Bengali name and is “ASP” approved publicly? Needed for bilingual templates and social avatars.\nWho founded, owns and manages the publication, and what can be published about them? Needed for brand story and credibility.\nWhat year was the publication established? Needed before using “EST.” or experience claims.\nWhat are the approved mission, vision, values and founding story? Needed for positioning and content themes.\nWhat makes the publication different from other publishers or bookstores? Needed for a defensible value proposition.\nWho are the primary and secondary audiences? Needed to prioritise campaigns and channels.\nWhich publishing categories are real and strategically important? Needed to replace demo categories.\nProvide the real book catalogue with authors, ISBNs, editions, language, price, stock, publication dates, descriptions and rights-cleared covers. Needed for all product marketing.\nWhich books are priority releases, proven bestsellers or upcoming launches? What evidence supports each label? Needed for honest merchandising.\nProvide approved author bios, portraits, social handles, quotes and permissions. Needed for author campaigns.\nAre e-books, journals, magazines, manuscript publishing or author services offered? Needed to define the product/service portfolio.\nIf manuscript submission is open, what are the criteria, process, rights, royalties and response times? Needed before author-acquisition promotion.\nConfirm the official website domain, email, phone, WhatsApp, address and business hours. Needed for conversion and metadata.\nConfirm all owned social accounts and preferred username. Who has administrative access? Needed for channel activation.\nWhich payment methods, merchant accounts and delivery regions are live? Needed for checkout reassurance.\nWhat are the approved delivery charges, free-shipping threshold, timing, tracking, cancellation, return and refund rules? Needed to replace placeholder claims/policies.\nWhere are books distributed—own site, marketplaces, bookshops, fairs, schools or libraries? Needed for purchase and partnership messaging.\nAre wholesale/institutional sales offered? Provide MOQ, trade discount and contact process. Needed for B2B marketing.\nProvide verified testimonials, reviews, awards, partnerships, media coverage, events and numerical achievements. Needed for trust content.\nWho owns the logos, book covers, excerpts, photographs and videos, and are licences documented? Needed to prevent rights violations.\nWhat original photography/video assets are available or can be produced monthly? Needed for a sustainable content plan.\nWhich campaign language is preferred—Bengali, English or bilingual—and who approves copy? Needed for workflow and consistency.\nWhat are the next 90-day marketing objectives and campaign priorities? Needed to turn this information report into strategy.\nWhat monthly budget, advertising budget and team capacity are available? Needed for realistic channel/cadence planning.\nWhich competitors or benchmark publishers should be researched later? Needed for a separate external positioning study.\nWhat KPIs define success—sales, qualified enquiries, manuscripts, subscribers, repeat purchases or reach? Needed for measurement.\nWhich email, analytics and advertising accounts already exist, and what consent rules apply? Needed for newsletters, attribution and remarketing.\n\n10. Marketing Readiness Verdict\nDecision\nOWNER_INFORMATION_REQUIRED\nThe repository is sufficient to define a preliminary visual and editorial marketing direction, but it is not sufficient to launch factual book, author, trust, delivery, service or paid-advertising campaigns safely.\nRecommended next steps\nApprove the English/Bengali name and short form.\nReplace the demo catalogue, generated ISBNs, placeholders and unsupported claims.\nVerify contact, domain, social, payment, delivery and policy information.\nSecure rights-cleared book covers, author portraits, excerpts and photography.\nApprove positioning, priority audiences, campaign goals and proof library.\nCreate channel templates from the forest/sage/cream/gold system.\nLaunch a single verified book or brand campaign before scaling channels.\n\nFurther questions\nThe most decision-changing unknowns are the real catalogue, priority audience, differentiation, proof, distribution footprint and first campaign. These determine whether the visual system should lean primarily literary, educational, faith-oriented, family-oriented or broad reader retail.\nCaveats and assumptions\nThis is a marketing-only repository report, not a legal, market-demand or competitor study.\nRepository presence confirms project content/capability, not real-world business status.\nDemo/seed books and placeholder policies/contact data are excluded as business facts.\nNo external competitor, social-account or keyword-volume research was performed.\nRuntime database-only values and environment configuration were excluded.\nColour counts cover exact six-digit HEX literals; translucent and named Tailwind colours are not included in the frequency chart.\nNo repository files were modified to create this report.\n\nSources\nRepository brand-colour frequency scan Reproduces exact six-digit HEX occurrence counts from the reviewed TS, TSX, CSS, and SVG files under src and public. Repository scope: src/**/*.{ts,tsx,css}, public/**/*.svg WITH colour_counts(hex_code, occurrences, rank, role, status) AS (VALUES ('#2D4A2B',42,1,'Forest / primary','active'),('#B0A89C',35,2,'Soft grey / muted','active but low contrast'),('#D4A574',33,3,'Gold / accent','active'),('#FFFFFF',23,4,'White / surface','active'),('#6B8E6F',22,5,'Sage / secondary','active'),('#F5F1E8',10,6,'Cream / background','active')) SELECT hex_code, occurrences, rank, role, status FROM colour_counts ORDER BY occurrences DESC;\n",
+  "headings": [
+    {
+      "start": 0,
+      "end": 54,
+      "level": 1,
+      "text": "Ayesha Sharif Publication Marketing Information Report"
+    },
+    {
+      "start": 55,
+      "end": 92,
+      "level": 2,
+      "text": "Executive Summary — Marketing Summary"
+    },
+    {
+      "start": 2060,
+      "end": 2094,
+      "level": 2,
+      "text": "2. Confirmed Marketing Information"
+    },
+    {
+      "start": 2267,
+      "end": 2291,
+      "level": 2,
+      "text": "3. Existing Visual Theme"
+    },
+    {
+      "start": 2292,
+      "end": 2311,
+      "level": 3,
+      "text": "Marketing character"
+    },
+    {
+      "start": 2326,
+      "end": 2344,
+      "level": 3,
+      "text": "UI and image style"
+    },
+    {
+      "start": 3265,
+      "end": 3302,
+      "level": 3,
+      "text": "Typography audit and marketing system"
+    },
+    {
+      "start": 4067,
+      "end": 4106,
+      "level": 2,
+      "text": "4. Recommended Marketing Colour Palette"
+    },
+    {
+      "start": 4107,
+      "end": 4134,
+      "level": 3,
+      "text": "Repository colour inventory"
+    },
+    {
+      "start": 4149,
+      "end": 4178,
+      "level": 3,
+      "text": "Recommended marketing palette"
+    },
+    {
+      "start": 5237,
+      "end": 5265,
+      "level": 2,
+      "text": "5. Marketing Asset Inventory"
+    },
+    {
+      "start": 5266,
+      "end": 5289,
+      "level": 3,
+      "text": "Usable and risky assets"
+    },
+    {
+      "start": 5304,
+      "end": 5321,
+      "level": 3,
+      "text": "Channel readiness"
+    },
+    {
+      "start": 6023,
+      "end": 6058,
+      "level": 3,
+      "text": "Website marketing-section checklist"
+    },
+    {
+      "start": 6073,
+      "end": 6094,
+      "level": 3,
+      "text": "Trust-building status"
+    },
+    {
+      "start": 6471,
+      "end": 6498,
+      "level": 2,
+      "text": "6. Audience and Product Map"
+    },
+    {
+      "start": 6499,
+      "end": 6538,
+      "level": 3,
+      "text": "Product and service marketing inventory"
+    },
+    {
+      "start": 6753,
+      "end": 6780,
+      "level": 3,
+      "text": "Evidence-based audience map"
+    },
+    {
+      "start": 7017,
+      "end": 7043,
+      "level": 2,
+      "text": "7. Marketing Message Draft"
+    },
+    {
+      "start": 7044,
+      "end": 7075,
+      "level": 3,
+      "text": "Current message and positioning"
+    },
+    {
+      "start": 7728,
+      "end": 7746,
+      "level": 3,
+      "text": "Preliminary drafts"
+    },
+    {
+      "start": 9602,
+      "end": 9621,
+      "level": 3,
+      "text": "Tone-of-voice guide"
+    },
+    {
+      "start": 10691,
+      "end": 10720,
+      "level": 3,
+      "text": "Customer-facing CTA inventory"
+    },
+    {
+      "start": 10968,
+      "end": 10999,
+      "level": 2,
+      "text": "8. Social-Media Content Pillars"
+    },
+    {
+      "start": 11000,
+      "end": 11024,
+      "level": 3,
+      "text": "Current social readiness"
+    },
+    {
+      "start": 11039,
+      "end": 11069,
+      "level": 3,
+      "text": "Evidence-based content pillars"
+    },
+    {
+      "start": 11223,
+      "end": 11246,
+      "level": 3,
+      "text": "Content opportunity map"
+    },
+    {
+      "start": 11261,
+      "end": 11297,
+      "level": 2,
+      "text": "9. Missing Information Questionnaire"
+    },
+    {
+      "start": 14845,
+      "end": 14876,
+      "level": 2,
+      "text": "10. Marketing Readiness Verdict"
+    },
+    {
+      "start": 14877,
+      "end": 14885,
+      "level": 3,
+      "text": "Decision"
+    },
+    {
+      "start": 15128,
+      "end": 15150,
+      "level": 3,
+      "text": "Recommended next steps"
+    },
+    {
+      "start": 15649,
+      "end": 15666,
+      "level": 3,
+      "text": "Further questions"
+    },
+    {
+      "start": 15956,
+      "end": 15979,
+      "level": 3,
+      "text": "Caveats and assumptions"
+    },
+    {
+      "start": 16590,
+      "end": 16597,
+      "level": 2,
+      "text": "Sources"
+    }
+  ],
+  "inline_styles": [
+    {
+      "start": 93,
+      "end": 176,
+      "style": "bold",
+      "text": "[Confirmed from repository] A distinctive “Editorial Calm” identity already exists."
+    },
+    {
+      "start": 395,
+      "end": 404,
+      "style": "code",
+      "text": "README.md"
+    },
+    {
+      "start": 406,
+      "end": 425,
+      "style": "code",
+      "text": "src/app/globals.css"
+    },
+    {
+      "start": 427,
+      "end": 445,
+      "style": "code",
+      "text": "src/app/layout.tsx"
+    },
+    {
+      "start": 447,
+      "end": 483,
+      "style": "code",
+      "text": "src/components/site/hero-section.tsx"
+    },
+    {
+      "start": 486,
+      "end": 743,
+      "style": "bold",
+      "text": "[Confirmed from repository] The strongest marketing-ready elements are the logo family, Bengali-first hero, clear catalogue navigation, book-detail merchandising, direct purchase CTAs, WhatsApp support pathway, Open Graph setup, and responsive editorial UI."
+    },
+    {
+      "start": 753,
+      "end": 765,
+      "style": "code",
+      "text": "public/logo/"
+    },
+    {
+      "start": 767,
+      "end": 785,
+      "style": "code",
+      "text": "src/app/layout.tsx"
+    },
+    {
+      "start": 787,
+      "end": 824,
+      "style": "code",
+      "text": "src/components/books/product-card.tsx"
+    },
+    {
+      "start": 826,
+      "end": 870,
+      "style": "code",
+      "text": "src/components/books/book-purchase-panel.tsx"
+    },
+    {
+      "start": 872,
+      "end": 902,
+      "style": "code",
+      "text": "src/components/site/footer.tsx"
+    },
+    {
+      "start": 905,
+      "end": 1014,
+      "style": "bold",
+      "text": "[Owner confirmation required] The repository is not a reliable source for the real catalogue or proof claims."
+    },
+    {
+      "start": 1357,
+      "end": 1371,
+      "style": "code",
+      "text": "prisma/seed.ts"
+    },
+    {
+      "start": 1373,
+      "end": 1395,
+      "style": "code",
+      "text": "src/lib/sample-data.ts"
+    },
+    {
+      "start": 1397,
+      "end": 1426,
+      "style": "code",
+      "text": "src/lib/policy-definitions.ts"
+    },
+    {
+      "start": 1428,
+      "end": 1467,
+      "style": "code",
+      "text": "src/lib/homepage-content-definitions.ts"
+    },
+    {
+      "start": 1469,
+      "end": 1492,
+      "style": "code",
+      "text": "src/lib/site-content.ts"
+    },
+    {
+      "start": 1495,
+      "end": 1649,
+      "style": "bold",
+      "text": "[Inferred from available content] The intended market is Bangladesh-based readers seeking printed books through a straightforward online ordering journey."
+    },
+    {
+      "start": 1826,
+      "end": 1838,
+      "style": "bold",
+      "text": "Bottom line:"
+    },
+    {
+      "start": 2345,
+      "end": 2352,
+      "style": "bold",
+      "text": "Layout:"
+    },
+    {
+      "start": 2451,
+      "end": 2457,
+      "style": "bold",
+      "text": "Cards:"
+    },
+    {
+      "start": 2571,
+      "end": 2579,
+      "style": "bold",
+      "text": "Buttons:"
+    },
+    {
+      "start": 2680,
+      "end": 2702,
+      "style": "bold",
+      "text": "Gradients/backgrounds:"
+    },
+    {
+      "start": 2816,
+      "end": 2822,
+      "style": "bold",
+      "text": "Icons:"
+    },
+    {
+      "start": 2888,
+      "end": 2900,
+      "style": "bold",
+      "text": "Photography:"
+    },
+    {
+      "start": 3026,
+      "end": 3053,
+      "style": "bold",
+      "text": "Desktop/mobile consistency:"
+    },
+    {
+      "start": 3303,
+      "end": 3331,
+      "style": "bold",
+      "text": "[Confirmed] Loaded families:"
+    },
+    {
+      "start": 3456,
+      "end": 3474,
+      "style": "code",
+      "text": "src/app/layout.tsx"
+    },
+    {
+      "start": 3574,
+      "end": 3592,
+      "style": "code",
+      "text": "tailwind.config.ts"
+    },
+    {
+      "start": 3608,
+      "end": 3615,
+      "style": "bold",
+      "text": "Issues:"
+    },
+    {
+      "start": 4193,
+      "end": 4211,
+      "style": "bold",
+      "text": "Contrast cautions:"
+    },
+    {
+      "start": 4581,
+      "end": 4604,
+      "style": "bold",
+      "text": "Marketing applications:"
+    },
+    {
+      "start": 5322,
+      "end": 5349,
+      "style": "bold",
+      "text": "Facebook/Instagram profile:"
+    },
+    {
+      "start": 5404,
+      "end": 5428,
+      "style": "bold",
+      "text": "Facebook/LinkedIn cover:"
+    },
+    {
+      "start": 5488,
+      "end": 5518,
+      "style": "bold",
+      "text": "Instagram posts/stories/reels:"
+    },
+    {
+      "start": 5580,
+      "end": 5606,
+      "style": "bold",
+      "text": "YouTube thumbnails/TikTok:"
+    },
+    {
+      "start": 5649,
+      "end": 5679,
+      "style": "bold",
+      "text": "Book-release/author campaigns:"
+    },
+    {
+      "start": 5779,
+      "end": 5808,
+      "style": "bold",
+      "text": "Website advertisements/email:"
+    },
+    {
+      "start": 5885,
+      "end": 5913,
+      "style": "bold",
+      "text": "Print posters/event banners:"
+    },
+    {
+      "start": 6095,
+      "end": 6121,
+      "style": "bold",
+      "text": "Usable after verification:"
+    },
+    {
+      "start": 6238,
+      "end": 6261,
+      "style": "bold",
+      "text": " Unsupported or absent:"
+    },
+    {
+      "start": 6625,
+      "end": 6639,
+      "style": "code",
+      "text": "prisma/seed.ts"
+    },
+    {
+      "start": 6644,
+      "end": 6666,
+      "style": "code",
+      "text": "src/lib/sample-data.ts"
+    },
+    {
+      "start": 6795,
+      "end": 6816,
+      "style": "bold",
+      "text": "Preliminary priority:"
+    },
+    {
+      "start": 7076,
+      "end": 7096,
+      "style": "bold",
+      "text": "Repository messages:"
+    },
+    {
+      "start": 7330,
+      "end": 7349,
+      "style": "bold",
+      "text": "Clarity assessment:"
+    },
+    {
+      "start": 7350,
+      "end": 7365,
+      "style": "bold",
+      "text": "What it offers:"
+    },
+    {
+      "start": 7427,
+      "end": 7441,
+      "style": "bold",
+      "text": "Who it serves:"
+    },
+    {
+      "start": 7519,
+      "end": 7533,
+      "style": "bold",
+      "text": "Why choose it:"
+    },
+    {
+      "start": 7614,
+      "end": 7630,
+      "style": "bold",
+      "text": "Differentiation:"
+    },
+    {
+      "start": 7648,
+      "end": 7660,
+      "style": "bold",
+      "text": "Next action:"
+    },
+    {
+      "start": 7886,
+      "end": 7900,
+      "style": "bold",
+      "text": "Short tagline:"
+    },
+    {
+      "start": 7901,
+      "end": 7941,
+      "style": "italic",
+      "text": "Books made easier to discover and order."
+    },
+    {
+      "start": 7942,
+      "end": 7957,
+      "style": "bold",
+      "text": "Longer tagline:"
+    },
+    {
+      "start": 7958,
+      "end": 8028,
+      "style": "italic",
+      "text": "A clear, reader-friendly way to browse printed books and order online."
+    },
+    {
+      "start": 8029,
+      "end": 8051,
+      "style": "bold",
+      "text": "Positioning statement:"
+    },
+    {
+      "start": 8052,
+      "end": 8228,
+      "style": "italic",
+      "text": "Ayesha Sharif Publication provides a direct online catalogue where readers can discover printed books, review key details and place an order through a straightforward checkout."
+    },
+    {
+      "start": 8229,
+      "end": 8243,
+      "style": "bold",
+      "text": "Hero headline:"
+    },
+    {
+      "start": 8244,
+      "end": 8271,
+      "style": "italic",
+      "text": "Browse books. Order online."
+    },
+    {
+      "start": 8272,
+      "end": 8288,
+      "style": "bold",
+      "text": "Hero subheading:"
+    },
+    {
+      "start": 8289,
+      "end": 8381,
+      "style": "italic",
+      "text": "Explore the catalogue, check availability and choose the ordering option that works for you."
+    },
+    {
+      "start": 8382,
+      "end": 8406,
+      "style": "bold",
+      "text": "Thirty-word description:"
+    },
+    {
+      "start": 8407,
+      "end": 8595,
+      "style": "italic",
+      "text": "Ayesha Sharif Publication offers an online catalogue for discovering printed books, viewing essential publication details and placing orders through a clear, practical checkout experience."
+    },
+    {
+      "start": 8596,
+      "end": 8618,
+      "style": "bold",
+      "text": "Fifty-word social bio:"
+    },
+    {
+      "start": 8619,
+      "end": 8920,
+      "style": "italic",
+      "text": "Discover printed books from Ayesha Sharif Publication through a simple online catalogue. Browse titles, check prices and availability, save books for later, or place an order through guest or account checkout. Official catalogue, author and delivery information will be added after owner verification."
+    },
+    {
+      "start": 8921,
+      "end": 8951,
+      "style": "bold",
+      "text": "One-hundred-word introduction:"
+    },
+    {
+      "start": 8952,
+      "end": 9600,
+      "style": "italic",
+      "text": "Ayesha Sharif Publication is developing a reader-friendly online home for discovering and ordering printed books. The website allows visitors to browse the catalogue, search by title or author, review book information, save books, add available titles to a cart and complete an order as a guest or registered customer. The current repository also supports pre-orders, manual payment options and delivery-area selection. Before public marketing begins, the publication’s official name, catalogue, authors, delivery terms, contact details and brand story should be verified by the owner so that every campaign is accurate, consistent and trustworthy."
+    },
+    {
+      "start": 9622,
+      "end": 9640,
+      "style": "bold",
+      "text": "Recommended voice:"
+    },
+    {
+      "start": 9703,
+      "end": 9715,
+      "style": "bold",
+      "text": "Be specific:"
+    },
+    {
+      "start": 9773,
+      "end": 9798,
+      "style": "bold",
+      "text": "Be warm, not exaggerated:"
+    },
+    {
+      "start": 9874,
+      "end": 9897,
+      "style": "bold",
+      "text": "Respect both languages:"
+    },
+    {
+      "start": 9965,
+      "end": 9982,
+      "style": "bold",
+      "text": "Make action easy:"
+    },
+    {
+      "start": 10020,
+      "end": 10031,
+      "style": "bold",
+      "text": "Show proof:"
+    },
+    {
+      "start": 10113,
+      "end": 10117,
+      "style": "bold",
+      "text": "Use:"
+    },
+    {
+      "start": 10234,
+      "end": 10254,
+      "style": "bold",
+      "text": " Avoid until proven:"
+    },
+    {
+      "start": 10392,
+      "end": 10427,
+      "style": "bold",
+      "text": "সহজে বই খুঁজুন, অনলাইনে অর্ডার করুন"
+    },
+    {
+      "start": 10446,
+      "end": 10477,
+      "style": "bold",
+      "text": "Discover books and order online"
+    },
+    {
+      "start": 10495,
+      "end": 10558,
+      "style": "bold",
+      "text": "বইয়ের তথ্য, মূল্য ও প্রাপ্যতা দেখে আপনার পছন্দের বইটি বেছে নিন।"
+    },
+    {
+      "start": 10576,
+      "end": 10641,
+      "style": "bold",
+      "text": "Review the details, check availability and choose your next book."
+    },
+    {
+      "start": 10655,
+      "end": 10663,
+      "style": "bold",
+      "text": "বই দেখুন"
+    },
+    {
+      "start": 10677,
+      "end": 10689,
+      "style": "bold",
+      "text": "Browse books"
+    },
+    {
+      "start": 10735,
+      "end": 10748,
+      "style": "bold",
+      "text": "Missing CTAs:"
+    },
+    {
+      "start": 11298,
+      "end": 11389,
+      "style": "bold",
+      "text": "What is the exact legal and public English name, including hyphenation and singular/plural?"
+    },
+    {
+      "start": 11443,
+      "end": 11508,
+      "style": "bold",
+      "text": "What is the approved Bengali name and is “ASP” approved publicly?"
+    },
+    {
+      "start": 11560,
+      "end": 11644,
+      "style": "bold",
+      "text": "Who founded, owns and manages the publication, and what can be published about them?"
+    },
+    {
+      "start": 11685,
+      "end": 11727,
+      "style": "bold",
+      "text": "What year was the publication established?"
+    },
+    {
+      "start": 11777,
+      "end": 11842,
+      "style": "bold",
+      "text": "What are the approved mission, vision, values and founding story?"
+    },
+    {
+      "start": 11886,
+      "end": 11959,
+      "style": "bold",
+      "text": "What makes the publication different from other publishers or bookstores?"
+    },
+    {
+      "start": 12003,
+      "end": 12047,
+      "style": "bold",
+      "text": "Who are the primary and secondary audiences?"
+    },
+    {
+      "start": 12093,
+      "end": 12158,
+      "style": "bold",
+      "text": "Which publishing categories are real and strategically important?"
+    },
+    {
+      "start": 12194,
+      "end": 12339,
+      "style": "bold",
+      "text": "Provide the real book catalogue with authors, ISBNs, editions, language, price, stock, publication dates, descriptions and rights-cleared covers."
+    },
+    {
+      "start": 12374,
+      "end": 12484,
+      "style": "bold",
+      "text": "Which books are priority releases, proven bestsellers or upcoming launches? What evidence supports each label?"
+    },
+    {
+      "start": 12518,
+      "end": 12598,
+      "style": "bold",
+      "text": "Provide approved author bios, portraits, social handles, quotes and permissions."
+    },
+    {
+      "start": 12628,
+      "end": 12711,
+      "style": "bold",
+      "text": "Are e-books, journals, magazines, manuscript publishing or author services offered?"
+    },
+    {
+      "start": 12760,
+      "end": 12863,
+      "style": "bold",
+      "text": "If manuscript submission is open, what are the criteria, process, rights, royalties and response times?"
+    },
+    {
+      "start": 12908,
+      "end": 12996,
+      "style": "bold",
+      "text": "Confirm the official website domain, email, phone, WhatsApp, address and business hours."
+    },
+    {
+      "start": 13033,
+      "end": 13121,
+      "style": "bold",
+      "text": "Confirm all owned social accounts and preferred username. Who has administrative access?"
+    },
+    {
+      "start": 13153,
+      "end": 13224,
+      "style": "bold",
+      "text": "Which payment methods, merchant accounts and delivery regions are live?"
+    },
+    {
+      "start": 13258,
+      "end": 13379,
+      "style": "bold",
+      "text": "What are the approved delivery charges, free-shipping threshold, timing, tracking, cancellation, return and refund rules?"
+    },
+    {
+      "start": 13427,
+      "end": 13518,
+      "style": "bold",
+      "text": "Where are books distributed—own site, marketplaces, bookshops, fairs, schools or libraries?"
+    },
+    {
+      "start": 13566,
+      "end": 13657,
+      "style": "bold",
+      "text": "Are wholesale/institutional sales offered? Provide MOQ, trade discount and contact process."
+    },
+    {
+      "start": 13684,
+      "end": 13796,
+      "style": "bold",
+      "text": "Provide verified testimonials, reviews, awards, partnerships, media coverage, events and numerical achievements."
+    },
+    {
+      "start": 13823,
+      "end": 13918,
+      "style": "bold",
+      "text": "Who owns the logos, book covers, excerpts, photographs and videos, and are licences documented?"
+    },
+    {
+      "start": 13956,
+      "end": 14036,
+      "style": "bold",
+      "text": "What original photography/video assets are available or can be produced monthly?"
+    },
+    {
+      "start": 14076,
+      "end": 14165,
+      "style": "bold",
+      "text": "Which campaign language is preferred—Bengali, English or bilingual—and who approves copy?"
+    },
+    {
+      "start": 14203,
+      "end": 14273,
+      "style": "bold",
+      "text": "What are the next 90-day marketing objectives and campaign priorities?"
+    },
+    {
+      "start": 14328,
+      "end": 14400,
+      "style": "bold",
+      "text": "What monthly budget, advertising budget and team capacity are available?"
+    },
+    {
+      "start": 14448,
+      "end": 14517,
+      "style": "bold",
+      "text": "Which competitors or benchmark publishers should be researched later?"
+    },
+    {
+      "start": 14568,
+      "end": 14673,
+      "style": "bold",
+      "text": "What KPIs define success—sales, qualified enquiries, manuscripts, subscribers, repeat purchases or reach?"
+    },
+    {
+      "start": 14698,
+      "end": 14790,
+      "style": "bold",
+      "text": "Which email, analytics and advertising accounts already exist, and what consent rules apply?"
+    },
+    {
+      "start": 14886,
+      "end": 14912,
+      "style": "bold",
+      "text": "OWNER_INFORMATION_REQUIRED"
+    },
+    {
+      "start": 16598,
+      "end": 16636,
+      "style": "bold",
+      "text": "Repository brand-colour frequency scan"
+    },
+    {
+      "start": 16753,
+      "end": 16771,
+      "style": "bold",
+      "text": " Repository scope:"
+    },
+    {
+      "start": 16810,
+      "end": 17265,
+      "style": "code",
+      "text": " WITH colour_counts(hex_code, occurrences, rank, role, status) AS (VALUES ('#2D4A2B',42,1,'Forest / primary','active'),('#B0A89C',35,2,'Soft grey / muted','active but low contrast'),('#D4A574',33,3,'Gold / accent','active'),('#FFFFFF',23,4,'White / surface','active'),('#6B8E6F',22,5,'Sage / secondary','active'),('#F5F1E8',10,6,'Cream / background','active')) SELECT hex_code, occurrences, rank, role, status FROM colour_counts ORDER BY occurrences DESC;"
+    }
+  ],
+  "blocks": [
+    {
+      "start": 5109,
+      "end": 5145,
+      "type": "chart_data_title"
+    },
+    {
+      "start": 5145,
+      "end": 5218,
+      "type": "muted"
+    }
+  ],
+  "lists": [
+    {
+      "start": 93,
+      "end": 1825,
+      "ordered": false
+    },
+    {
+      "start": 2345,
+      "end": 3264,
+      "ordered": false
+    },
+    {
+      "start": 5322,
+      "end": 6022,
+      "ordered": false
+    },
+    {
+      "start": 7350,
+      "end": 7727,
+      "ordered": false
+    },
+    {
+      "start": 7886,
+      "end": 9601,
+      "ordered": false
+    },
+    {
+      "start": 9703,
+      "end": 10112,
+      "ordered": true
+    },
+    {
+      "start": 10374,
+      "end": 10690,
+      "ordered": false
+    },
+    {
+      "start": 11298,
+      "end": 14844,
+      "ordered": true
+    },
+    {
+      "start": 15151,
+      "end": 15648,
+      "ordered": true
+    },
+    {
+      "start": 15980,
+      "end": 16589,
+      "ordered": false
+    },
+    {
+      "start": 16598,
+      "end": 17266,
+      "ordered": true
+    }
+  ],
+  "placeholders": [
+    {
+      "id": "TABLE_01",
+      "kind": "table",
+      "text_to_find": "[[TABLE_01]]",
+      "start": 2253,
+      "end": 2265
+    },
+    {
+      "id": "TABLE_02",
+      "kind": "table",
+      "text_to_find": "[[TABLE_02]]",
+      "start": 2312,
+      "end": 2324
+    },
+    {
+      "id": "TABLE_03",
+      "kind": "table",
+      "text_to_find": "[[TABLE_03]]",
+      "start": 3594,
+      "end": 3606
+    },
+    {
+      "id": "TABLE_04",
+      "kind": "table",
+      "text_to_find": "[[TABLE_04]]",
+      "start": 4135,
+      "end": 4147
+    },
+    {
+      "id": "TABLE_05",
+      "kind": "table",
+      "text_to_find": "[[TABLE_05]]",
+      "start": 4179,
+      "end": 4191
+    },
+    {
+      "id": "CHART_DATA_06",
+      "kind": "chart_data",
+      "text_to_find": "[[CHART_DATA_06]]",
+      "start": 5218,
+      "end": 5235
+    },
+    {
+      "id": "TABLE_07",
+      "kind": "table",
+      "text_to_find": "[[TABLE_07]]",
+      "start": 5290,
+      "end": 5302
+    },
+    {
+      "id": "TABLE_08",
+      "kind": "table",
+      "text_to_find": "[[TABLE_08]]",
+      "start": 6059,
+      "end": 6071
+    },
+    {
+      "id": "TABLE_09",
+      "kind": "table",
+      "text_to_find": "[[TABLE_09]]",
+      "start": 6539,
+      "end": 6551
+    },
+    {
+      "id": "TABLE_10",
+      "kind": "table",
+      "text_to_find": "[[TABLE_10]]",
+      "start": 6781,
+      "end": 6793
+    },
+    {
+      "id": "TABLE_11",
+      "kind": "table",
+      "text_to_find": "[[TABLE_11]]",
+      "start": 10721,
+      "end": 10733
+    },
+    {
+      "id": "TABLE_12",
+      "kind": "table",
+      "text_to_find": "[[TABLE_12]]",
+      "start": 11025,
+      "end": 11037
+    },
+    {
+      "id": "TABLE_13",
+      "kind": "table",
+      "text_to_find": "[[TABLE_13]]",
+      "start": 11070,
+      "end": 11082
+    },
+    {
+      "id": "TABLE_14",
+      "kind": "table",
+      "text_to_find": "[[TABLE_14]]",
+      "start": 11247,
+      "end": 11259
+    }
+  ],
+  "tables": [
+    {
+      "id": "TABLE_01",
+      "kind": "table",
+      "rows": [
+        [
+          "Information",
+          "Confirmed value",
+          "Repository source",
+          "Confidence",
+          "Notes"
+        ],
+        [
+          "Most-used repository name",
+          "Ayesha-Sharif Publication",
+          "README.md; src/lib/constants.ts; src/app/layout.tsx",
+          "High",
+          "51 exact occurrences; legal spelling still needs owner approval"
+        ],
+        [
+          "Logo-facing English name",
+          "AYESHA SHARIF PUBLICATION",
+          "public/logo/logo-horizontal-forest.svg; light/ink SVG variants",
+          "High",
+          "Unhyphenated singular"
+        ],
+        [
+          "Bengali display name",
+          "আয়েশা-শরীফ পাবলিকেশন্স",
+          "src/components/site/hero-section.tsx",
+          "High",
+          "Exact repository text; owner must approve official form"
+        ],
+        [
+          "Other variants",
+          "Ayesha Sharif Publication; Ayesha Sharif Publications; AS Publications",
+          "public/logo/*.svg; apps/api/src/mail/mail.service.ts; account metadata",
+          "High",
+          "Current naming is inconsistent"
+        ],
+        [
+          "Short mark",
+          "ASP",
+          "public/logo/logo-icon-simplified.svg; src/components/books/book-cover.tsx",
+          "High",
+          "Appropriate preliminary abbreviation"
+        ],
+        [
+          "Publication/project type",
+          "E-commerce bookstore for a Bangladeshi publishing house",
+          "README.md; package.json",
+          "High for project intent",
+          "Real legal/business classification unverified"
+        ],
+        [
+          "Existing tagline",
+          "“Quality books from Ayesha-Sharif Publication, delivered to your doorstep.”",
+          "src/lib/constants.ts; src/app/layout.tsx",
+          "High as repository copy",
+          "“Quality” is a claim; approve before advertising"
+        ],
+        [
+          "About description",
+          "New Bangladeshi publishing company focused on simple, useful, reader-friendly books",
+          "src/lib/site-content.ts",
+          "High as fallback copy",
+          "Owner must verify company facts"
+        ],
+        [
+          "Main confirmed product capability",
+          "Printed/physical books with catalogue, stock, prices and checkout",
+          "README.md; prisma/schema.prisma; src/app/(site)/books/[slug]/page.tsx",
+          "High",
+          "No real catalogue confirmed"
+        ],
+        [
+          "Book languages supported by data model/demo",
+          "Bangla and English",
+          "prisma/schema.prisma; src/lib/sample-data.ts",
+          "Medium",
+          "Actual publishing-language policy not confirmed"
+        ],
+        [
+          "Product states",
+          "Published, pre-order, upcoming, out of stock",
+          "prisma/schema.prisma; src/lib/constants.ts",
+          "High as capability",
+          "Useful for launches once real products exist"
+        ],
+        [
+          "Purchase actions",
+          "Add to cart, buy now, guest checkout, place order",
+          "src/components/books/book-purchase-panel.tsx; src/components/checkout/checkout-page-client.tsx",
+          "High",
+          "Strong conversion foundation"
+        ],
+        [
+          "Payment capability",
+          "COD and manual bKash, Nagad, Rocket",
+          "src/lib/constants.ts; README.md",
+          "High as implementation",
+          "Operational availability/merchant details require confirmation"
+        ],
+        [
+          "Delivery-market intent",
+          "Dhaka, Chattogram and other Bangladesh districts",
+          "src/lib/constants.ts",
+          "Medium",
+          "Charges and coverage require owner confirmation"
+        ],
+        [
+          "Contact details",
+          "Placeholder phone/WhatsApp and address; email/domain and Facebook clues",
+          "src/lib/constants.ts; src/lib/site-content.ts",
+          "High as repository state; Low as public fact",
+          "Do not publish without verification"
+        ],
+        [
+          "Website address",
+          "Not found in repository",
+          "src/app/layout.tsx; src/app/robots.ts; src/app/sitemap.ts",
+          "High",
+          "URL is environment-driven and can fall back to localhost"
+        ],
+        [
+          "Facebook",
+          "Repository clue: facebook.com/ayeshasharifpublication",
+          "src/lib/constants.ts; prisma/seed.ts",
+          "Low",
+          "Contact copy calls it a placeholder"
+        ],
+        [
+          "WhatsApp",
+          "wa.me links are implemented",
+          "src/components/site/footer.tsx; src/components/home/storytelling-sections.tsx",
+          "High as capability",
+          "Number is placeholder"
+        ],
+        [
+          "Other social networks",
+          "Not found in repository",
+          "—",
+          "High",
+          "Instagram, LinkedIn, YouTube, TikTok, X and Messenger absent"
+        ],
+        [
+          "Mission, founder, management",
+          "Not found in repository",
+          "—",
+          "High",
+          "Owner input required"
+        ],
+        [
+          "Publishing services",
+          "Not found in repository",
+          "—",
+          "High",
+          "No submission, editing, proofreading, cover design or service packages"
+        ],
+        [
+          "Testimonials, awards, partners",
+          "Not found in repository",
+          "—",
+          "High",
+          "No usable credibility library"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "code"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_01]]",
+      "placeholder_start": 2253,
+      "placeholder_end": 2265
+    },
+    {
+      "id": "TABLE_02",
+      "kind": "table",
+      "rows": [
+        [
+          "Characteristic",
+          "Status",
+          "Evidence",
+          "Marketing implication"
+        ],
+        [
+          "Literary",
+          "[Confirmed] Strong",
+          "Crimson Text headings, book motifs, “on the shelf” 404 copy, fine gold rules",
+          "Well suited to editorial book campaigns"
+        ],
+        [
+          "Modern/minimal",
+          "[Confirmed] Strong",
+          "Spacious layouts, restrained palette, simple navigation, limited ornament",
+          "Supports premium-looking digital content"
+        ],
+        [
+          "Elegant/premium",
+          "[Inferred] Medium-high",
+          "Cream surfaces, forest/gold contrast, serif italics, subtle motion",
+          "Use calm hierarchy rather than loud discount graphics"
+        ],
+        [
+          "Cultural/Bengali-rooted",
+          "[Confirmed] Medium-high",
+          "Bengali hero: আয়েশা-শরীফ পাবলিকেশন্স; Bengali font bundle",
+          "Strong basis for bilingual promotion"
+        ],
+        [
+          "Educational",
+          "[Inferred] Medium",
+          "Demo categories and student-oriented fallback copy",
+          "Must be validated before positioning"
+        ],
+        [
+          "Reader-focused",
+          "[Confirmed] High",
+          "Browse, search, saved books, guest checkout, recommendations",
+          "Strong direct-to-reader journey"
+        ],
+        [
+          "Family/religious/youth",
+          "[Inferred] Low-medium",
+          "Demo children’s and Islamic categories",
+          "Do not make a central claim yet"
+        ],
+        [
+          "Author-focused",
+          "[Not found] Low",
+          "No public author pages, portraits or author campaigns",
+          "Major content gap"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_02]]",
+      "placeholder_start": 2312,
+      "placeholder_end": 2324
+    },
+    {
+      "id": "TABLE_03",
+      "kind": "table",
+      "rows": [
+        [
+          "Marketing role",
+          "Recommended family and treatment",
+          "Status"
+        ],
+        [
+          "Main campaign headline",
+          "Crimson Text 600, 52–72 px digital / scale proportionally for print",
+          "Existing family; adjusted weight/scale"
+        ],
+        [
+          "Bengali campaign headline",
+          "Noto Serif Bengali 900, 44–64 px, 1.05–1.15 line height",
+          "Existing"
+        ],
+        [
+          "Social heading",
+          "Crimson Text 600 or Noto Serif Bengali 900, 32–48 px",
+          "Existing"
+        ],
+        [
+          "Subheading",
+          "Inter 500, 20–28 px",
+          "Existing"
+        ],
+        [
+          "Body copy",
+          "Inter 400, 16–20 px, 1.55–1.7 line height",
+          "Existing"
+        ],
+        [
+          "Caption/metadata",
+          "Inter 500, 12–14 px; avoid extreme tracking",
+          "Existing, adjusted"
+        ],
+        [
+          "Call to action",
+          "Inter 600, 14–18 px; short sentence case or restrained uppercase",
+          "Weight adjustment; 600 is not currently loaded"
+        ],
+        [
+          "Bengali body",
+          "Anek Bangla 400/500 or a loaded Noto Sans Bengali fallback",
+          "Existing family needs additional weights"
+        ],
+        [
+          "English text",
+          "Inter body + Crimson Text editorial headings",
+          "Existing"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_03]]",
+      "placeholder_start": 3594,
+      "placeholder_end": 3606
+    },
+    {
+      "id": "TABLE_04",
+      "kind": "table",
+      "rows": [
+        [
+          "Colour role",
+          "HEX code",
+          "Where used",
+          "Repository source",
+          "Marketing use"
+        ],
+        [
+          "Primary",
+          "#2D4A2B",
+          "Headings, footer, dark buttons/hover",
+          "src/app/globals.css; tailwind.config.ts",
+          "Logo grounds, headlines, premium campaign backgrounds"
+        ],
+        [
+          "Secondary",
+          "#6B8E6F",
+          "CTAs, prices, icons, pills",
+          "Same; multiple public components",
+          "Secondary panels, category labels, supporting shapes"
+        ],
+        [
+          "Accent",
+          "#D4A574",
+          "Rules, focus, highlights, discount pill",
+          "Same",
+          "Launch date, edition, decorative lines—not small body text"
+        ],
+        [
+          "Main background",
+          "#F5F1E8",
+          "Page and hero background",
+          "src/app/globals.css; hero component",
+          "Editorial canvas and social post background"
+        ],
+        [
+          "Secondary background",
+          "#FFFFFF",
+          "Cards, forms, metadata surfaces",
+          "Public components",
+          "Product cards and information blocks"
+        ],
+        [
+          "Heading text",
+          "#2D4A2B",
+          "Page, section and product headings",
+          "Public components",
+          "Primary campaign typography"
+        ],
+        [
+          "Body text",
+          "#1A1A1A",
+          "Core ink token",
+          "src/app/globals.css",
+          "Recommended body copy"
+        ],
+        [
+          "Muted text",
+          "#B0A89C",
+          "Hero metadata, descriptions, authors",
+          "Public components",
+          "Decorative/large metadata only; fails normal-text contrast"
+        ],
+        [
+          "Button",
+          "#6B8E6F / #2D4A2B hover",
+          "Hero, product, forms",
+          "Hero/product/contact components",
+          "Use forest for critical CTA when contrast matters"
+        ],
+        [
+          "Link",
+          "Sage/forest with gold hover or underline",
+          "Header/footer/accounts",
+          "Public components",
+          "Prefer forest + underline for accessibility"
+        ],
+        [
+          "Border",
+          "rgba(176,168,156,.20)",
+          "Cards and dividers",
+          "src/app/globals.css",
+          "Quiet frames"
+        ],
+        [
+          "Highlight",
+          "#D4A574",
+          "Gold accents and pills",
+          "Same",
+          "Controlled emphasis"
+        ],
+        [
+          "Gradient",
+          "#2D4A2B, #B0A89C, #D4A574 over #F5F1E8",
+          "Hero atmosphere",
+          "src/components/site/hero-section.tsx",
+          "Editorial campaign backgrounds"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          [],
+          [
+            "code"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [
+            "code"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [
+            "code"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [
+            "code"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [
+            "code"
+          ],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_04]]",
+      "placeholder_start": 4135,
+      "placeholder_end": 4147
+    },
+    {
+      "id": "TABLE_05",
+      "kind": "table",
+      "rows": [
+        [
+          "Role",
+          "HEX",
+          "Classification",
+          "Guidance"
+        ],
+        [
+          "Primary brand",
+          "#2D4A2B",
+          "Existing",
+          "Dominant brand anchor"
+        ],
+        [
+          "Secondary brand",
+          "#6B8E6F",
+          "Existing",
+          "Supporting colour; avoid white small text"
+        ],
+        [
+          "Accent",
+          "#D4A574",
+          "Existing",
+          "Decorative highlight and launch marker"
+        ],
+        [
+          "Light background",
+          "#F5F1E8",
+          "Existing",
+          "Main editorial canvas"
+        ],
+        [
+          "Dark background",
+          "#1E3320",
+          "Existing",
+          "Premium dark campaign/print ground"
+        ],
+        [
+          "Heading",
+          "#2D4A2B",
+          "Existing",
+          "High contrast on cream/white"
+        ],
+        [
+          "Body",
+          "#1A1A1A",
+          "Existing",
+          "Readable long-form copy"
+        ],
+        [
+          "Accessible muted",
+          "#6B655C",
+          "Newly suggested, derived from #B0A89C",
+          "Secondary copy; approximately 5.12:1 on cream"
+        ],
+        [
+          "Primary CTA",
+          "#2D4A2B with #F5F1E8 text",
+          "Adjusted use of existing colours",
+          "Stronger contrast than white on sage"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          [
+            "bold"
+          ],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_05]]",
+      "placeholder_start": 4179,
+      "placeholder_end": 4191
+    },
+    {
+      "id": "CHART_DATA_06",
+      "kind": "chart_data",
+      "rows": [
+        [
+          "HEX colour",
+          "Occurrences"
+        ],
+        [
+          "#2D4A2B",
+          "42"
+        ],
+        [
+          "#B0A89C",
+          "35"
+        ],
+        [
+          "#D4A574",
+          "33"
+        ],
+        [
+          "#FFFFFF",
+          "23"
+        ],
+        [
+          "#6B8E6F",
+          "22"
+        ],
+        [
+          "#F5F1E8",
+          "10"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ],
+        [
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[CHART_DATA_06]]",
+      "placeholder_start": 5218,
+      "placeholder_end": 5235,
+      "semantic_label": "Most-used implemented brand colours",
+      "source_kind": "portable_chart_summary"
+    },
+    {
+      "id": "TABLE_07",
+      "kind": "table",
+      "rows": [
+        [
+          "Asset",
+          "File path",
+          "Format/dimensions",
+          "Current use",
+          "Marketing suitability",
+          "Missing version/action"
+        ],
+        [
+          "Horizontal light logo",
+          "public/logo/logo-horizontal-light-transparent-trimmed.png",
+          "PNG, 1510×272",
+          "Active header/footer",
+          "Good for dark web/social headers",
+          "Add documented clear space and print export"
+        ],
+        [
+          "Horizontal forest logo",
+          "public/logo/logo-horizontal-forest-transparent-trimmed.png",
+          "PNG, 1510×272",
+          "Unused public UI",
+          "Good for cream/white creatives",
+          "Demonstrate approved use"
+        ],
+        [
+          "Horizontal vector logos",
+          "public/logo/logo-horizontal-{forest,light,ink}.svg",
+          "SVG, 2048×682",
+          "Unused",
+          "Excellent for print/large-format",
+          "Consolidate as master files"
+        ],
+        [
+          "Standalone marks",
+          "public/logo/logo-mark-*.svg/png",
+          "SVG/PNG; full mark 1254×1254",
+          "Unused",
+          "Good for posters, seals and avatars",
+          "Confirm preferred mark"
+        ],
+        [
+          "Simplified icon",
+          "public/logo/logo-icon-simplified.svg; PNG 32–512",
+          "SVG/PNG",
+          "Apple icon; fallback branding",
+          "Strong square avatar/app icon",
+          "Export platform-tested avatar with safe padding"
+        ],
+        [
+          "Favicon suite",
+          "public/favicon/",
+          "ICO/SVG/PNG 16–512",
+          "Active browser identity",
+          "Useful only for digital micro-scale",
+          "None essential"
+        ],
+        [
+          "Legacy square logos",
+          "public/logo/logo.png; logo-white.png",
+          "PNG 1254×1254; 824 KB/1.06 MB",
+          "Unused; still documented as primary",
+          "Poorly governed; heavy",
+          "Retire or formally classify"
+        ],
+        [
+          "Open Graph banner",
+          "public/banners/homepage-banner.png",
+          "PNG 2172×724, 3:1",
+          "Active sharing fallback",
+          "Usable only temporarily; old black/white identity",
+          "Replace with 1200×630 OG design"
+        ],
+        [
+          "Uploaded book cover",
+          "public/uploads/books/cover-30c9dad7-773a-4fdd-aca6-87f9f7232471.jpg",
+          "JPG 299×475",
+          "No active code reference",
+          "Not suitable: low-resolution third-party cover",
+          "Remove or document copyright permission"
+        ],
+        [
+          "Real book covers",
+          "Not found",
+          "—",
+          "Generated fallbacks used",
+          "Not campaign-ready",
+          "Rights-cleared high-resolution covers"
+        ],
+        [
+          "Author photos",
+          "Not found",
+          "—",
+          "—",
+          "Missing",
+          "Portrait set + permissions"
+        ],
+        [
+          "Event/office/process photos",
+          "Not found",
+          "—",
+          "—",
+          "Missing",
+          "Owned photo library"
+        ],
+        [
+          "Patterns/illustrations",
+          "CSS literary fragments and gradients",
+          "Code-native",
+          "Active",
+          "Usable as supporting brand language",
+          "Exportable template system"
+        ],
+        [
+          "Testimonials/partner/award assets",
+          "Not found",
+          "—",
+          "—",
+          "Missing",
+          "Verified proof assets"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_07]]",
+      "placeholder_start": 5290,
+      "placeholder_end": 5302
+    },
+    {
+      "id": "TABLE_08",
+      "kind": "table",
+      "rows": [
+        [
+          "Section",
+          "Present?",
+          "Current marketing quality",
+          "Improvement",
+          "Priority"
+        ],
+        [
+          "Hero",
+          "Yes",
+          "Strong visual; weak/unsupported proof line",
+          "Use verified who/what/audience promise",
+          "Critical"
+        ],
+        [
+          "Featured books",
+          "Yes when data exists",
+          "Useful structure; catalogue may be demo",
+          "Populate real priority books",
+          "Critical"
+        ],
+        [
+          "Categories",
+          "Yes",
+          "Clear browse mechanism",
+          "Confirm real categories and audience labels",
+          "High"
+        ],
+        [
+          "New arrivals",
+          "Yes",
+          "Good campaign surface",
+          "Drive from verified release dates",
+          "High"
+        ],
+        [
+          "Best sellers",
+          "Yes",
+          "Label may be manually set, not sales-proven",
+          "Define evidence threshold or rename “Popular picks”",
+          "Critical"
+        ],
+        [
+          "Featured authors",
+          "Missing",
+          "—",
+          "Add only with approved bios/portraits",
+          "High"
+        ],
+        [
+          "Testimonials/reviews",
+          "Missing",
+          "—",
+          "Add verified, permissioned proof",
+          "High"
+        ],
+        [
+          "Achievements/statistics",
+          "Placeholder claims only",
+          "High credibility risk",
+          "Remove until documented",
+          "Critical"
+        ],
+        [
+          "Newsletter",
+          "Missing",
+          "Retention gap",
+          "Add consented signup after ESP/consent setup",
+          "Medium"
+        ],
+        [
+          "Contact",
+          "Present",
+          "Form button does not submit",
+          "Implement success/error workflow; verify details",
+          "Critical"
+        ],
+        [
+          "Social links",
+          "Partial",
+          "Facebook clue/WhatsApp only",
+          "Verify accounts and add channel set",
+          "High"
+        ],
+        [
+          "Manuscript submission",
+          "Missing",
+          "—",
+          "Add only if service exists",
+          "Owner decision"
+        ],
+        [
+          "Events/blog/FAQ",
+          "Missing",
+          "Content-discovery gap",
+          "Add selectively after strategy",
+          "Medium"
+        ],
+        [
+          "Discount banner",
+          "Seed references missing image",
+          "Not reliable",
+          "Build real campaign component and asset",
+          "High"
+        ],
+        [
+          "Policies/payment/delivery",
+          "Present",
+          "Placeholder content undermines trust",
+          "Owner/legal approval",
+          "Critical"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_08]]",
+      "placeholder_start": 6059,
+      "placeholder_end": 6071
+    },
+    {
+      "id": "TABLE_09",
+      "kind": "table",
+      "rows": [
+        [
+          "Product or service",
+          "Category",
+          "Description/audience",
+          "Price",
+          "Promotional image",
+          "Marketing status"
+        ],
+        [
+          "Printed books",
+          "[Confirmed capability]",
+          "Physical-book catalogue for online ordering",
+          "Real prices not confirmed",
+          "Generated fallbacks; real covers absent",
+          "Structure ready, content not ready"
+        ],
+        [
+          "Pre-order/upcoming books",
+          "[Confirmed capability]",
+          "Statuses support launch campaigns",
+          "Not confirmed",
+          "No real assets",
+          "Campaign-ready mechanism only"
+        ],
+        [
+          "Book sample/PDF preview",
+          "[Confirmed capability]",
+          "Optional “Preview sample” link on book detail",
+          "N/A",
+          "No sample files confirmed",
+          "Useful after rights approval"
+        ],
+        [
+          "Bangla and English books",
+          "[Inferred offering]",
+          "Data model/demo supports both languages",
+          "Demo only",
+          "Missing",
+          "Owner confirmation required"
+        ],
+        [
+          "Academic/admission books",
+          "[Demo only]",
+          "Student/exam preparation",
+          "Demo prices only",
+          "Missing",
+          "Do not promote yet"
+        ],
+        [
+          "Children’s books",
+          "[Demo only]",
+          "Parents/children",
+          "Demo prices only",
+          "Missing",
+          "Do not promote yet"
+        ],
+        [
+          "Islamic/religious books",
+          "[Demo only]",
+          "Faith/family readers",
+          "Demo prices only",
+          "Missing",
+          "Do not promote yet"
+        ],
+        [
+          "Literature/fiction",
+          "[Demo only]",
+          "General/literary readers",
+          "Demo prices only",
+          "Missing",
+          "Do not promote yet"
+        ],
+        [
+          "E-books, journals, magazines",
+          "Not found",
+          "—",
+          "Not found",
+          "Not found",
+          "Owner confirmation"
+        ],
+        [
+          "Manuscript publishing/author support",
+          "Not found",
+          "—",
+          "Not found",
+          "Not found",
+          "Do not advertise"
+        ],
+        [
+          "Editing/proofreading/cover design",
+          "Not found",
+          "—",
+          "Not found",
+          "Not found",
+          "Do not advertise"
+        ],
+        [
+          "Printing/distribution",
+          "Not found as a customer service",
+          "Storefront delivery exists, but no service package",
+          "Not found",
+          "Not found",
+          "Do not advertise"
+        ],
+        [
+          "Events/workshops/book launches",
+          "Not found",
+          "—",
+          "Not found",
+          "Not found",
+          "Owner confirmation"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "bold"
+          ],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_09]]",
+      "placeholder_start": 6539,
+      "placeholder_end": 6551
+    },
+    {
+      "id": "TABLE_10",
+      "kind": "table",
+      "rows": [
+        [
+          "Audience",
+          "Repository evidence",
+          "Needs/interests",
+          "Relevant products",
+          "Suitable channels",
+          "Confidence"
+        ],
+        [
+          "General/Bengali readers",
+          "Bengali hero; Bangladesh-focused copy; catalogue",
+          "Clear discovery, trusted details, convenient ordering",
+          "Real printed books",
+          "Facebook, Instagram, search, WhatsApp",
+          "Medium-high; partly inferred"
+        ],
+        [
+          "Existing website customers",
+          "Orders, saved books, account and recommendations",
+          "Reordering, status, saved titles, relevant releases",
+          "Catalogue/new releases",
+          "Email, website account, consented remarketing",
+          "High as product audience"
+        ],
+        [
+          "Students/admission candidates",
+          "Demo academic/admission categories and copy",
+          "Exam relevance, editions, price, availability",
+          "Unconfirmed academic/admission books",
+          "Facebook, YouTube, search, campus communities",
+          "Medium; demo-derived"
+        ],
+        [
+          "Parents/children",
+          "Demo children’s category",
+          "Age fit, safety, learning outcomes, durable format",
+          "Unconfirmed children’s books",
+          "Facebook, Instagram, schools",
+          "Medium-low"
+        ],
+        [
+          "Religious/family readers",
+          "Demo Islamic category",
+          "Authenticity, accessibility, family suitability",
+          "Unconfirmed religious books",
+          "Facebook, YouTube, community pages",
+          "Medium-low"
+        ],
+        [
+          "Literary readers",
+          "Editorial identity and demo literature category",
+          "Author voice, excerpts, editions, discovery",
+          "Unconfirmed literature",
+          "Facebook, Instagram, literary groups",
+          "Medium"
+        ],
+        [
+          "Authors/aspiring writers",
+          "Publication identity only; no submission/service pages",
+          "Transparent submission, rights, royalties, support",
+          "Not found",
+          "LinkedIn, Facebook groups, email",
+          "Low"
+        ],
+        [
+          "Bookshops/institutions",
+          "Contact fallback mentions wholesale questions",
+          "Trade terms, stock, invoices, discount, delivery",
+          "Printed books if confirmed",
+          "Direct email, phone, LinkedIn, sales PDF",
+          "Low-medium"
+        ],
+        [
+          "International customers",
+          "No shipping/currency/international content",
+          "Delivery/payment/rights clarity",
+          "Not found",
+          "Not applicable yet",
+          "Low"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_10]]",
+      "placeholder_start": 6781,
+      "placeholder_end": 6793
+    },
+    {
+      "id": "TABLE_11",
+      "kind": "table",
+      "rows": [
+        [
+          "Call to action",
+          "Page/component",
+          "Purpose",
+          "Strength",
+          "Recommended improvement"
+        ],
+        [
+          "Browse Books / Browse books",
+          "Hero, empty states, order success, account",
+          "Catalogue entry/re-entry",
+          "Strong",
+          "Standardise capitalisation"
+        ],
+        [
+          "View all",
+          "Homepage book sections",
+          "Explore complete collection",
+          "Clear but generic",
+          "Use “View all books”"
+        ],
+        [
+          "Search / Apply filters",
+          "Header, search, books listing",
+          "Discovery",
+          "Strong",
+          "Preserve plain language"
+        ],
+        [
+          "View [book]",
+          "Product-card cover/title",
+          "Book detail",
+          "Strong via accessible labels",
+          "Add visible “View details” only if testing shows need"
+        ],
+        [
+          "Add to cart / Pre-order",
+          "Cards and details",
+          "Purchase intent",
+          "Strong",
+          "Keep status-aware language"
+        ],
+        [
+          "Buy now",
+          "Book detail",
+          "Direct checkout",
+          "Strong",
+          "Retain as primary high-intent action"
+        ],
+        [
+          "View cart / Checkout",
+          "Product cards/cart/account",
+          "Funnel progression",
+          "Strong",
+          "Standardise sentence case"
+        ],
+        [
+          "Place order",
+          "Checkout",
+          "Conversion",
+          "Strong",
+          "Add reassurance about payment/delivery only after verification"
+        ],
+        [
+          "Save / Saved",
+          "Product cards/details",
+          "Retention",
+          "Clear",
+          "Explain sign-in requirement earlier"
+        ],
+        [
+          "Preview sample",
+          "Book detail",
+          "Reduce purchase uncertainty",
+          "Strong",
+          "Use only with licensed excerpts"
+        ],
+        [
+          "Login / Register / Create account / Sign in",
+          "Header/account",
+          "Account acquisition",
+          "Functional",
+          "Prefer “Sign in” consistently"
+        ],
+        [
+          "Send message",
+          "Contact",
+          "Lead generation",
+          "Weak because form has no submission handler",
+          "Implement and change to “Send enquiry”"
+        ],
+        [
+          "Chat on WhatsApp / Contact on WhatsApp",
+          "Footer/legacy sections",
+          "Assisted ordering",
+          "Strong channel fit",
+          "Verify number and add prefilled context"
+        ],
+        [
+          "Read privacy policy / Save choices",
+          "Cookie controls",
+          "Consent",
+          "Clear",
+          "Keep separate from marketing CTAs"
+        ],
+        [
+          "Home / Browse books",
+          "Not-found page",
+          "Recovery",
+          "Strong",
+          "No major change"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_11]]",
+      "placeholder_start": 10721,
+      "placeholder_end": 10733
+    },
+    {
+      "id": "TABLE_12",
+      "kind": "table",
+      "rows": [
+        [
+          "Item",
+          "Repository status",
+          "Marketing assessment"
+        ],
+        [
+          "Facebook",
+          "URL clue in src/lib/constants.ts; contact display says placeholder",
+          "Verify ownership before publishing"
+        ],
+        [
+          "WhatsApp",
+          "wa.me pathways implemented",
+          "Strong assisted-ordering channel after number verification"
+        ],
+        [
+          "Instagram, LinkedIn, YouTube, TikTok, X, Messenger",
+          "Not found",
+          "Accounts/handles and platform roles needed"
+        ],
+        [
+          "Open Graph",
+          "Global title, description and /banners/homepage-banner.png",
+          "Implemented, but banner and copy need refresh"
+        ],
+        [
+          "Twitter/X card",
+          "No explicit configuration found",
+          "Add after verified domain/assets"
+        ],
+        [
+          "Social icons",
+          "Facebook and WhatsApp Lucide icons only",
+          "No complete social set"
+        ],
+        [
+          "Sharing buttons/feed integrations",
+          "Not found",
+          "Optional after channel strategy"
+        ],
+        [
+          "Username variations",
+          "“ayeshasharifpublication” clue; repository names differ",
+          "Reserve one approved handle across platforms"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [
+            "code"
+          ],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_12]]",
+      "placeholder_start": 11025,
+      "placeholder_end": 11037
+    },
+    {
+      "id": "TABLE_13",
+      "kind": "table",
+      "rows": [
+        [
+          "Content pillar",
+          "Audience",
+          "Example topics",
+          "Recommended format",
+          "Marketing objective"
+        ],
+        [
+          "Verified new releases",
+          "General readers",
+          "Cover reveal, publication date, format, price",
+          "Carousel, reel, launch poster",
+          "Awareness and sales"
+        ],
+        [
+          "Book discovery",
+          "Readers/students",
+          "Category picks, “what to read next,” availability",
+          "Carousel, story poll, short video",
+          "Catalogue exploration"
+        ],
+        [
+          "Author introductions",
+          "Literary readers",
+          "Approved bio, inspiration, short interview",
+          "Portrait carousel, reel, YouTube interview",
+          "Trust and author affinity"
+        ],
+        [
+          "Book previews",
+          "High-intent readers",
+          "Approved excerpt, contents, sample pages",
+          "Carousel, reel voiceover, website sample",
+          "Purchase consideration"
+        ],
+        [
+          "Ordering guidance",
+          "New customers",
+          "Add to cart, guest checkout, payment steps",
+          "Screen recording, infographic, story highlight",
+          "Conversion"
+        ],
+        [
+          "Reader proof",
+          "Prospects",
+          "Verified review with source and permission",
+          "Quote card, testimonial reel",
+          "Credibility"
+        ],
+        [
+          "Publishing behind the scenes",
+          "Readers/authors",
+          "Editing, cover process, printing, packing",
+          "Reels, photo diary, YouTube short",
+          "Brand transparency"
+        ],
+        [
+          "Learning/literary guidance",
+          "Students/readers",
+          "Reading tips, study use, writing guidance tied to real books",
+          "Carousel, short video, blog/email",
+          "Reach and usefulness"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_13]]",
+      "placeholder_start": 11070,
+      "placeholder_end": 11082
+    },
+    {
+      "id": "TABLE_14",
+      "kind": "table",
+      "rows": [
+        [
+          "Content idea",
+          "Available source material",
+          "Target audience",
+          "Format",
+          "Required missing information"
+        ],
+        [
+          "Brand introduction",
+          "Logo, palette, current fallback description",
+          "General",
+          "Pinned carousel/video",
+          "Approved story, founder, mission"
+        ],
+        [
+          "New-book launch",
+          "Status fields and campaign-ready UI",
+          "Readers",
+          "Launch sequence",
+          "Real book metadata, stock, cover, rights"
+        ],
+        [
+          "Author spotlight",
+          "Author field exists",
+          "Readers/authors",
+          "Portrait carousel/interview",
+          "Approved bio, portrait, achievements"
+        ],
+        [
+          "Excerpt/sample",
+          "Sample-link capability",
+          "High-intent readers",
+          "Carousel/PDF/video",
+          "Rights-cleared excerpt"
+        ],
+        [
+          "Reader review",
+          "None",
+          "Prospects",
+          "Quote card/reel",
+          "Verified review and permission"
+        ],
+        [
+          "“How to order”",
+          "Checkout steps and CTAs",
+          "New buyers",
+          "Screen recording/infographic",
+          "Confirmed payment/delivery terms"
+        ],
+        [
+          "Category education",
+          "Demo categories only",
+          "Students/parents/readers",
+          "Carousel/blog",
+          "Real category strategy and products"
+        ],
+        [
+          "Behind the scenes",
+          "No imagery",
+          "Readers/authors",
+          "Reels/photo series",
+          "Production access and consent"
+        ],
+        [
+          "Seasonal campaign",
+          "Palette and templates-to-be-built",
+          "Segment-specific",
+          "Poster/story/email",
+          "Calendar, offer, stock, budget"
+        ],
+        [
+          "Newsletter",
+          "Consent concepts exist; no signup",
+          "Customers/readers",
+          "Email",
+          "ESP, consent text, sender domain, cadence"
+        ],
+        [
+          "Blog/SEO article",
+          "No blog route",
+          "Search audience",
+          "Article",
+          "Editorial owner, topics, keyword research"
+        ],
+        [
+          "YouTube/short-form series",
+          "No video assets",
+          "Students/readers",
+          "Shorts/interviews",
+          "Presenter, scripts, filming capacity"
+        ],
+        [
+          "Event promotion",
+          "No event evidence",
+          "Community",
+          "Poster/reel/event page",
+          "Real date, venue, speakers, registration"
+        ],
+        [
+          "Wholesale catalogue",
+          "Contact copy mentions wholesale questions",
+          "Bookshops/institutions",
+          "PDF/email/LinkedIn",
+          "Trade pricing, MOQ, distribution terms"
+        ]
+      ],
+      "cell_styles": [
+        [
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "bold"
+          ]
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "cell_links": [
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      "placeholder": "[[TABLE_14]]",
+      "placeholder_start": 11247,
+      "placeholder_end": 11259
+    }
+  ],
+  "chart_images": [],
+  "counts": {
+    "headings": 34,
+    "inline_styles": 114,
+    "blocks": 2,
+    "lists": 11,
+    "tables": 14,
+    "portable_metric_source_cards": 0,
+    "portable_metric_table_cells": 0,
+    "portable_chart_source_blocks": 1,
+    "portable_chart_data_tables": 1,
+    "chart_images": 0,
+    "two_col_source_blocks": 0,
+    "two_col_image_blocks": 0,
+    "two_col_text_blocks": 0,
+    "embedded_image_blocks": 0,
+    "svg_image_blocks": 0,
+    "bar_source_blocks": 0,
+    "bar_image_blocks": 0,
+    "bar_table_blocks": 0,
+    "images": 0,
+    "svgs": 0,
+    "portable_static_chart_svgs": 0,
+    "canvas": 0
+  },
+  "source_flags": {
+    "auth_page_detected": false
+  }
+}

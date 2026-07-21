@@ -1,0 +1,1397 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ayesha Sharif Publication Marketing Information Report</title><style>body{max-width:860px;margin:0 auto;padding:40px 32px 64px;font:15px/1.55 Arial,sans-serif;color:#1a1a1a}h1,h2,h3{color:#2d4a2b}h1{font-size:30px}h2{margin-top:34px;font-size:23px}h3{margin-top:24px;font-size:18px}table{width:100%;border-collapse:collapse;margin:14px 0 24px;font-size:12px}th,td{padding:7px 8px;border:1px solid #d8d2c8;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#f5f1e8;color:#2d4a2b}code{font-family:Consolas,monospace;font-size:.9em}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f7f7;padding:12px;border:1px solid #ddd}.portable-chart-summary{margin:22px 0}.portable-chart-summary figcaption{display:flex;flex-direction:column}.portable-chart-summary figcaption strong{font-size:18px;color:#2d4a2b}.portable-chart-summary figcaption span,.source-note{color:#6b655c}.portable-chart-data summary{font-weight:700;margin:8px 0}section{break-inside:auto}a{color:#2d4a2b}</style></head><body><main class="report"><section data-block-id="title"><h1>Ayesha Sharif Publication Marketing Information Report</h1>
+</section>
+<section data-block-id="marketing-summary"><h2>Executive Summary — Marketing Summary</h2>
+<ul>
+<li><p><strong>[Confirmed from repository] A distinctive “Editorial Calm” identity already exists.</strong> The storefront combines forest green, sage, cream, gold, Crimson Text, Inter, and a Bengali serif display treatment. The result feels literary, minimal, elegant, culturally rooted, modern, and reader-focused. Sources: <code>README.md</code>; <code>src/app/globals.css</code>; <code>src/app/layout.tsx</code>; <code>src/components/site/hero-section.tsx</code>.</p>
+</li>
+<li><p><strong>[Confirmed from repository] The strongest marketing-ready elements are the logo family, Bengali-first hero, clear catalogue navigation, book-detail merchandising, direct purchase CTAs, WhatsApp support pathway, Open Graph setup, and responsive editorial UI.</strong> Sources: <code>public/logo/</code>; <code>src/app/layout.tsx</code>; <code>src/components/books/product-card.tsx</code>; <code>src/components/books/book-purchase-panel.tsx</code>; <code>src/components/site/footer.tsx</code>.</p>
+</li>
+<li><p><strong>[Owner confirmation required] The repository is not a reliable source for the real catalogue or proof claims.</strong> Seed and fallback books explicitly call themselves sample content; ISBNs are generated; policies identify themselves as placeholders; contact values include placeholders; and “400+ Books,” “Free delivery above ৳500,” “Easy Returns,” “Original publication,” “Best sellers,” and “Nationwide Shipping” lack sufficient repository proof. Sources: <code>prisma/seed.ts</code>; <code>src/lib/sample-data.ts</code>; <code>src/lib/policy-definitions.ts</code>; <code>src/lib/homepage-content-definitions.ts</code>; <code>src/lib/site-content.ts</code>.</p>
+</li>
+<li><p><strong>[Inferred from available content] The intended market is Bangladesh-based readers seeking printed books through a straightforward online ordering journey.</strong> Student, parent, children’s, religious, admission, and literary segments are plausible, but the category evidence comes from demo data and cannot yet drive public campaigns.</p>
+</li>
+</ul>
+<p><strong>Bottom line:</strong> the visual identity and storefront can support future marketing, but factual content, proof, rights-cleared photography, real books/authors, and owner-approved positioning must be collected before campaigns are produced.</p>
+</section>
+<section data-block-id="confirmed-marketing-information"><h2>2. Confirmed Marketing Information</h2>
+<p>“Confirmed” means present in repository content or implemented as a website capability; it does not independently verify a legal or real-world business fact.</p>
+<table>
+<thead>
+<tr>
+<th>Information</th>
+<th>Confirmed value</th>
+<th>Repository source</th>
+<th>Confidence</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Most-used repository name</td>
+<td>Ayesha-Sharif Publication</td>
+<td><code>README.md</code>; <code>src/lib/constants.ts</code>; <code>src/app/layout.tsx</code></td>
+<td>High</td>
+<td>51 exact occurrences; legal spelling still needs owner approval</td>
+</tr>
+<tr>
+<td>Logo-facing English name</td>
+<td>AYESHA SHARIF PUBLICATION</td>
+<td><code>public/logo/logo-horizontal-forest.svg</code>; light/ink SVG variants</td>
+<td>High</td>
+<td>Unhyphenated singular</td>
+</tr>
+<tr>
+<td>Bengali display name</td>
+<td>আয়েশা-শরীফ পাবলিকেশন্স</td>
+<td><code>src/components/site/hero-section.tsx</code></td>
+<td>High</td>
+<td>Exact repository text; owner must approve official form</td>
+</tr>
+<tr>
+<td>Other variants</td>
+<td>Ayesha Sharif Publication; Ayesha Sharif Publications; AS Publications</td>
+<td><code>public/logo/*.svg</code>; <code>apps/api/src/mail/mail.service.ts</code>; account metadata</td>
+<td>High</td>
+<td>Current naming is inconsistent</td>
+</tr>
+<tr>
+<td>Short mark</td>
+<td>ASP</td>
+<td><code>public/logo/logo-icon-simplified.svg</code>; <code>src/components/books/book-cover.tsx</code></td>
+<td>High</td>
+<td>Appropriate preliminary abbreviation</td>
+</tr>
+<tr>
+<td>Publication/project type</td>
+<td>E-commerce bookstore for a Bangladeshi publishing house</td>
+<td><code>README.md</code>; <code>package.json</code></td>
+<td>High for project intent</td>
+<td>Real legal/business classification unverified</td>
+</tr>
+<tr>
+<td>Existing tagline</td>
+<td>“Quality books from Ayesha-Sharif Publication, delivered to your doorstep.”</td>
+<td><code>src/lib/constants.ts</code>; <code>src/app/layout.tsx</code></td>
+<td>High as repository copy</td>
+<td>“Quality” is a claim; approve before advertising</td>
+</tr>
+<tr>
+<td>About description</td>
+<td>New Bangladeshi publishing company focused on simple, useful, reader-friendly books</td>
+<td><code>src/lib/site-content.ts</code></td>
+<td>High as fallback copy</td>
+<td>Owner must verify company facts</td>
+</tr>
+<tr>
+<td>Main confirmed product capability</td>
+<td>Printed/physical books with catalogue, stock, prices and checkout</td>
+<td><code>README.md</code>; <code>prisma/schema.prisma</code>; <code>src/app/(site)/books/[slug]/page.tsx</code></td>
+<td>High</td>
+<td>No real catalogue confirmed</td>
+</tr>
+<tr>
+<td>Book languages supported by data model/demo</td>
+<td>Bangla and English</td>
+<td><code>prisma/schema.prisma</code>; <code>src/lib/sample-data.ts</code></td>
+<td>Medium</td>
+<td>Actual publishing-language policy not confirmed</td>
+</tr>
+<tr>
+<td>Product states</td>
+<td>Published, pre-order, upcoming, out of stock</td>
+<td><code>prisma/schema.prisma</code>; <code>src/lib/constants.ts</code></td>
+<td>High as capability</td>
+<td>Useful for launches once real products exist</td>
+</tr>
+<tr>
+<td>Purchase actions</td>
+<td>Add to cart, buy now, guest checkout, place order</td>
+<td><code>src/components/books/book-purchase-panel.tsx</code>; <code>src/components/checkout/checkout-page-client.tsx</code></td>
+<td>High</td>
+<td>Strong conversion foundation</td>
+</tr>
+<tr>
+<td>Payment capability</td>
+<td>COD and manual bKash, Nagad, Rocket</td>
+<td><code>src/lib/constants.ts</code>; <code>README.md</code></td>
+<td>High as implementation</td>
+<td>Operational availability/merchant details require confirmation</td>
+</tr>
+<tr>
+<td>Delivery-market intent</td>
+<td>Dhaka, Chattogram and other Bangladesh districts</td>
+<td><code>src/lib/constants.ts</code></td>
+<td>Medium</td>
+<td>Charges and coverage require owner confirmation</td>
+</tr>
+<tr>
+<td>Contact details</td>
+<td>Placeholder phone/WhatsApp and address; email/domain and Facebook clues</td>
+<td><code>src/lib/constants.ts</code>; <code>src/lib/site-content.ts</code></td>
+<td>High as repository state; Low as public fact</td>
+<td>Do not publish without verification</td>
+</tr>
+<tr>
+<td>Website address</td>
+<td>Not found in repository</td>
+<td><code>src/app/layout.tsx</code>; <code>src/app/robots.ts</code>; <code>src/app/sitemap.ts</code></td>
+<td>High</td>
+<td>URL is environment-driven and can fall back to localhost</td>
+</tr>
+<tr>
+<td>Facebook</td>
+<td>Repository clue: facebook.com/ayeshasharifpublication</td>
+<td><code>src/lib/constants.ts</code>; <code>prisma/seed.ts</code></td>
+<td>Low</td>
+<td>Contact copy calls it a placeholder</td>
+</tr>
+<tr>
+<td>WhatsApp</td>
+<td>wa.me links are implemented</td>
+<td><code>src/components/site/footer.tsx</code>; <code>src/components/home/storytelling-sections.tsx</code></td>
+<td>High as capability</td>
+<td>Number is placeholder</td>
+</tr>
+<tr>
+<td>Other social networks</td>
+<td>Not found in repository</td>
+<td>—</td>
+<td>High</td>
+<td>Instagram, LinkedIn, YouTube, TikTok, X and Messenger absent</td>
+</tr>
+<tr>
+<td>Mission, founder, management</td>
+<td>Not found in repository</td>
+<td>—</td>
+<td>High</td>
+<td>Owner input required</td>
+</tr>
+<tr>
+<td>Publishing services</td>
+<td>Not found in repository</td>
+<td>—</td>
+<td>High</td>
+<td>No submission, editing, proofreading, cover design or service packages</td>
+</tr>
+<tr>
+<td>Testimonials, awards, partners</td>
+<td>Not found in repository</td>
+<td>—</td>
+<td>High</td>
+<td>No usable credibility library</td>
+</tr>
+</tbody></table>
+</section>
+<section data-block-id="existing-visual-theme"><h2>3. Existing Visual Theme</h2>
+<h3>Marketing character</h3>
+<table>
+<thead>
+<tr>
+<th>Characteristic</th>
+<th>Status</th>
+<th>Evidence</th>
+<th>Marketing implication</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Literary</td>
+<td><strong>[Confirmed] Strong</strong></td>
+<td>Crimson Text headings, book motifs, “on the shelf” 404 copy, fine gold rules</td>
+<td>Well suited to editorial book campaigns</td>
+</tr>
+<tr>
+<td>Modern/minimal</td>
+<td><strong>[Confirmed] Strong</strong></td>
+<td>Spacious layouts, restrained palette, simple navigation, limited ornament</td>
+<td>Supports premium-looking digital content</td>
+</tr>
+<tr>
+<td>Elegant/premium</td>
+<td><strong>[Inferred] Medium-high</strong></td>
+<td>Cream surfaces, forest/gold contrast, serif italics, subtle motion</td>
+<td>Use calm hierarchy rather than loud discount graphics</td>
+</tr>
+<tr>
+<td>Cultural/Bengali-rooted</td>
+<td><strong>[Confirmed] Medium-high</strong></td>
+<td>Bengali hero: আয়েশা-শরীফ পাবলিকেশন্স; Bengali font bundle</td>
+<td>Strong basis for bilingual promotion</td>
+</tr>
+<tr>
+<td>Educational</td>
+<td><strong>[Inferred] Medium</strong></td>
+<td>Demo categories and student-oriented fallback copy</td>
+<td>Must be validated before positioning</td>
+</tr>
+<tr>
+<td>Reader-focused</td>
+<td><strong>[Confirmed] High</strong></td>
+<td>Browse, search, saved books, guest checkout, recommendations</td>
+<td>Strong direct-to-reader journey</td>
+</tr>
+<tr>
+<td>Family/religious/youth</td>
+<td><strong>[Inferred] Low-medium</strong></td>
+<td>Demo children’s and Islamic categories</td>
+<td>Do not make a central claim yet</td>
+</tr>
+<tr>
+<td>Author-focused</td>
+<td><strong>[Not found] Low</strong></td>
+<td>No public author pages, portraits or author campaigns</td>
+<td>Major content gap</td>
+</tr>
+</tbody></table>
+<h3>UI and image style</h3>
+<ul>
+<li><strong>Layout:</strong> centred editorial sections, generous whitespace, responsive grids, 1,200–1,440 px content widths.</li>
+<li><strong>Cards:</strong> white or translucent “glass” surfaces; typically 8–10 px radius; soft shadows such as 0 2px 8px rgba(0,0,0,.06).</li>
+<li><strong>Buttons:</strong> compact 4–6 px radius; sage fill, forest hover, gold focus; uppercase/tracked labels in major CTAs.</li>
+<li><strong>Gradients/backgrounds:</strong> cream base with low-opacity forest, soft grey and gold gradients; literary fragments, hairlines and subtle dust.</li>
+<li><strong>Icons:</strong> consistent Lucide outline icons, generally small and functional.</li>
+<li><strong>Photography:</strong> effectively absent. Book cards generate fallback covers; there are no owned author, office, event or production photographs.</li>
+<li><strong>Desktop/mobile consistency:</strong> responsive component classes and mobile breakpoints preserve the same palette and hierarchy. The current visual identity is suited to square and vertical social templates, but dedicated templates do not exist.</li>
+</ul>
+<h3>Typography audit and marketing system</h3>
+<p><strong>[Confirmed] Loaded families:</strong> Crimson Text 400/600 normal/italic; Inter 400/500; Noto Serif Bengali 700/900; Montserrat 800/900; Anek Bangla 800. Source: <code>src/app/layout.tsx</code>. Tailwind defines Crimson/Georgia for serif and Inter/Noto Sans Bengali/system for sans/heading in <code>tailwind.config.ts</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Marketing role</th>
+<th>Recommended family and treatment</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Main campaign headline</td>
+<td>Crimson Text 600, 52–72 px digital / scale proportionally for print</td>
+<td>Existing family; adjusted weight/scale</td>
+</tr>
+<tr>
+<td>Bengali campaign headline</td>
+<td>Noto Serif Bengali 900, 44–64 px, 1.05–1.15 line height</td>
+<td>Existing</td>
+</tr>
+<tr>
+<td>Social heading</td>
+<td>Crimson Text 600 or Noto Serif Bengali 900, 32–48 px</td>
+<td>Existing</td>
+</tr>
+<tr>
+<td>Subheading</td>
+<td>Inter 500, 20–28 px</td>
+<td>Existing</td>
+</tr>
+<tr>
+<td>Body copy</td>
+<td>Inter 400, 16–20 px, 1.55–1.7 line height</td>
+<td>Existing</td>
+</tr>
+<tr>
+<td>Caption/metadata</td>
+<td>Inter 500, 12–14 px; avoid extreme tracking</td>
+<td>Existing, adjusted</td>
+</tr>
+<tr>
+<td>Call to action</td>
+<td>Inter 600, 14–18 px; short sentence case or restrained uppercase</td>
+<td>Weight adjustment; 600 is not currently loaded</td>
+</tr>
+<tr>
+<td>Bengali body</td>
+<td>Anek Bangla 400/500 or a loaded Noto Sans Bengali fallback</td>
+<td>Existing family needs additional weights</td>
+</tr>
+<tr>
+<td>English text</td>
+<td>Inter body + Crimson Text editorial headings</td>
+<td>Existing</td>
+</tr>
+</tbody></table>
+<p><strong>Issues:</strong> five font families are loaded, but Montserrat and Anek are not clearly active in current public sections; Inter 600 is used in styling without being loaded; “Noto Sans Bengali” is named as fallback but not loaded; small low-contrast text and wide uppercase tracking reduce readability; no font-licence documentation was found. For promotional graphics, use Crimson + Inter + Noto Serif Bengali and drop Montserrat unless a specific campaign needs it.</p>
+</section>
+<section data-block-id="marketing-colour-palette"><h2>4. Recommended Marketing Colour Palette</h2>
+<h3>Repository colour inventory</h3>
+<table>
+<thead>
+<tr>
+<th>Colour role</th>
+<th>HEX code</th>
+<th>Where used</th>
+<th>Repository source</th>
+<th>Marketing use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Primary</td>
+<td>#2D4A2B</td>
+<td>Headings, footer, dark buttons/hover</td>
+<td><code>src/app/globals.css</code>; <code>tailwind.config.ts</code></td>
+<td>Logo grounds, headlines, premium campaign backgrounds</td>
+</tr>
+<tr>
+<td>Secondary</td>
+<td>#6B8E6F</td>
+<td>CTAs, prices, icons, pills</td>
+<td>Same; multiple public components</td>
+<td>Secondary panels, category labels, supporting shapes</td>
+</tr>
+<tr>
+<td>Accent</td>
+<td>#D4A574</td>
+<td>Rules, focus, highlights, discount pill</td>
+<td>Same</td>
+<td>Launch date, edition, decorative lines—not small body text</td>
+</tr>
+<tr>
+<td>Main background</td>
+<td>#F5F1E8</td>
+<td>Page and hero background</td>
+<td><code>src/app/globals.css</code>; hero component</td>
+<td>Editorial canvas and social post background</td>
+</tr>
+<tr>
+<td>Secondary background</td>
+<td>#FFFFFF</td>
+<td>Cards, forms, metadata surfaces</td>
+<td>Public components</td>
+<td>Product cards and information blocks</td>
+</tr>
+<tr>
+<td>Heading text</td>
+<td>#2D4A2B</td>
+<td>Page, section and product headings</td>
+<td>Public components</td>
+<td>Primary campaign typography</td>
+</tr>
+<tr>
+<td>Body text</td>
+<td>#1A1A1A</td>
+<td>Core ink token</td>
+<td><code>src/app/globals.css</code></td>
+<td>Recommended body copy</td>
+</tr>
+<tr>
+<td>Muted text</td>
+<td>#B0A89C</td>
+<td>Hero metadata, descriptions, authors</td>
+<td>Public components</td>
+<td>Decorative/large metadata only; fails normal-text contrast</td>
+</tr>
+<tr>
+<td>Button</td>
+<td>#6B8E6F / #2D4A2B hover</td>
+<td>Hero, product, forms</td>
+<td>Hero/product/contact components</td>
+<td>Use forest for critical CTA when contrast matters</td>
+</tr>
+<tr>
+<td>Link</td>
+<td>Sage/forest with gold hover or underline</td>
+<td>Header/footer/accounts</td>
+<td>Public components</td>
+<td>Prefer forest + underline for accessibility</td>
+</tr>
+<tr>
+<td>Border</td>
+<td>rgba(176,168,156,.20)</td>
+<td>Cards and dividers</td>
+<td><code>src/app/globals.css</code></td>
+<td>Quiet frames</td>
+</tr>
+<tr>
+<td>Highlight</td>
+<td>#D4A574</td>
+<td>Gold accents and pills</td>
+<td>Same</td>
+<td>Controlled emphasis</td>
+</tr>
+<tr>
+<td>Gradient</td>
+<td>#2D4A2B, #B0A89C, #D4A574 over #F5F1E8</td>
+<td>Hero atmosphere</td>
+<td><code>src/components/site/hero-section.tsx</code></td>
+<td>Editorial campaign backgrounds</td>
+</tr>
+</tbody></table>
+<h3>Recommended marketing palette</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>HEX</th>
+<th>Classification</th>
+<th>Guidance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Primary brand</td>
+<td>#2D4A2B</td>
+<td><strong>Existing</strong></td>
+<td>Dominant brand anchor</td>
+</tr>
+<tr>
+<td>Secondary brand</td>
+<td>#6B8E6F</td>
+<td><strong>Existing</strong></td>
+<td>Supporting colour; avoid white small text</td>
+</tr>
+<tr>
+<td>Accent</td>
+<td>#D4A574</td>
+<td><strong>Existing</strong></td>
+<td>Decorative highlight and launch marker</td>
+</tr>
+<tr>
+<td>Light background</td>
+<td>#F5F1E8</td>
+<td><strong>Existing</strong></td>
+<td>Main editorial canvas</td>
+</tr>
+<tr>
+<td>Dark background</td>
+<td>#1E3320</td>
+<td><strong>Existing</strong></td>
+<td>Premium dark campaign/print ground</td>
+</tr>
+<tr>
+<td>Heading</td>
+<td>#2D4A2B</td>
+<td><strong>Existing</strong></td>
+<td>High contrast on cream/white</td>
+</tr>
+<tr>
+<td>Body</td>
+<td>#1A1A1A</td>
+<td><strong>Existing</strong></td>
+<td>Readable long-form copy</td>
+</tr>
+<tr>
+<td>Accessible muted</td>
+<td>#6B655C</td>
+<td><strong>Newly suggested, derived from #B0A89C</strong></td>
+<td>Secondary copy; approximately 5.12:1 on cream</td>
+</tr>
+<tr>
+<td>Primary CTA</td>
+<td>#2D4A2B with #F5F1E8 text</td>
+<td><strong>Adjusted use of existing colours</strong></td>
+<td>Stronger contrast than white on sage</td>
+</tr>
+</tbody></table>
+<p><strong>Contrast cautions:</strong> #B0A89C is approximately 2.09:1 on cream and 2.35:1 on white; white on #6B8E6F is approximately 3.67:1; white on #D4A574 is approximately 2.23:1. These combinations should not carry small marketing copy. Duplicate legacy colours—#F7F1E3/#FFFCF6 creams, #C9A227 gold, #10233F navy, #0F766E emerald and #111827 ink—should be consolidated where they act as brand colours.</p>
+<p><strong>Marketing applications:</strong> cream/forest/gold for premium and literary posts; cream/sage/forest for educational explainers; deep forest/cream/gold for book launches; forest CTA panels for advertisements. Preserve generous whitespace and avoid multi-colour discount styling.</p>
+<p>The chart below counts exact six-digit HEX occurrences across inspected TS, TSX, CSS and SVG files. It confirms forest, soft grey, gold, white, sage and cream as the dominant implemented system; frequency does not imply that every combination is accessible.</p>
+</section>
+<section data-block-id="colour-frequency-chart"><figure class="portable-chart-summary"><figcaption><strong>Most-used implemented brand colours</strong><span>Exact six-digit HEX occurrences in inspected TS, TSX, CSS and SVG files.</span></figcaption><details class="portable-chart-data" open><summary>Chart data</summary><div class="portable-table-scroll"><table><thead><tr><th>HEX colour</th><th>Occurrences</th></tr></thead><tbody><tr><td>#2D4A2B</td><td>42</td></tr><tr><td>#B0A89C</td><td>35</td></tr><tr><td>#D4A574</td><td>33</td></tr><tr><td>#FFFFFF</td><td>23</td></tr><tr><td>#6B8E6F</td><td>22</td></tr><tr><td>#F5F1E8</td><td>10</td></tr></tbody></table></div></details><p class="source-note"><strong>Source:</strong> Reproduces exact six-digit HEX occurrence counts from the reviewed TS, TSX, CSS, and SVG files under src and public.</p></figure></section>
+<section data-block-id="marketing-asset-inventory"><h2>5. Marketing Asset Inventory</h2>
+<h3>Usable and risky assets</h3>
+<table>
+<thead>
+<tr>
+<th>Asset</th>
+<th>File path</th>
+<th>Format/dimensions</th>
+<th>Current use</th>
+<th>Marketing suitability</th>
+<th>Missing version/action</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Horizontal light logo</td>
+<td><code>public/logo/logo-horizontal-light-transparent-trimmed.png</code></td>
+<td>PNG, 1510×272</td>
+<td>Active header/footer</td>
+<td>Good for dark web/social headers</td>
+<td>Add documented clear space and print export</td>
+</tr>
+<tr>
+<td>Horizontal forest logo</td>
+<td><code>public/logo/logo-horizontal-forest-transparent-trimmed.png</code></td>
+<td>PNG, 1510×272</td>
+<td>Unused public UI</td>
+<td>Good for cream/white creatives</td>
+<td>Demonstrate approved use</td>
+</tr>
+<tr>
+<td>Horizontal vector logos</td>
+<td><code>public/logo/logo-horizontal-{forest,light,ink}.svg</code></td>
+<td>SVG, 2048×682</td>
+<td>Unused</td>
+<td>Excellent for print/large-format</td>
+<td>Consolidate as master files</td>
+</tr>
+<tr>
+<td>Standalone marks</td>
+<td><code>public/logo/logo-mark-*.svg/png</code></td>
+<td>SVG/PNG; full mark 1254×1254</td>
+<td>Unused</td>
+<td>Good for posters, seals and avatars</td>
+<td>Confirm preferred mark</td>
+</tr>
+<tr>
+<td>Simplified icon</td>
+<td><code>public/logo/logo-icon-simplified.svg</code>; PNG 32–512</td>
+<td>SVG/PNG</td>
+<td>Apple icon; fallback branding</td>
+<td>Strong square avatar/app icon</td>
+<td>Export platform-tested avatar with safe padding</td>
+</tr>
+<tr>
+<td>Favicon suite</td>
+<td><code>public/favicon/</code></td>
+<td>ICO/SVG/PNG 16–512</td>
+<td>Active browser identity</td>
+<td>Useful only for digital micro-scale</td>
+<td>None essential</td>
+</tr>
+<tr>
+<td>Legacy square logos</td>
+<td><code>public/logo/logo.png</code>; <code>logo-white.png</code></td>
+<td>PNG 1254×1254; 824 KB/1.06 MB</td>
+<td>Unused; still documented as primary</td>
+<td>Poorly governed; heavy</td>
+<td>Retire or formally classify</td>
+</tr>
+<tr>
+<td>Open Graph banner</td>
+<td><code>public/banners/homepage-banner.png</code></td>
+<td>PNG 2172×724, 3:1</td>
+<td>Active sharing fallback</td>
+<td>Usable only temporarily; old black/white identity</td>
+<td>Replace with 1200×630 OG design</td>
+</tr>
+<tr>
+<td>Uploaded book cover</td>
+<td><code>public/uploads/books/cover-30c9dad7-773a-4fdd-aca6-87f9f7232471.jpg</code></td>
+<td>JPG 299×475</td>
+<td>No active code reference</td>
+<td>Not suitable: low-resolution third-party cover</td>
+<td>Remove or document copyright permission</td>
+</tr>
+<tr>
+<td>Real book covers</td>
+<td>Not found</td>
+<td>—</td>
+<td>Generated fallbacks used</td>
+<td>Not campaign-ready</td>
+<td>Rights-cleared high-resolution covers</td>
+</tr>
+<tr>
+<td>Author photos</td>
+<td>Not found</td>
+<td>—</td>
+<td>—</td>
+<td>Missing</td>
+<td>Portrait set + permissions</td>
+</tr>
+<tr>
+<td>Event/office/process photos</td>
+<td>Not found</td>
+<td>—</td>
+<td>—</td>
+<td>Missing</td>
+<td>Owned photo library</td>
+</tr>
+<tr>
+<td>Patterns/illustrations</td>
+<td>CSS literary fragments and gradients</td>
+<td>Code-native</td>
+<td>Active</td>
+<td>Usable as supporting brand language</td>
+<td>Exportable template system</td>
+</tr>
+<tr>
+<td>Testimonials/partner/award assets</td>
+<td>Not found</td>
+<td>—</td>
+<td>—</td>
+<td>Missing</td>
+<td>Verified proof assets</td>
+</tr>
+</tbody></table>
+<h3>Channel readiness</h3>
+<ul>
+<li><strong>Facebook/Instagram profile:</strong> simplified icon is usable after padding verification.</li>
+<li><strong>Facebook/LinkedIn cover:</strong> no dedicated asset; horizontal logo alone is insufficient.</li>
+<li><strong>Instagram posts/stories/reels:</strong> no templates, book assets, video, portraits or frame system.</li>
+<li><strong>YouTube thumbnails/TikTok:</strong> no video identity or thumbnail templates.</li>
+<li><strong>Book-release/author campaigns:</strong> logo and palette are ready; factual content, covers, portraits and campaign templates are missing.</li>
+<li><strong>Website advertisements/email:</strong> OG banner is stale; no modular campaign banner or newsletter design exists.</li>
+<li><strong>Print posters/event banners:</strong> SVG logos are suitable, but CMYK/Pantone values, minimum size, clear space and print templates are missing.</li>
+</ul>
+<h3>Website marketing-section checklist</h3>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Present?</th>
+<th>Current marketing quality</th>
+<th>Improvement</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hero</td>
+<td>Yes</td>
+<td>Strong visual; weak/unsupported proof line</td>
+<td>Use verified who/what/audience promise</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>Featured books</td>
+<td>Yes when data exists</td>
+<td>Useful structure; catalogue may be demo</td>
+<td>Populate real priority books</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>Categories</td>
+<td>Yes</td>
+<td>Clear browse mechanism</td>
+<td>Confirm real categories and audience labels</td>
+<td>High</td>
+</tr>
+<tr>
+<td>New arrivals</td>
+<td>Yes</td>
+<td>Good campaign surface</td>
+<td>Drive from verified release dates</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Best sellers</td>
+<td>Yes</td>
+<td>Label may be manually set, not sales-proven</td>
+<td>Define evidence threshold or rename “Popular picks”</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>Featured authors</td>
+<td>Missing</td>
+<td>—</td>
+<td>Add only with approved bios/portraits</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Testimonials/reviews</td>
+<td>Missing</td>
+<td>—</td>
+<td>Add verified, permissioned proof</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Achievements/statistics</td>
+<td>Placeholder claims only</td>
+<td>High credibility risk</td>
+<td>Remove until documented</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>Newsletter</td>
+<td>Missing</td>
+<td>Retention gap</td>
+<td>Add consented signup after ESP/consent setup</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Contact</td>
+<td>Present</td>
+<td>Form button does not submit</td>
+<td>Implement success/error workflow; verify details</td>
+<td>Critical</td>
+</tr>
+<tr>
+<td>Social links</td>
+<td>Partial</td>
+<td>Facebook clue/WhatsApp only</td>
+<td>Verify accounts and add channel set</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Manuscript submission</td>
+<td>Missing</td>
+<td>—</td>
+<td>Add only if service exists</td>
+<td>Owner decision</td>
+</tr>
+<tr>
+<td>Events/blog/FAQ</td>
+<td>Missing</td>
+<td>Content-discovery gap</td>
+<td>Add selectively after strategy</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Discount banner</td>
+<td>Seed references missing image</td>
+<td>Not reliable</td>
+<td>Build real campaign component and asset</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Policies/payment/delivery</td>
+<td>Present</td>
+<td>Placeholder content undermines trust</td>
+<td>Owner/legal approval</td>
+<td>Critical</td>
+</tr>
+</tbody></table>
+<h3>Trust-building status</h3>
+<p><strong>Usable after verification:</strong> book metadata structure, ISBN field, payment-method UI, delivery-area UI, policies framework, office/contact fields.<br><strong>Unsupported or absent:</strong> real ISBN records, customer/author counts, years, reviews, awards, partnerships, media mentions, event photographs and secure-payment certification. Never turn repository placeholders into advertising claims.</p>
+</section>
+<section data-block-id="audience-product-map"><h2>6. Audience and Product Map</h2>
+<h3>Product and service marketing inventory</h3>
+<table>
+<thead>
+<tr>
+<th>Product or service</th>
+<th>Category</th>
+<th>Description/audience</th>
+<th>Price</th>
+<th>Promotional image</th>
+<th>Marketing status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Printed books</td>
+<td><strong>[Confirmed capability]</strong></td>
+<td>Physical-book catalogue for online ordering</td>
+<td>Real prices not confirmed</td>
+<td>Generated fallbacks; real covers absent</td>
+<td>Structure ready, content not ready</td>
+</tr>
+<tr>
+<td>Pre-order/upcoming books</td>
+<td><strong>[Confirmed capability]</strong></td>
+<td>Statuses support launch campaigns</td>
+<td>Not confirmed</td>
+<td>No real assets</td>
+<td>Campaign-ready mechanism only</td>
+</tr>
+<tr>
+<td>Book sample/PDF preview</td>
+<td><strong>[Confirmed capability]</strong></td>
+<td>Optional “Preview sample” link on book detail</td>
+<td>N/A</td>
+<td>No sample files confirmed</td>
+<td>Useful after rights approval</td>
+</tr>
+<tr>
+<td>Bangla and English books</td>
+<td><strong>[Inferred offering]</strong></td>
+<td>Data model/demo supports both languages</td>
+<td>Demo only</td>
+<td>Missing</td>
+<td>Owner confirmation required</td>
+</tr>
+<tr>
+<td>Academic/admission books</td>
+<td><strong>[Demo only]</strong></td>
+<td>Student/exam preparation</td>
+<td>Demo prices only</td>
+<td>Missing</td>
+<td>Do not promote yet</td>
+</tr>
+<tr>
+<td>Children’s books</td>
+<td><strong>[Demo only]</strong></td>
+<td>Parents/children</td>
+<td>Demo prices only</td>
+<td>Missing</td>
+<td>Do not promote yet</td>
+</tr>
+<tr>
+<td>Islamic/religious books</td>
+<td><strong>[Demo only]</strong></td>
+<td>Faith/family readers</td>
+<td>Demo prices only</td>
+<td>Missing</td>
+<td>Do not promote yet</td>
+</tr>
+<tr>
+<td>Literature/fiction</td>
+<td><strong>[Demo only]</strong></td>
+<td>General/literary readers</td>
+<td>Demo prices only</td>
+<td>Missing</td>
+<td>Do not promote yet</td>
+</tr>
+<tr>
+<td>E-books, journals, magazines</td>
+<td><strong>Not found</strong></td>
+<td>—</td>
+<td>Not found</td>
+<td>Not found</td>
+<td>Owner confirmation</td>
+</tr>
+<tr>
+<td>Manuscript publishing/author support</td>
+<td><strong>Not found</strong></td>
+<td>—</td>
+<td>Not found</td>
+<td>Not found</td>
+<td>Do not advertise</td>
+</tr>
+<tr>
+<td>Editing/proofreading/cover design</td>
+<td><strong>Not found</strong></td>
+<td>—</td>
+<td>Not found</td>
+<td>Not found</td>
+<td>Do not advertise</td>
+</tr>
+<tr>
+<td>Printing/distribution</td>
+<td><strong>Not found as a customer service</strong></td>
+<td>Storefront delivery exists, but no service package</td>
+<td>Not found</td>
+<td>Not found</td>
+<td>Do not advertise</td>
+</tr>
+<tr>
+<td>Events/workshops/book launches</td>
+<td><strong>Not found</strong></td>
+<td>—</td>
+<td>Not found</td>
+<td>Not found</td>
+<td>Owner confirmation</td>
+</tr>
+</tbody></table>
+<p>The named titles, authors, prices, dates, ISBNs and bestseller flags in <code>prisma/seed.ts</code> and <code>src/lib/sample-data.ts</code> are explicitly sample/demo content. They are excluded from the promotional inventory.</p>
+<h3>Evidence-based audience map</h3>
+<table>
+<thead>
+<tr>
+<th>Audience</th>
+<th>Repository evidence</th>
+<th>Needs/interests</th>
+<th>Relevant products</th>
+<th>Suitable channels</th>
+<th>Confidence</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>General/Bengali readers</td>
+<td>Bengali hero; Bangladesh-focused copy; catalogue</td>
+<td>Clear discovery, trusted details, convenient ordering</td>
+<td>Real printed books</td>
+<td>Facebook, Instagram, search, WhatsApp</td>
+<td>Medium-high; partly inferred</td>
+</tr>
+<tr>
+<td>Existing website customers</td>
+<td>Orders, saved books, account and recommendations</td>
+<td>Reordering, status, saved titles, relevant releases</td>
+<td>Catalogue/new releases</td>
+<td>Email, website account, consented remarketing</td>
+<td>High as product audience</td>
+</tr>
+<tr>
+<td>Students/admission candidates</td>
+<td>Demo academic/admission categories and copy</td>
+<td>Exam relevance, editions, price, availability</td>
+<td>Unconfirmed academic/admission books</td>
+<td>Facebook, YouTube, search, campus communities</td>
+<td>Medium; demo-derived</td>
+</tr>
+<tr>
+<td>Parents/children</td>
+<td>Demo children’s category</td>
+<td>Age fit, safety, learning outcomes, durable format</td>
+<td>Unconfirmed children’s books</td>
+<td>Facebook, Instagram, schools</td>
+<td>Medium-low</td>
+</tr>
+<tr>
+<td>Religious/family readers</td>
+<td>Demo Islamic category</td>
+<td>Authenticity, accessibility, family suitability</td>
+<td>Unconfirmed religious books</td>
+<td>Facebook, YouTube, community pages</td>
+<td>Medium-low</td>
+</tr>
+<tr>
+<td>Literary readers</td>
+<td>Editorial identity and demo literature category</td>
+<td>Author voice, excerpts, editions, discovery</td>
+<td>Unconfirmed literature</td>
+<td>Facebook, Instagram, literary groups</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Authors/aspiring writers</td>
+<td>Publication identity only; no submission/service pages</td>
+<td>Transparent submission, rights, royalties, support</td>
+<td>Not found</td>
+<td>LinkedIn, Facebook groups, email</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Bookshops/institutions</td>
+<td>Contact fallback mentions wholesale questions</td>
+<td>Trade terms, stock, invoices, discount, delivery</td>
+<td>Printed books if confirmed</td>
+<td>Direct email, phone, LinkedIn, sales PDF</td>
+<td>Low-medium</td>
+</tr>
+<tr>
+<td>International customers</td>
+<td>No shipping/currency/international content</td>
+<td>Delivery/payment/rights clarity</td>
+<td>Not found</td>
+<td>Not applicable yet</td>
+<td>Low</td>
+</tr>
+</tbody></table>
+<p><strong>Preliminary priority:</strong> direct-to-reader Bangladeshi customers are the clearest repository-supported audience. Student, parent, religious, literary and B2B campaigns should wait for owner-confirmed catalogue and priorities.</p>
+</section>
+<section data-block-id="marketing-message-draft"><h2>7. Marketing Message Draft</h2>
+<h3>Current message and positioning</h3>
+<p><strong>Repository messages:</strong> “Quality books, delivered to your doorstep,” “Browse Books,” “Original publications for readers, students, and lifelong learners across Bangladesh,” “simple, useful, and reader-friendly books,” and “Search, filter, and order books.”</p>
+<p><strong>Clarity assessment:</strong></p>
+<ul>
+<li><strong>What it offers:</strong> reasonably clear—an online book catalogue and ordering flow.</li>
+<li><strong>Who it serves:</strong> weak—“readers and students” appears, but audience priorities are unverified.</li>
+<li><strong>Why choose it:</strong> weak—quality, originality, convenience and delivery are asserted without proof.</li>
+<li><strong>Differentiation:</strong> not established.</li>
+<li><strong>Next action:</strong> clear—browse, add to cart, buy, checkout or contact via WhatsApp.</li>
+</ul>
+<h3>Preliminary drafts</h3>
+<p>These drafts use only repository-supported capabilities. The preferred legal name and Bangladesh positioning still require owner approval.</p>
+<ul>
+<li><strong>Short tagline:</strong> <em>Books made easier to discover and order.</em></li>
+<li><strong>Longer tagline:</strong> <em>A clear, reader-friendly way to browse printed books and order online.</em></li>
+<li><strong>Positioning statement:</strong> <em>Ayesha Sharif Publication provides a direct online catalogue where readers can discover printed books, review key details and place an order through a straightforward checkout.</em></li>
+<li><strong>Hero headline:</strong> <em>Browse books. Order online.</em></li>
+<li><strong>Hero subheading:</strong> <em>Explore the catalogue, check availability and choose the ordering option that works for you.</em></li>
+<li><strong>Thirty-word description:</strong> <em>Ayesha Sharif Publication offers an online catalogue for discovering printed books, viewing essential publication details and placing orders through a clear, practical checkout experience.</em></li>
+<li><strong>Fifty-word social bio:</strong> <em>Discover printed books from Ayesha Sharif Publication through a simple online catalogue. Browse titles, check prices and availability, save books for later, or place an order through guest or account checkout. Official catalogue, author and delivery information will be added after owner verification.</em></li>
+<li><strong>One-hundred-word introduction:</strong> <em>Ayesha Sharif Publication is developing a reader-friendly online home for discovering and ordering printed books. The website allows visitors to browse the catalogue, search by title or author, review book information, save books, add available titles to a cart and complete an order as a guest or registered customer. The current repository also supports pre-orders, manual payment options and delivery-area selection. Before public marketing begins, the publication’s official name, catalogue, authors, delivery terms, contact details and brand story should be verified by the owner so that every campaign is accurate, consistent and trustworthy.</em></li>
+</ul>
+<h3>Tone-of-voice guide</h3>
+<p><strong>Recommended voice:</strong> calm, clear, culturally aware, reader-first and evidence-led.</p>
+<ol>
+<li><strong>Be specific:</strong> name the book, audience, format, price and availability.</li>
+<li><strong>Be warm, not exaggerated:</strong> invite discovery without “best,” “number one” or unsupported superlatives.</li>
+<li><strong>Respect both languages:</strong> write natural Bengali and English rather than literal translation.</li>
+<li><strong>Make action easy:</strong> short CTAs with one clear next step.</li>
+<li><strong>Show proof:</strong> attach ISBN, author, excerpt, review source or delivery terms whenever claimed.</li>
+</ol>
+<p><strong>Use:</strong> discover, browse, printed book, author, edition, available, pre-order, read a sample, order online, verified review.<br><strong>Avoid until proven:</strong> 400+ books, bestseller, original, award-winning, nationwide, guaranteed, easy returns, free delivery, premium quality.</p>
+<ul>
+<li>Bengali headline: <strong>সহজে বই খুঁজুন, অনলাইনে অর্ডার করুন</strong></li>
+<li>English headline: <strong>Discover books and order online</strong></li>
+<li>Bengali caption: <strong>বইয়ের তথ্য, মূল্য ও প্রাপ্যতা দেখে আপনার পছন্দের বইটি বেছে নিন।</strong></li>
+<li>English caption: <strong>Review the details, check availability and choose your next book.</strong></li>
+<li>Bengali CTA: <strong>বই দেখুন</strong></li>
+<li>English CTA: <strong>Browse books</strong></li>
+</ul>
+<h3>Customer-facing CTA inventory</h3>
+<table>
+<thead>
+<tr>
+<th>Call to action</th>
+<th>Page/component</th>
+<th>Purpose</th>
+<th>Strength</th>
+<th>Recommended improvement</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Browse Books / Browse books</td>
+<td>Hero, empty states, order success, account</td>
+<td>Catalogue entry/re-entry</td>
+<td>Strong</td>
+<td>Standardise capitalisation</td>
+</tr>
+<tr>
+<td>View all</td>
+<td>Homepage book sections</td>
+<td>Explore complete collection</td>
+<td>Clear but generic</td>
+<td>Use “View all books”</td>
+</tr>
+<tr>
+<td>Search / Apply filters</td>
+<td>Header, search, books listing</td>
+<td>Discovery</td>
+<td>Strong</td>
+<td>Preserve plain language</td>
+</tr>
+<tr>
+<td>View [book]</td>
+<td>Product-card cover/title</td>
+<td>Book detail</td>
+<td>Strong via accessible labels</td>
+<td>Add visible “View details” only if testing shows need</td>
+</tr>
+<tr>
+<td>Add to cart / Pre-order</td>
+<td>Cards and details</td>
+<td>Purchase intent</td>
+<td>Strong</td>
+<td>Keep status-aware language</td>
+</tr>
+<tr>
+<td>Buy now</td>
+<td>Book detail</td>
+<td>Direct checkout</td>
+<td>Strong</td>
+<td>Retain as primary high-intent action</td>
+</tr>
+<tr>
+<td>View cart / Checkout</td>
+<td>Product cards/cart/account</td>
+<td>Funnel progression</td>
+<td>Strong</td>
+<td>Standardise sentence case</td>
+</tr>
+<tr>
+<td>Place order</td>
+<td>Checkout</td>
+<td>Conversion</td>
+<td>Strong</td>
+<td>Add reassurance about payment/delivery only after verification</td>
+</tr>
+<tr>
+<td>Save / Saved</td>
+<td>Product cards/details</td>
+<td>Retention</td>
+<td>Clear</td>
+<td>Explain sign-in requirement earlier</td>
+</tr>
+<tr>
+<td>Preview sample</td>
+<td>Book detail</td>
+<td>Reduce purchase uncertainty</td>
+<td>Strong</td>
+<td>Use only with licensed excerpts</td>
+</tr>
+<tr>
+<td>Login / Register / Create account / Sign in</td>
+<td>Header/account</td>
+<td>Account acquisition</td>
+<td>Functional</td>
+<td>Prefer “Sign in” consistently</td>
+</tr>
+<tr>
+<td>Send message</td>
+<td>Contact</td>
+<td>Lead generation</td>
+<td>Weak because form has no submission handler</td>
+<td>Implement and change to “Send enquiry”</td>
+</tr>
+<tr>
+<td>Chat on WhatsApp / Contact on WhatsApp</td>
+<td>Footer/legacy sections</td>
+<td>Assisted ordering</td>
+<td>Strong channel fit</td>
+<td>Verify number and add prefilled context</td>
+</tr>
+<tr>
+<td>Read privacy policy / Save choices</td>
+<td>Cookie controls</td>
+<td>Consent</td>
+<td>Clear</td>
+<td>Keep separate from marketing CTAs</td>
+</tr>
+<tr>
+<td>Home / Browse books</td>
+<td>Not-found page</td>
+<td>Recovery</td>
+<td>Strong</td>
+<td>No major change</td>
+</tr>
+</tbody></table>
+<p><strong>Missing CTAs:</strong> subscribe for releases, meet authors, read verified reviews, download catalogue, wholesale enquiry, submit manuscript, follow verified social accounts and register for events. Add only when the underlying offer exists.</p>
+</section>
+<section data-block-id="social-content-pillars"><h2>8. Social-Media Content Pillars</h2>
+<h3>Current social readiness</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Repository status</th>
+<th>Marketing assessment</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Facebook</td>
+<td>URL clue in <code>src/lib/constants.ts</code>; contact display says placeholder</td>
+<td>Verify ownership before publishing</td>
+</tr>
+<tr>
+<td>WhatsApp</td>
+<td>wa.me pathways implemented</td>
+<td>Strong assisted-ordering channel after number verification</td>
+</tr>
+<tr>
+<td>Instagram, LinkedIn, YouTube, TikTok, X, Messenger</td>
+<td>Not found</td>
+<td>Accounts/handles and platform roles needed</td>
+</tr>
+<tr>
+<td>Open Graph</td>
+<td>Global title, description and <code>/banners/homepage-banner.png</code></td>
+<td>Implemented, but banner and copy need refresh</td>
+</tr>
+<tr>
+<td>Twitter/X card</td>
+<td>No explicit configuration found</td>
+<td>Add after verified domain/assets</td>
+</tr>
+<tr>
+<td>Social icons</td>
+<td>Facebook and WhatsApp Lucide icons only</td>
+<td>No complete social set</td>
+</tr>
+<tr>
+<td>Sharing buttons/feed integrations</td>
+<td>Not found</td>
+<td>Optional after channel strategy</td>
+</tr>
+<tr>
+<td>Username variations</td>
+<td>“ayeshasharifpublication” clue; repository names differ</td>
+<td>Reserve one approved handle across platforms</td>
+</tr>
+</tbody></table>
+<h3>Evidence-based content pillars</h3>
+<table>
+<thead>
+<tr>
+<th>Content pillar</th>
+<th>Audience</th>
+<th>Example topics</th>
+<th>Recommended format</th>
+<th>Marketing objective</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Verified new releases</td>
+<td>General readers</td>
+<td>Cover reveal, publication date, format, price</td>
+<td>Carousel, reel, launch poster</td>
+<td>Awareness and sales</td>
+</tr>
+<tr>
+<td>Book discovery</td>
+<td>Readers/students</td>
+<td>Category picks, “what to read next,” availability</td>
+<td>Carousel, story poll, short video</td>
+<td>Catalogue exploration</td>
+</tr>
+<tr>
+<td>Author introductions</td>
+<td>Literary readers</td>
+<td>Approved bio, inspiration, short interview</td>
+<td>Portrait carousel, reel, YouTube interview</td>
+<td>Trust and author affinity</td>
+</tr>
+<tr>
+<td>Book previews</td>
+<td>High-intent readers</td>
+<td>Approved excerpt, contents, sample pages</td>
+<td>Carousel, reel voiceover, website sample</td>
+<td>Purchase consideration</td>
+</tr>
+<tr>
+<td>Ordering guidance</td>
+<td>New customers</td>
+<td>Add to cart, guest checkout, payment steps</td>
+<td>Screen recording, infographic, story highlight</td>
+<td>Conversion</td>
+</tr>
+<tr>
+<td>Reader proof</td>
+<td>Prospects</td>
+<td>Verified review with source and permission</td>
+<td>Quote card, testimonial reel</td>
+<td>Credibility</td>
+</tr>
+<tr>
+<td>Publishing behind the scenes</td>
+<td>Readers/authors</td>
+<td>Editing, cover process, printing, packing</td>
+<td>Reels, photo diary, YouTube short</td>
+<td>Brand transparency</td>
+</tr>
+<tr>
+<td>Learning/literary guidance</td>
+<td>Students/readers</td>
+<td>Reading tips, study use, writing guidance tied to real books</td>
+<td>Carousel, short video, blog/email</td>
+<td>Reach and usefulness</td>
+</tr>
+</tbody></table>
+<p>Discounts, giveaways, events and seasonal posts are possible only after the owner supplies real terms, budget, dates and fulfilment rules.</p>
+<h3>Content opportunity map</h3>
+<table>
+<thead>
+<tr>
+<th>Content idea</th>
+<th>Available source material</th>
+<th>Target audience</th>
+<th>Format</th>
+<th>Required missing information</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Brand introduction</td>
+<td>Logo, palette, current fallback description</td>
+<td>General</td>
+<td>Pinned carousel/video</td>
+<td>Approved story, founder, mission</td>
+</tr>
+<tr>
+<td>New-book launch</td>
+<td>Status fields and campaign-ready UI</td>
+<td>Readers</td>
+<td>Launch sequence</td>
+<td>Real book metadata, stock, cover, rights</td>
+</tr>
+<tr>
+<td>Author spotlight</td>
+<td>Author field exists</td>
+<td>Readers/authors</td>
+<td>Portrait carousel/interview</td>
+<td>Approved bio, portrait, achievements</td>
+</tr>
+<tr>
+<td>Excerpt/sample</td>
+<td>Sample-link capability</td>
+<td>High-intent readers</td>
+<td>Carousel/PDF/video</td>
+<td>Rights-cleared excerpt</td>
+</tr>
+<tr>
+<td>Reader review</td>
+<td>None</td>
+<td>Prospects</td>
+<td>Quote card/reel</td>
+<td>Verified review and permission</td>
+</tr>
+<tr>
+<td>“How to order”</td>
+<td>Checkout steps and CTAs</td>
+<td>New buyers</td>
+<td>Screen recording/infographic</td>
+<td>Confirmed payment/delivery terms</td>
+</tr>
+<tr>
+<td>Category education</td>
+<td>Demo categories only</td>
+<td>Students/parents/readers</td>
+<td>Carousel/blog</td>
+<td>Real category strategy and products</td>
+</tr>
+<tr>
+<td>Behind the scenes</td>
+<td>No imagery</td>
+<td>Readers/authors</td>
+<td>Reels/photo series</td>
+<td>Production access and consent</td>
+</tr>
+<tr>
+<td>Seasonal campaign</td>
+<td>Palette and templates-to-be-built</td>
+<td>Segment-specific</td>
+<td>Poster/story/email</td>
+<td>Calendar, offer, stock, budget</td>
+</tr>
+<tr>
+<td>Newsletter</td>
+<td>Consent concepts exist; no signup</td>
+<td>Customers/readers</td>
+<td>Email</td>
+<td>ESP, consent text, sender domain, cadence</td>
+</tr>
+<tr>
+<td>Blog/SEO article</td>
+<td>No blog route</td>
+<td>Search audience</td>
+<td>Article</td>
+<td>Editorial owner, topics, keyword research</td>
+</tr>
+<tr>
+<td>YouTube/short-form series</td>
+<td>No video assets</td>
+<td>Students/readers</td>
+<td>Shorts/interviews</td>
+<td>Presenter, scripts, filming capacity</td>
+</tr>
+<tr>
+<td>Event promotion</td>
+<td>No event evidence</td>
+<td>Community</td>
+<td>Poster/reel/event page</td>
+<td>Real date, venue, speakers, registration</td>
+</tr>
+<tr>
+<td>Wholesale catalogue</td>
+<td>Contact copy mentions wholesale questions</td>
+<td>Bookshops/institutions</td>
+<td>PDF/email/LinkedIn</td>
+<td>Trade pricing, MOQ, distribution terms</td>
+</tr>
+</tbody></table>
+</section>
+<section data-block-id="missing-questionnaire"><h2>9. Missing Information Questionnaire</h2>
+<ol>
+<li><strong>What is the exact legal and public English name, including hyphenation and singular/plural?</strong> Needed to resolve repository/wordmark inconsistency.</li>
+<li><strong>What is the approved Bengali name and is “ASP” approved publicly?</strong> Needed for bilingual templates and social avatars.</li>
+<li><strong>Who founded, owns and manages the publication, and what can be published about them?</strong> Needed for brand story and credibility.</li>
+<li><strong>What year was the publication established?</strong> Needed before using “EST.” or experience claims.</li>
+<li><strong>What are the approved mission, vision, values and founding story?</strong> Needed for positioning and content themes.</li>
+<li><strong>What makes the publication different from other publishers or bookstores?</strong> Needed for a defensible value proposition.</li>
+<li><strong>Who are the primary and secondary audiences?</strong> Needed to prioritise campaigns and channels.</li>
+<li><strong>Which publishing categories are real and strategically important?</strong> Needed to replace demo categories.</li>
+<li><strong>Provide the real book catalogue with authors, ISBNs, editions, language, price, stock, publication dates, descriptions and rights-cleared covers.</strong> Needed for all product marketing.</li>
+<li><strong>Which books are priority releases, proven bestsellers or upcoming launches? What evidence supports each label?</strong> Needed for honest merchandising.</li>
+<li><strong>Provide approved author bios, portraits, social handles, quotes and permissions.</strong> Needed for author campaigns.</li>
+<li><strong>Are e-books, journals, magazines, manuscript publishing or author services offered?</strong> Needed to define the product/service portfolio.</li>
+<li><strong>If manuscript submission is open, what are the criteria, process, rights, royalties and response times?</strong> Needed before author-acquisition promotion.</li>
+<li><strong>Confirm the official website domain, email, phone, WhatsApp, address and business hours.</strong> Needed for conversion and metadata.</li>
+<li><strong>Confirm all owned social accounts and preferred username. Who has administrative access?</strong> Needed for channel activation.</li>
+<li><strong>Which payment methods, merchant accounts and delivery regions are live?</strong> Needed for checkout reassurance.</li>
+<li><strong>What are the approved delivery charges, free-shipping threshold, timing, tracking, cancellation, return and refund rules?</strong> Needed to replace placeholder claims/policies.</li>
+<li><strong>Where are books distributed—own site, marketplaces, bookshops, fairs, schools or libraries?</strong> Needed for purchase and partnership messaging.</li>
+<li><strong>Are wholesale/institutional sales offered? Provide MOQ, trade discount and contact process.</strong> Needed for B2B marketing.</li>
+<li><strong>Provide verified testimonials, reviews, awards, partnerships, media coverage, events and numerical achievements.</strong> Needed for trust content.</li>
+<li><strong>Who owns the logos, book covers, excerpts, photographs and videos, and are licences documented?</strong> Needed to prevent rights violations.</li>
+<li><strong>What original photography/video assets are available or can be produced monthly?</strong> Needed for a sustainable content plan.</li>
+<li><strong>Which campaign language is preferred—Bengali, English or bilingual—and who approves copy?</strong> Needed for workflow and consistency.</li>
+<li><strong>What are the next 90-day marketing objectives and campaign priorities?</strong> Needed to turn this information report into strategy.</li>
+<li><strong>What monthly budget, advertising budget and team capacity are available?</strong> Needed for realistic channel/cadence planning.</li>
+<li><strong>Which competitors or benchmark publishers should be researched later?</strong> Needed for a separate external positioning study.</li>
+<li><strong>What KPIs define success—sales, qualified enquiries, manuscripts, subscribers, repeat purchases or reach?</strong> Needed for measurement.</li>
+<li><strong>Which email, analytics and advertising accounts already exist, and what consent rules apply?</strong> Needed for newsletters, attribution and remarketing.</li>
+</ol>
+</section>
+<section data-block-id="marketing-readiness"><h2>10. Marketing Readiness Verdict</h2>
+<h3>Decision</h3>
+<p><strong>OWNER_INFORMATION_REQUIRED</strong></p>
+<p>The repository is sufficient to define a preliminary visual and editorial marketing direction, but it is not sufficient to launch factual book, author, trust, delivery, service or paid-advertising campaigns safely.</p>
+<h3>Recommended next steps</h3>
+<ol>
+<li>Approve the English/Bengali name and short form.</li>
+<li>Replace the demo catalogue, generated ISBNs, placeholders and unsupported claims.</li>
+<li>Verify contact, domain, social, payment, delivery and policy information.</li>
+<li>Secure rights-cleared book covers, author portraits, excerpts and photography.</li>
+<li>Approve positioning, priority audiences, campaign goals and proof library.</li>
+<li>Create channel templates from the forest/sage/cream/gold system.</li>
+<li>Launch a single verified book or brand campaign before scaling channels.</li>
+</ol>
+<h3>Further questions</h3>
+<p>The most decision-changing unknowns are the real catalogue, priority audience, differentiation, proof, distribution footprint and first campaign. These determine whether the visual system should lean primarily literary, educational, faith-oriented, family-oriented or broad reader retail.</p>
+<h3>Caveats and assumptions</h3>
+<ul>
+<li>This is a marketing-only repository report, not a legal, market-demand or competitor study.</li>
+<li>Repository presence confirms project content/capability, not real-world business status.</li>
+<li>Demo/seed books and placeholder policies/contact data are excluded as business facts.</li>
+<li>No external competitor, social-account or keyword-volume research was performed.</li>
+<li>Runtime database-only values and environment configuration were excluded.</li>
+<li>Colour counts cover exact six-digit HEX literals; translucent and named Tailwind colours are not included in the frequency chart.</li>
+<li>No repository files were modified to create this report.</li>
+</ul>
+</section><section id="sources"><h2>Sources</h2><ol><li><strong>Repository brand-colour frequency scan</strong><p>Reproduces exact six-digit HEX occurrence counts from the reviewed TS, TSX, CSS, and SVG files under src and public.</p><p><strong>Repository scope:</strong> src/**/*.{ts,tsx,css}, public/**/*.svg</p><pre><code>WITH colour_counts(hex_code, occurrences, rank, role, status) AS (VALUES ('#2D4A2B',42,1,'Forest / primary','active'),('#B0A89C',35,2,'Soft grey / muted','active but low contrast'),('#D4A574',33,3,'Gold / accent','active'),('#FFFFFF',23,4,'White / surface','active'),('#6B8E6F',22,5,'Sage / secondary','active'),('#F5F1E8',10,6,'Cream / background','active')) SELECT hex_code, occurrences, rank, role, status FROM colour_counts ORDER BY occurrences DESC;</code></pre></li></ol></section></main></body></html>

@@ -16,6 +16,7 @@ import { formatCurrency } from "@/lib/format";
 import { trackBookEvent } from "@/lib/tracking-client";
 import type { BookCardData } from "@/types";
 import { BookCover } from "@/components/books/book-cover";
+import { SavedBookToggle } from "@/components/books/saved-book-toggle";
 import { QuantityStepper } from "@/components/ui/quantity-stepper";
 import { useToast } from "@/components/ui/toast";
 
@@ -33,6 +34,7 @@ export const ProductCard = memo(function ProductCard({ book }: { book: BookCardD
     purchasableStatuses.includes(book.status) && book.stockQuantity > 0;
   const isPreOrder = book.status === "pre_order";
   const isArchived = book.status === "archived";
+  const showSaveAction = isAvailable || quantity > 0;
   const [failedCover, setFailedCover] = useState<string | null>(null);
   const coverError = Boolean(
     book.coverImage && failedCover === book.coverImage,
@@ -224,54 +226,71 @@ export const ProductCard = memo(function ProductCard({ book }: { book: BookCardD
         {/* Price + button pushed to card bottom */}
         <div className="mt-auto">
           {/* Price row */}
-          <div className="mt-3 flex items-center justify-between gap-2">
-            <span
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "15px",
-                fontWeight: 600,
-                color: "#6B8E6F",
-              }}
-            >
-              {formatCurrency(book.salePrice)}
-            </span>
-            {book.salePrice < book.regularPrice ? (
+          <div className="mt-3 flex items-start justify-between gap-3">
+            <div className="min-w-0">
               <span
                 style={{
-                  fontSize: "12px",
-                  color: "#B0A89C",
-                  textDecoration: "line-through",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "15px",
+                  fontWeight: 600,
+                  color: "#6B8E6F",
                 }}
               >
-                {formatCurrency(book.regularPrice)}
+                {formatCurrency(book.salePrice)}
               </span>
+              {book.salePrice < book.regularPrice ? (
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#B0A89C",
+                    textDecoration: "line-through",
+                  }}
+                >
+                  {formatCurrency(book.regularPrice)}
+                </div>
+              ) : null}
+            </div>
+            {showSaveAction ? (
+              <SavedBookToggle
+                bookId={book.id}
+                title={book.title}
+                variant="compact"
+              />
             ) : null}
           </div>
 
           {quantity > 0 ? (
-            <div className="mt-3 flex items-center gap-2">
-              <QuantityStepper
-                value={quantity}
-                min={0}
-                max={isAvailable ? book.stockQuantity : quantity}
-                size="md"
-                active
-                valueLabel={`Quantity for ${book.title}`}
-                decreaseLabel={`Decrease quantity for ${book.title}`}
-                increaseLabel={`Increase quantity for ${book.title}`}
-                onDecrement={handleDecrement}
-                onIncrement={handleIncrement}
-                className="min-w-0 flex-1 justify-between"
-              />
-              <button
-                type="button"
-                onClick={handleRemove}
-                className="cart-remove-button inline-flex h-11 w-11 shrink-0 items-center justify-center"
-                aria-label={`Remove ${book.title} from cart`}
-                title="Remove from cart"
+            <div className="mt-3 flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <QuantityStepper
+                  value={quantity}
+                  min={0}
+                  max={isAvailable ? book.stockQuantity : quantity}
+                  size="md"
+                  active
+                  valueLabel={`Quantity for ${book.title}`}
+                  decreaseLabel={`Decrease quantity for ${book.title}`}
+                  increaseLabel={`Increase quantity for ${book.title}`}
+                  onDecrement={handleDecrement}
+                  onIncrement={handleIncrement}
+                  className="min-w-0 flex-1 justify-between"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemove}
+                  className="cart-remove-button inline-flex h-11 w-11 shrink-0 items-center justify-center"
+                  aria-label={`Remove ${book.title} from cart`}
+                  title="Remove from cart"
+                >
+                  <Trash2 className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+              <Link
+                href="/cart"
+                className="cart-view-link focus-ring inline-flex min-h-11 w-full items-center justify-center rounded-[4px] px-3 py-2 text-[12px] font-medium uppercase tracking-[0.06em]"
               >
-                <Trash2 className="h-4 w-4" aria-hidden="true" />
-              </button>
+                View cart
+              </Link>
             </div>
           ) : (
             <button

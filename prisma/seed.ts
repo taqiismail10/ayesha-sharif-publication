@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 import { DEFAULT_POLICIES } from "../src/lib/policy-definitions";
+import { DEFAULT_HOMEPAGE_CONTENT } from "../src/lib/homepage-content-definitions";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required to seed the database.");
@@ -373,6 +374,17 @@ async function main() {
         address: "Office address, Dhaka, Bangladesh"
       }
     }
+  });
+
+  await prisma.siteSetting.upsert({
+    where: { key: "site_content.homepage" },
+    update: {
+      value: DEFAULT_HOMEPAGE_CONTENT,
+    },
+    create: {
+      key: "site_content.homepage",
+      value: DEFAULT_HOMEPAGE_CONTENT,
+    },
   });
 
   console.log(`Seeded database. Admin: ${adminEmail}`);

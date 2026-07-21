@@ -1,4 +1,5 @@
 import { getHomeData } from "@/lib/data";
+import { getHomepageContent } from "@/lib/site-content";
 import { BookSection } from "@/components/books/book-section";
 import { HeroSection } from "@/components/site/hero-section";
 import {
@@ -9,13 +10,17 @@ import {
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const { featured, categories, newArrivals, bestSellers } =
-    await getHomeData();
+  const [{ featured, categories, newArrivals, bestSellers }, homepage] =
+    await Promise.all([getHomeData(), getHomepageContent()]);
 
   return (
     <main>
       {/* 1. Hero */}
-      <HeroSection />
+      <HeroSection
+        eyebrow={homepage.heroEyebrow}
+        subtitle={homepage.heroSubtitle}
+        meta={homepage.heroMeta}
+      />
 
       {/* 2. Featured Books — max 8 */}
       <div className="mx-auto max-w-[1200px] px-6">
@@ -54,7 +59,7 @@ export default async function HomePage() {
       </div>
 
       {/* 6. Trust strip */}
-      <TrustStrip />
+      <TrustStrip items={homepage.features} />
     </main>
   );
 }

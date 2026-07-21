@@ -7,15 +7,14 @@ import { usePathname } from "next/navigation";
 import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { publicNav } from "@/lib/constants";
 import { useCart } from "@/lib/cart-client";
+import { apiFetch } from "@/lib/api-client";
+import { AccountMenu } from "@/components/site/account-menu";
 
 const HEADER_MORPH_THRESHOLD = 80;
 
 type HeaderAuthState = "loading" | "guest" | "customer" | "admin";
 
 function getAuthAction(pathname: string, authState: HeaderAuthState) {
-  if (authState === "customer") {
-    return { href: "/account/profile", label: "Account" };
-  }
   if (authState === "admin") {
     return { href: "/admin", label: "Admin" };
   }
@@ -48,6 +47,14 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const authAction = getAuthAction(pathname, authState);
+  const customerMenuItems = [
+    { href: "/account", label: "My Account" },
+    { href: "/account/orders", label: "Orders" },
+    { href: "/account/saved-books", label: "Saved Books" },
+    { href: "/cart", label: "Cart" },
+    { href: "/account/settings#profile", label: "Profile & Delivery" },
+    { href: "/account/security", label: "Security" },
+  ];
 
   /** True when `href` matches the current pathname */
   const isActive = (href: string) =>
@@ -129,6 +136,15 @@ export function Header() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [searchOpen]);
+
+  const handleCustomerLogout = () => {
+    setMobileOpen(false);
+    apiFetch("/auth/customer/logout", { method: "POST" })
+      .catch(() => undefined)
+      .finally(() => {
+        window.location.href = "/";
+      });
+  };
 
   return (
     <>
@@ -231,7 +247,7 @@ export function Header() {
           </nav>
 
           {/* Right: icons + CTA (desktop) / hamburger (mobile) */}
-          <div className="header-actions flex flex-shrink-0 items-center gap-2">
+          <div className="header-actions flex flex-shrink-0 items-center gap-2 md:gap-3">
 
             {/* Search — desktop */}
             <button
@@ -268,8 +284,9 @@ export function Header() {
               )}
             </Link>
 
-            {/* Route- and session-aware auth action — desktop only */}
-            {authAction ? (
+            {authState === "customer" ? (
+              <AccountMenu />
+            ) : authAction ? (
               <Link
                 href={authAction.href}
                 aria-label={authAction.label}
@@ -326,7 +343,21 @@ export function Header() {
               </Link>
             ))}
 
-            {/* Mobile: route- and session-aware auth link */}
+            {authState === "customer"
+              ? customerMenuItems
+                  .filter((item) => item.href !== "/cart")
+                  .map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block min-h-11 px-6 py-[18px] font-sans text-base text-cream/70 transition-colors duration-150 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold"
+                  >
+                    {item.label}
+                  </Link>
+                  ))
+              : null}
+
             {authAction ? (
               <Link
                 href={authAction.href}
@@ -336,6 +367,16 @@ export function Header() {
               >
                 {authAction.label}
               </Link>
+            ) : null}
+
+            {authState === "customer" ? (
+              <button
+                type="button"
+                onClick={handleCustomerLogout}
+                className="block min-h-11 px-6 py-[18px] text-left font-sans text-base text-cream/70 transition-colors duration-150 hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold"
+              >
+                Logout
+              </button>
             ) : null}
 
             {/* Mobile: search + cart row */}

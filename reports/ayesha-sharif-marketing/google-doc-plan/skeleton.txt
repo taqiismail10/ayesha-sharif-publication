@@ -1,0 +1,179 @@
+Ayesha Sharif Publication Marketing Information Report
+Executive Summary — Marketing Summary
+[Confirmed from repository] A distinctive “Editorial Calm” identity already exists. The storefront combines forest green, sage, cream, gold, Crimson Text, Inter, and a Bengali serif display treatment. The result feels literary, minimal, elegant, culturally rooted, modern, and reader-focused. Sources: README.md; src/app/globals.css; src/app/layout.tsx; src/components/site/hero-section.tsx. 
+[Confirmed from repository] The strongest marketing-ready elements are the logo family, Bengali-first hero, clear catalogue navigation, book-detail merchandising, direct purchase CTAs, WhatsApp support pathway, Open Graph setup, and responsive editorial UI. Sources: public/logo/; src/app/layout.tsx; src/components/books/product-card.tsx; src/components/books/book-purchase-panel.tsx; src/components/site/footer.tsx. 
+[Owner confirmation required] The repository is not a reliable source for the real catalogue or proof claims. Seed and fallback books explicitly call themselves sample content; ISBNs are generated; policies identify themselves as placeholders; contact values include placeholders; and “400+ Books,” “Free delivery above ৳500,” “Easy Returns,” “Original publication,” “Best sellers,” and “Nationwide Shipping” lack sufficient repository proof. Sources: prisma/seed.ts; src/lib/sample-data.ts; src/lib/policy-definitions.ts; src/lib/homepage-content-definitions.ts; src/lib/site-content.ts. 
+[Inferred from available content] The intended market is Bangladesh-based readers seeking printed books through a straightforward online ordering journey. Student, parent, children’s, religious, admission, and literary segments are plausible, but the category evidence comes from demo data and cannot yet drive public campaigns. 
+
+Bottom line: the visual identity and storefront can support future marketing, but factual content, proof, rights-cleared photography, real books/authors, and owner-approved positioning must be collected before campaigns are produced.
+2. Confirmed Marketing Information
+“Confirmed” means present in repository content or implemented as a website capability; it does not independently verify a legal or real-world business fact.
+[[TABLE_01]]
+
+3. Existing Visual Theme
+Marketing character
+[[TABLE_02]]
+
+UI and image style
+Layout: centred editorial sections, generous whitespace, responsive grids, 1,200–1,440 px content widths.
+Cards: white or translucent “glass” surfaces; typically 8–10 px radius; soft shadows such as 0 2px 8px rgba(0,0,0,.06).
+Buttons: compact 4–6 px radius; sage fill, forest hover, gold focus; uppercase/tracked labels in major CTAs.
+Gradients/backgrounds: cream base with low-opacity forest, soft grey and gold gradients; literary fragments, hairlines and subtle dust.
+Icons: consistent Lucide outline icons, generally small and functional.
+Photography: effectively absent. Book cards generate fallback covers; there are no owned author, office, event or production photographs.
+Desktop/mobile consistency: responsive component classes and mobile breakpoints preserve the same palette and hierarchy. The current visual identity is suited to square and vertical social templates, but dedicated templates do not exist.
+
+Typography audit and marketing system
+[Confirmed] Loaded families: Crimson Text 400/600 normal/italic; Inter 400/500; Noto Serif Bengali 700/900; Montserrat 800/900; Anek Bangla 800. Source: src/app/layout.tsx. Tailwind defines Crimson/Georgia for serif and Inter/Noto Sans Bengali/system for sans/heading in tailwind.config.ts.
+[[TABLE_03]]
+
+Issues: five font families are loaded, but Montserrat and Anek are not clearly active in current public sections; Inter 600 is used in styling without being loaded; “Noto Sans Bengali” is named as fallback but not loaded; small low-contrast text and wide uppercase tracking reduce readability; no font-licence documentation was found. For promotional graphics, use Crimson + Inter + Noto Serif Bengali and drop Montserrat unless a specific campaign needs it.
+4. Recommended Marketing Colour Palette
+Repository colour inventory
+[[TABLE_04]]
+
+Recommended marketing palette
+[[TABLE_05]]
+
+Contrast cautions: #B0A89C is approximately 2.09:1 on cream and 2.35:1 on white; white on #6B8E6F is approximately 3.67:1; white on #D4A574 is approximately 2.23:1. These combinations should not carry small marketing copy. Duplicate legacy colours—#F7F1E3/#FFFCF6 creams, #C9A227 gold, #10233F navy, #0F766E emerald and #111827 ink—should be consolidated where they act as brand colours.
+Marketing applications: cream/forest/gold for premium and literary posts; cream/sage/forest for educational explainers; deep forest/cream/gold for book launches; forest CTA panels for advertisements. Preserve generous whitespace and avoid multi-colour discount styling.
+The chart below counts exact six-digit HEX occurrences across inspected TS, TSX, CSS and SVG files. It confirms forest, soft grey, gold, white, sage and cream as the dominant implemented system; frequency does not imply that every combination is accessible.
+Most-used implemented brand colours
+Exact six-digit HEX occurrences in inspected TS, TSX, CSS and SVG files.
+[[CHART_DATA_06]]
+
+5. Marketing Asset Inventory
+Usable and risky assets
+[[TABLE_07]]
+
+Channel readiness
+Facebook/Instagram profile: simplified icon is usable after padding verification.
+Facebook/LinkedIn cover: no dedicated asset; horizontal logo alone is insufficient.
+Instagram posts/stories/reels: no templates, book assets, video, portraits or frame system.
+YouTube thumbnails/TikTok: no video identity or thumbnail templates.
+Book-release/author campaigns: logo and palette are ready; factual content, covers, portraits and campaign templates are missing.
+Website advertisements/email: OG banner is stale; no modular campaign banner or newsletter design exists.
+Print posters/event banners: SVG logos are suitable, but CMYK/Pantone values, minimum size, clear space and print templates are missing.
+
+Website marketing-section checklist
+[[TABLE_08]]
+
+Trust-building status
+Usable after verification: book metadata structure, ISBN field, payment-method UI, delivery-area UI, policies framework, office/contact fields. Unsupported or absent: real ISBN records, customer/author counts, years, reviews, awards, partnerships, media mentions, event photographs and secure-payment certification. Never turn repository placeholders into advertising claims.
+6. Audience and Product Map
+Product and service marketing inventory
+[[TABLE_09]]
+
+The named titles, authors, prices, dates, ISBNs and bestseller flags in prisma/seed.ts and src/lib/sample-data.ts are explicitly sample/demo content. They are excluded from the promotional inventory.
+Evidence-based audience map
+[[TABLE_10]]
+
+Preliminary priority: direct-to-reader Bangladeshi customers are the clearest repository-supported audience. Student, parent, religious, literary and B2B campaigns should wait for owner-confirmed catalogue and priorities.
+7. Marketing Message Draft
+Current message and positioning
+Repository messages: “Quality books, delivered to your doorstep,” “Browse Books,” “Original publications for readers, students, and lifelong learners across Bangladesh,” “simple, useful, and reader-friendly books,” and “Search, filter, and order books.”
+Clarity assessment:
+What it offers: reasonably clear—an online book catalogue and ordering flow.
+Who it serves: weak—“readers and students” appears, but audience priorities are unverified.
+Why choose it: weak—quality, originality, convenience and delivery are asserted without proof.
+Differentiation: not established.
+Next action: clear—browse, add to cart, buy, checkout or contact via WhatsApp.
+
+Preliminary drafts
+These drafts use only repository-supported capabilities. The preferred legal name and Bangladesh positioning still require owner approval.
+Short tagline: Books made easier to discover and order.
+Longer tagline: A clear, reader-friendly way to browse printed books and order online.
+Positioning statement: Ayesha Sharif Publication provides a direct online catalogue where readers can discover printed books, review key details and place an order through a straightforward checkout.
+Hero headline: Browse books. Order online.
+Hero subheading: Explore the catalogue, check availability and choose the ordering option that works for you.
+Thirty-word description: Ayesha Sharif Publication offers an online catalogue for discovering printed books, viewing essential publication details and placing orders through a clear, practical checkout experience.
+Fifty-word social bio: Discover printed books from Ayesha Sharif Publication through a simple online catalogue. Browse titles, check prices and availability, save books for later, or place an order through guest or account checkout. Official catalogue, author and delivery information will be added after owner verification.
+One-hundred-word introduction: Ayesha Sharif Publication is developing a reader-friendly online home for discovering and ordering printed books. The website allows visitors to browse the catalogue, search by title or author, review book information, save books, add available titles to a cart and complete an order as a guest or registered customer. The current repository also supports pre-orders, manual payment options and delivery-area selection. Before public marketing begins, the publication’s official name, catalogue, authors, delivery terms, contact details and brand story should be verified by the owner so that every campaign is accurate, consistent and trustworthy.
+
+Tone-of-voice guide
+Recommended voice: calm, clear, culturally aware, reader-first and evidence-led.
+Be specific: name the book, audience, format, price and availability.
+Be warm, not exaggerated: invite discovery without “best,” “number one” or unsupported superlatives.
+Respect both languages: write natural Bengali and English rather than literal translation.
+Make action easy: short CTAs with one clear next step.
+Show proof: attach ISBN, author, excerpt, review source or delivery terms whenever claimed.
+
+Use: discover, browse, printed book, author, edition, available, pre-order, read a sample, order online, verified review. Avoid until proven: 400+ books, bestseller, original, award-winning, nationwide, guaranteed, easy returns, free delivery, premium quality.
+Bengali headline: সহজে বই খুঁজুন, অনলাইনে অর্ডার করুন
+English headline: Discover books and order online
+Bengali caption: বইয়ের তথ্য, মূল্য ও প্রাপ্যতা দেখে আপনার পছন্দের বইটি বেছে নিন।
+English caption: Review the details, check availability and choose your next book.
+Bengali CTA: বই দেখুন
+English CTA: Browse books
+
+Customer-facing CTA inventory
+[[TABLE_11]]
+
+Missing CTAs: subscribe for releases, meet authors, read verified reviews, download catalogue, wholesale enquiry, submit manuscript, follow verified social accounts and register for events. Add only when the underlying offer exists.
+8. Social-Media Content Pillars
+Current social readiness
+[[TABLE_12]]
+
+Evidence-based content pillars
+[[TABLE_13]]
+
+Discounts, giveaways, events and seasonal posts are possible only after the owner supplies real terms, budget, dates and fulfilment rules.
+Content opportunity map
+[[TABLE_14]]
+
+9. Missing Information Questionnaire
+What is the exact legal and public English name, including hyphenation and singular/plural? Needed to resolve repository/wordmark inconsistency.
+What is the approved Bengali name and is “ASP” approved publicly? Needed for bilingual templates and social avatars.
+Who founded, owns and manages the publication, and what can be published about them? Needed for brand story and credibility.
+What year was the publication established? Needed before using “EST.” or experience claims.
+What are the approved mission, vision, values and founding story? Needed for positioning and content themes.
+What makes the publication different from other publishers or bookstores? Needed for a defensible value proposition.
+Who are the primary and secondary audiences? Needed to prioritise campaigns and channels.
+Which publishing categories are real and strategically important? Needed to replace demo categories.
+Provide the real book catalogue with authors, ISBNs, editions, language, price, stock, publication dates, descriptions and rights-cleared covers. Needed for all product marketing.
+Which books are priority releases, proven bestsellers or upcoming launches? What evidence supports each label? Needed for honest merchandising.
+Provide approved author bios, portraits, social handles, quotes and permissions. Needed for author campaigns.
+Are e-books, journals, magazines, manuscript publishing or author services offered? Needed to define the product/service portfolio.
+If manuscript submission is open, what are the criteria, process, rights, royalties and response times? Needed before author-acquisition promotion.
+Confirm the official website domain, email, phone, WhatsApp, address and business hours. Needed for conversion and metadata.
+Confirm all owned social accounts and preferred username. Who has administrative access? Needed for channel activation.
+Which payment methods, merchant accounts and delivery regions are live? Needed for checkout reassurance.
+What are the approved delivery charges, free-shipping threshold, timing, tracking, cancellation, return and refund rules? Needed to replace placeholder claims/policies.
+Where are books distributed—own site, marketplaces, bookshops, fairs, schools or libraries? Needed for purchase and partnership messaging.
+Are wholesale/institutional sales offered? Provide MOQ, trade discount and contact process. Needed for B2B marketing.
+Provide verified testimonials, reviews, awards, partnerships, media coverage, events and numerical achievements. Needed for trust content.
+Who owns the logos, book covers, excerpts, photographs and videos, and are licences documented? Needed to prevent rights violations.
+What original photography/video assets are available or can be produced monthly? Needed for a sustainable content plan.
+Which campaign language is preferred—Bengali, English or bilingual—and who approves copy? Needed for workflow and consistency.
+What are the next 90-day marketing objectives and campaign priorities? Needed to turn this information report into strategy.
+What monthly budget, advertising budget and team capacity are available? Needed for realistic channel/cadence planning.
+Which competitors or benchmark publishers should be researched later? Needed for a separate external positioning study.
+What KPIs define success—sales, qualified enquiries, manuscripts, subscribers, repeat purchases or reach? Needed for measurement.
+Which email, analytics and advertising accounts already exist, and what consent rules apply? Needed for newsletters, attribution and remarketing.
+
+10. Marketing Readiness Verdict
+Decision
+OWNER_INFORMATION_REQUIRED
+The repository is sufficient to define a preliminary visual and editorial marketing direction, but it is not sufficient to launch factual book, author, trust, delivery, service or paid-advertising campaigns safely.
+Recommended next steps
+Approve the English/Bengali name and short form.
+Replace the demo catalogue, generated ISBNs, placeholders and unsupported claims.
+Verify contact, domain, social, payment, delivery and policy information.
+Secure rights-cleared book covers, author portraits, excerpts and photography.
+Approve positioning, priority audiences, campaign goals and proof library.
+Create channel templates from the forest/sage/cream/gold system.
+Launch a single verified book or brand campaign before scaling channels.
+
+Further questions
+The most decision-changing unknowns are the real catalogue, priority audience, differentiation, proof, distribution footprint and first campaign. These determine whether the visual system should lean primarily literary, educational, faith-oriented, family-oriented or broad reader retail.
+Caveats and assumptions
+This is a marketing-only repository report, not a legal, market-demand or competitor study.
+Repository presence confirms project content/capability, not real-world business status.
+Demo/seed books and placeholder policies/contact data are excluded as business facts.
+No external competitor, social-account or keyword-volume research was performed.
+Runtime database-only values and environment configuration were excluded.
+Colour counts cover exact six-digit HEX literals; translucent and named Tailwind colours are not included in the frequency chart.
+No repository files were modified to create this report.
+
+Sources
+Repository brand-colour frequency scan Reproduces exact six-digit HEX occurrence counts from the reviewed TS, TSX, CSS, and SVG files under src and public. Repository scope: src/**/*.{ts,tsx,css}, public/**/*.svg WITH colour_counts(hex_code, occurrences, rank, role, status) AS (VALUES ('#2D4A2B',42,1,'Forest / primary','active'),('#B0A89C',35,2,'Soft grey / muted','active but low contrast'),('#D4A574',33,3,'Gold / accent','active'),('#FFFFFF',23,4,'White / surface','active'),('#6B8E6F',22,5,'Sage / secondary','active'),('#F5F1E8',10,6,'Cream / background','active')) SELECT hex_code, occurrences, rank, role, status FROM colour_counts ORDER BY occurrences DESC;

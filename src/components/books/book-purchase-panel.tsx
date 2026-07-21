@@ -6,6 +6,7 @@ import { ShoppingBag, ShoppingCart } from "lucide-react";
 import type { BookStatus } from "@prisma/client";
 import { addCartItem } from "@/lib/cart-client";
 import { trackBookEvent } from "@/lib/tracking-client";
+import { SavedBookToggle } from "@/components/books/saved-book-toggle";
 import { Tooltip } from "@/components/ui/tooltip";
 import { QuantityStepper } from "@/components/ui/quantity-stepper";
 import type { BookDetailData } from "@/types";
@@ -112,6 +113,13 @@ export function BookPurchasePanel({ book }: { book: BookDetailData }) {
           {buyNowButton}
         </Tooltip>
       )}
+
+      <SavedBookToggle
+        bookId={book.id}
+        title={book.title}
+        variant="detail"
+        className="mt-2"
+      />
 
       {/* Unavailability notice */}
       {!canBuy && (

@@ -20,7 +20,7 @@ function pick(value: string | string[] | undefined) {
 
 export default async function CustomerLoginPage({ searchParams }: PageProps) {
   const customer = await getCurrentCustomer();
-  if (customer) redirect("/account/profile");
+  if (customer) redirect("/account");
 
   const next = pick((await searchParams).next);
   const redirectTo = isSafeAccountRedirect(next) ? next : undefined;

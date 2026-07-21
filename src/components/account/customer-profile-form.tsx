@@ -94,6 +94,11 @@ export function CustomerProfileForm({
   const selectedLanguages = new Set(
     arrayFromJson(customer.preferences?.preferredLanguages)
   );
+  const readingPreferenceCount =
+    selectedCategories.size + selectedTags.size + selectedLanguages.size;
+  const privacyChoiceCount =
+    Number(Boolean(customer.profile?.personalizationConsent)) +
+    Number(Boolean(customer.profile?.marketingConsent));
 
   return (
     <form action={formAction} className="grid gap-6">
@@ -104,7 +109,13 @@ export function CustomerProfileForm({
       ) : null}
       <FormSuccess message={state.success} />
 
-      <section className="grid gap-4 sm:grid-cols-2">
+      <section className="grid gap-4 rounded-lg border border-line/70 bg-page/50 p-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <h3 className="text-base font-medium text-forest">Contact details</h3>
+          <p className="mt-1 text-sm leading-6 text-muted">
+            This is the information we use across your account and signed-in checkout.
+          </p>
+        </div>
         <Field
           name="displayName"
           error={state.fieldErrors?.displayName}
@@ -148,7 +159,13 @@ export function CustomerProfileForm({
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2">
+      <section className="grid gap-4 rounded-lg border border-line/70 bg-page/50 p-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <h3 className="text-base font-medium text-forest">Delivery defaults</h3>
+          <p className="mt-1 text-sm leading-6 text-muted">
+            Save your usual location details to make future orders quicker.
+          </p>
+        </div>
         <Field
           name="defaultDistrict"
           error={state.fieldErrors?.defaultDistrict}
@@ -197,109 +214,149 @@ export function CustomerProfileForm({
         </div>
       </section>
 
-      <section className="grid gap-4">
-        <Field
-          name="preferredCategories"
-          error={state.fieldErrors?.preferredCategories}
-        >
-          <p className="form-label">Favorite categories</p>
-          <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {categories.map((category) => (
-              <label key={category.id} className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  name="preferredCategories"
-                  value={category.id}
-                  defaultChecked={selectedCategories.has(category.id)}
-                  className="h-4 w-4 accent-emerald"
-                />
-                {category.name}
-              </label>
-            ))}
+      <details className="group rounded-lg border border-line bg-white/70">
+        <summary className="focus-ring flex cursor-pointer list-none items-start justify-between gap-4 rounded-lg px-4 py-4 marker:hidden">
+          <div>
+            <h3 className="text-base font-medium text-forest">Reading preferences</h3>
+            <p className="mt-1 text-sm leading-6 text-muted">
+              Choose the categories, topics, and languages you want to hear more about.
+            </p>
           </div>
-          <FieldError />
-        </Field>
-
-        <Field
-          name="preferredTags"
-          error={state.fieldErrors?.preferredTags}
-        >
-          <p className="form-label">Preferred tags</p>
-          <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {tags.map((tag) => (
-              <label key={tag.id} className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  name="preferredTags"
-                  value={tag.id}
-                  defaultChecked={selectedTags.has(tag.id)}
-                  className="h-4 w-4 accent-emerald"
-                />
-                {tag.name}
-              </label>
-            ))}
+          <div className="shrink-0 text-right">
+            <p className="text-sm font-bold text-forest">
+              {readingPreferenceCount > 0
+                ? `${readingPreferenceCount} selected`
+                : "Optional"}
+            </p>
+            <p className="mt-1 text-xs uppercase tracking-[0.14em] text-gold">
+              Expand
+            </p>
           </div>
-          <FieldError />
-        </Field>
+        </summary>
+        <div className="grid gap-5 border-t border-line/70 px-4 py-4">
+          <Field
+            name="preferredCategories"
+            error={state.fieldErrors?.preferredCategories}
+          >
+            <p className="form-label">Favorite categories</p>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              {categories.map((category) => (
+                <label key={category.id} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    name="preferredCategories"
+                    value={category.id}
+                    defaultChecked={selectedCategories.has(category.id)}
+                    className="h-4 w-4 accent-emerald"
+                  />
+                  {category.name}
+                </label>
+              ))}
+            </div>
+            <FieldError />
+          </Field>
 
-        <Field
-          name="preferredLanguages"
-          error={state.fieldErrors?.preferredLanguages}
-        >
-          <p className="form-label">Language preference</p>
-          <div className="mt-2 flex flex-wrap gap-3">
-            {languages.map((language) => (
-              <label key={language} className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  name="preferredLanguages"
-                  value={language}
-                  defaultChecked={selectedLanguages.has(language)}
-                  className="h-4 w-4 accent-emerald"
-                />
-                {language}
-              </label>
-            ))}
+          <Field
+            name="preferredTags"
+            error={state.fieldErrors?.preferredTags}
+          >
+            <p className="form-label">Preferred tags</p>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              {tags.map((tag) => (
+                <label key={tag.id} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    name="preferredTags"
+                    value={tag.id}
+                    defaultChecked={selectedTags.has(tag.id)}
+                    className="h-4 w-4 accent-emerald"
+                  />
+                  {tag.name}
+                </label>
+              ))}
+            </div>
+            <FieldError />
+          </Field>
+
+          <Field
+            name="preferredLanguages"
+            error={state.fieldErrors?.preferredLanguages}
+          >
+            <p className="form-label">Language preference</p>
+            <div className="mt-2 flex flex-wrap gap-3">
+              {languages.map((language) => (
+                <label key={language} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    name="preferredLanguages"
+                    value={language}
+                    defaultChecked={selectedLanguages.has(language)}
+                    className="h-4 w-4 accent-emerald"
+                  />
+                  {language}
+                </label>
+              ))}
+            </div>
+            <FieldError />
+          </Field>
+        </div>
+      </details>
+
+      <details className="group rounded-lg border border-line bg-white/70">
+        <summary className="focus-ring flex cursor-pointer list-none items-start justify-between gap-4 rounded-lg px-4 py-4 marker:hidden">
+          <div>
+            <h3 className="text-base font-medium text-forest">Privacy and recommendations</h3>
+            <p className="mt-1 text-sm leading-6 text-muted">
+              Decide how the site personalizes recommendations and contacts you.
+            </p>
           </div>
-          <FieldError />
-        </Field>
-      </section>
-
-      <section className="grid gap-3 rounded-md bg-page p-4">
-        <Field
-          name="personalizationConsent"
-          error={state.fieldErrors?.personalizationConsent}
-        >
-          <label className="flex items-start gap-3 text-sm leading-6">
-            <input
-              type="checkbox"
-              name="personalizationConsent"
-              defaultChecked={!!customer.profile?.personalizationConsent}
-              className="mt-1 h-4 w-4 accent-emerald"
-            />
-            <span>
-              Allow personalized book recommendations based on my profile,
-              browsing events, cart events, and order history.
-            </span>
-          </label>
-          <FieldError />
-        </Field>
-        <Field
-          name="marketingConsent"
-          error={state.fieldErrors?.marketingConsent}
-        >
-          <label className="flex items-start gap-3 text-sm leading-6">
-            <input
-              type="checkbox"
-              name="marketingConsent"
-              defaultChecked={!!customer.profile?.marketingConsent}
-              className="mt-1 h-4 w-4 accent-emerald"
-            />
-            <span>Allow occasional marketing messages from the publication team.</span>
-          </label>
-          <FieldError />
-        </Field>
-      </section>
+          <div className="shrink-0 text-right">
+            <p className="text-sm font-bold text-forest">
+              {privacyChoiceCount > 0
+                ? `${privacyChoiceCount} enabled`
+                : "Optional"}
+            </p>
+            <p className="mt-1 text-xs uppercase tracking-[0.14em] text-gold">
+              Expand
+            </p>
+          </div>
+        </summary>
+        <div className="grid gap-3 border-t border-line/70 bg-page/35 px-4 py-4">
+          <Field
+            name="personalizationConsent"
+            error={state.fieldErrors?.personalizationConsent}
+          >
+            <label className="flex items-start gap-3 text-sm leading-6">
+              <input
+                type="checkbox"
+                name="personalizationConsent"
+                defaultChecked={!!customer.profile?.personalizationConsent}
+                className="mt-1 h-4 w-4 accent-emerald"
+              />
+              <span>
+                Allow personalized book recommendations based on my profile,
+                browsing events, cart events, and order history.
+              </span>
+            </label>
+            <FieldError />
+          </Field>
+          <Field
+            name="marketingConsent"
+            error={state.fieldErrors?.marketingConsent}
+          >
+            <label className="flex items-start gap-3 text-sm leading-6">
+              <input
+                type="checkbox"
+                name="marketingConsent"
+                defaultChecked={!!customer.profile?.marketingConsent}
+                className="mt-1 h-4 w-4 accent-emerald"
+              />
+              <span>Allow occasional marketing messages from the publication team.</span>
+            </label>
+            <FieldError />
+          </Field>
+        </div>
+      </details>
 
       <button
         type="submit"

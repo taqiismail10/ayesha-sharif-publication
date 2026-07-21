@@ -35,6 +35,11 @@ export function revalidatePublicSettings() {
   revalidatePath("/checkout");
 }
 
+export function revalidatePublicHomepage() {
+  revalidateTag(CACHE_TAGS.homepage);
+  revalidatePath("/");
+}
+
 export function revalidatePublicPolicy(slug: string) {
   revalidateTag(CACHE_TAGS.policies);
   revalidateTag(policyCacheTag(slug));

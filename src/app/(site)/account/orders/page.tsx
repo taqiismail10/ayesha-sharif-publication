@@ -34,8 +34,8 @@ export default async function CustomerOrdersPage() {
             Orders placed while signed in to your customer account.
           </p>
         </div>
-        <Link href="/account/profile" className="premium-button-secondary w-fit">
-          Back to profile
+        <Link href="/account" className="premium-button-secondary w-fit">
+          Back to account
         </Link>
       </div>
 

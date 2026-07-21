@@ -138,7 +138,7 @@ export async function loginCustomerAction(
   const redirectTo =
     input.redirectTo && isSafeAccountRedirect(input.redirectTo)
       ? input.redirectTo
-      : "/account/profile";
+      : "/account";
   redirect(redirectTo);
 }
 
@@ -242,6 +242,8 @@ export async function updateCustomerProfileAction(
     return { error: "Could not update your profile. Please try again." };
   }
 
+  revalidatePath("/account");
+  revalidatePath("/account/settings");
   revalidatePath("/account/profile");
   return { success: "Profile saved." };
 }

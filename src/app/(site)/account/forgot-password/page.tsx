@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function ForgotPasswordPage() {
   const customer = await getCurrentCustomer();
-  if (customer) redirect("/account/profile");
+  if (customer) redirect("/account");
 
   return (
     <div className="container-px mx-auto grid max-w-5xl gap-6 py-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
