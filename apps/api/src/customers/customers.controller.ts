@@ -1,9 +1,14 @@
-import { Body, Controller, Put, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Put,
+  UseGuards,
+} from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import { CustomerGuard } from "../common/guards/customer.guard";
 import { CurrentCustomer } from "../common/decorators/current-customer.decorator";
 import type { CurrentCustomer as CurrentCustomerType } from "../customer-auth/customer-auth.service";
-import { parseOrThrow } from "../common/validation/zod";
 import {
   customerPasswordSchema,
   customerProfileSchema,
@@ -23,12 +28,24 @@ export class CustomersController {
     @CurrentCustomer() customer: CurrentCustomerType,
     @Body() body: unknown,
   ) {
-    const input = parseOrThrow(
-      customerProfileSchema,
-      body,
-      "Invalid profile details.",
-    ) as CustomerProfileInput;
-    return this.customers.updateProfile(customer, input);
+    const parsed = customerProfileSchema.safeParse(body);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const field = issue.path[0];
+        if (typeof field === "string" && !(field in fieldErrors)) {
+          fieldErrors[field] = issue.message;
+        }
+      }
+      throw new BadRequestException({
+        message: parsed.error.issues[0]?.message || "Invalid profile details.",
+        fieldErrors,
+      });
+    }
+    return this.customers.updateProfile(
+      customer,
+      parsed.data as CustomerProfileInput,
+    );
   }
 
   /** PUT /customers/me/password */
@@ -39,11 +56,23 @@ export class CustomersController {
     @CurrentCustomer() customer: CurrentCustomerType,
     @Body() body: unknown,
   ) {
-    const input = parseOrThrow(
-      customerPasswordSchema,
-      body,
-      "Invalid password details.",
-    ) as CustomerPasswordInput;
-    return this.customers.changePassword(customer, input);
+    const parsed = customerPasswordSchema.safeParse(body);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const field = issue.path[0];
+        if (typeof field === "string" && !(field in fieldErrors)) {
+          fieldErrors[field] = issue.message;
+        }
+      }
+      throw new BadRequestException({
+        message: parsed.error.issues[0]?.message || "Invalid password details.",
+        fieldErrors,
+      });
+    }
+    return this.customers.changePassword(
+      customer,
+      parsed.data as CustomerPasswordInput,
+    );
   }
 }

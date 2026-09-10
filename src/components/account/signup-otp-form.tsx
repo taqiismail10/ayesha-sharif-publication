@@ -159,9 +159,10 @@ export function SignupOtpForm() {
       <label className="grid gap-1" htmlFor="signup-password">
         <span className="form-label">Password</span>
         <div className="relative">
-          <input id="signup-password" name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={8} required className="form-input pr-12" />
+          <input id="signup-password" name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={8} maxLength={128} required className="form-input pr-12" />
           <PasswordToggleButton isVisible={showPassword} label="Password" onToggle={() => setShowPassword((current) => !current)} />
         </div>
+        <span className="text-sm leading-6 text-muted">Use 8–128 characters with uppercase and lowercase letters, a number, and a special character. Do not start or end with whitespace.</span>
       </label>
       <label className="grid gap-1" htmlFor="signup-confirm-password">
         <span className="form-label">Confirm password</span>

@@ -39,7 +39,7 @@ Always **HTTP 200** (guests are not an error):
 ```
 Headers: `Cache-Control: private, no-store, max-age=0`.
 
-## 6. Profile update (`updateCustomerProfileAction`)
+## 6. Profile update (`PUT /customers/me/profile`; formerly `updateCustomerProfileAction`)
 
 **Validation** (`customerProfileSchema`): displayName min 2 · email/phone optional normalized, **at least one required** · consents boolean · preferred* string arrays.
 **Effect — single `$transaction` of 3 ops:**
@@ -50,9 +50,9 @@ Headers: `Cache-Control: private, no-store, max-age=0`.
 **Quirk preserved:** empty default-address fields become `undefined` → Prisma *skips* them on update, so a user cannot clear a saved default via empty input. (Pre-existing behavior, kept for parity.)
 **Errors:** P2002 → same conflict message as register. **Success:** `"Profile saved."`
 
-## 7. Password change (`changeCustomerPasswordAction`)
+## 7. Password change (`PUT /customers/me/password`; formerly `changeCustomerPasswordAction`)
 
-Requires logged-in customer. Verify `currentPassword` against stored hash → on mismatch `"Current password is incorrect."` New password 8–128 + confirm match → bcrypt(12) → `customer.update`. Success: `"Password changed."` No session invalidation (existing sessions stay valid — pre-existing behavior).
+Requires logged-in customer. Verify `currentPassword` against stored hash → on mismatch `"Current password is incorrect."` New passwords used by password change, OTP signup, and password reset share one creation policy: 8–128 characters, at least one uppercase ASCII letter, lowercase ASCII letter, digit, and non-whitespace special character; leading/trailing whitespace is rejected; confirmation must match. Login intentionally uses a separate basic input schema so historical passwords still reach bcrypt verification. Accepted passwords are passed unchanged to bcrypt(12) → `customer.update`. Success: `"Password changed."` No session invalidation (existing sessions stay valid — pre-existing behavior).
 
 ## 8. Checkout request/response (`POST /api/orders`)
 

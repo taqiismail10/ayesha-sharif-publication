@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  type FormEvent,
+  useActionState,
+  useEffect,
+  useRef,
+  useState
+} from "react";
 import { LogIn, UserPlus } from "lucide-react";
 import { GoogleAuthButton } from "@/components/account/google-auth-button";
 import { Spinner } from "@/components/ui/spinner";
@@ -13,10 +19,10 @@ import {
   FieldError
 } from "@/components/ui/field";
 import {
-  loginCustomerAction,
   registerCustomerAction,
   type CustomerActionState
 } from "@/app/(site)/account/actions";
+import { postAuth } from "@/lib/auth-api-client";
 
 const initialState: CustomerActionState = {};
 
@@ -67,13 +73,40 @@ export function CustomerAuthForm({
   redirectTo?: string;
 }) {
   const isLogin = mode === "login";
-  const [state, formAction, isPending] = useActionState(
-    isLogin ? loginCustomerAction : registerCustomerAction,
+  const [registerState, registerAction, isRegisterPending] = useActionState(
+    registerCustomerAction,
     initialState
   );
+  const [loginState, setLoginState] = useState<CustomerActionState>(initialState);
+  const [isLoginPending, setIsLoginPending] = useState(false);
+  const state = isLogin ? loginState : registerState;
+  const isPending = isLogin ? isLoginPending : isRegisterPending;
   const Icon = isLogin ? LogIn : UserPlus;
   const toast = useToast();
   const prevStateRef = useRef<CustomerActionState>(initialState);
+
+  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoginState(initialState);
+    setIsLoginPending(true);
+
+    const formData = new FormData(event.currentTarget);
+    try {
+      await postAuth("/auth/customer/login", {
+        identifier: formData.get("identifier"),
+        password: formData.get("password")
+      });
+      window.location.assign(redirectTo || "/account");
+    } catch (caught) {
+      setLoginState({
+        error:
+          caught instanceof Error
+            ? caught.message
+            : "The request could not be completed. Please try again."
+      });
+      setIsLoginPending(false);
+    }
+  }
 
   useEffect(() => {
     const prev = prevStateRef.current;
@@ -90,7 +123,11 @@ export function CustomerAuthForm({
   }, [state, toast, isLogin]);
 
   return (
-    <form action={formAction} className="grid gap-4">
+    <form
+      action={isLogin ? undefined : registerAction}
+      onSubmit={isLogin ? handleLogin : undefined}
+      className="grid gap-4"
+    >
       {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
 
       {state.error ? (

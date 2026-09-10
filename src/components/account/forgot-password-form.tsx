@@ -143,7 +143,7 @@ export function ForgotPasswordForm() {
 
       {step === "password" ? (
         <form onSubmit={resetPassword} className="grid gap-4">
-          <label className="grid gap-1" htmlFor="new-password"><span className="form-label">New password</span><input ref={passwordRef} id="new-password" name="newPassword" type="password" autoComplete="new-password" minLength={8} required className="form-input" /></label>
+          <label className="grid gap-1" htmlFor="new-password"><span className="form-label">New password</span><input ref={passwordRef} id="new-password" name="newPassword" type="password" autoComplete="new-password" minLength={8} maxLength={128} required className="form-input" /><span className="text-sm leading-6 text-muted">Use 8–128 characters with uppercase and lowercase letters, a number, and a special character. Do not start or end with whitespace.</span></label>
           <label className="grid gap-1" htmlFor="confirm-new-password"><span className="form-label">Confirm new password</span><input id="confirm-new-password" name="confirmPassword" type="password" autoComplete="new-password" minLength={8} required className="form-input" /></label>
           <button type="submit" disabled={isPending} className="btn-lift focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-[4px] bg-sage px-5 py-3 text-sm font-medium text-white disabled:opacity-60">{isPending ? <Spinner size="sm" label="Updating password" /> : <KeyRound className="h-4 w-4" aria-hidden="true" />}{isPending ? "Updating…" : "Update password"}</button>
         </form>

@@ -1,21 +1,19 @@
 import { z } from "zod";
-import { normalizeEmail } from "./customer.schemas";
+import {
+  normalizeEmail,
+  passwordCreationSchema,
+} from "./customer.schemas";
 
 const emailSchema = z.preprocess(
   normalizeEmail,
   z.string().email("Enter a valid email address."),
 );
 
-const passwordSchema = z
-  .string()
-  .min(8, "Password must be at least 8 characters.")
-  .max(128, "Password is too long.");
-
 export const signupOtpRequestSchema = z
   .object({
     name: z.string().trim().min(2, "Name is required.").max(120),
     email: emailSchema,
-    password: passwordSchema,
+    password: passwordCreationSchema,
     confirmPassword: z.string().min(1, "Confirm your password."),
   })
   .superRefine((value, ctx) => {
@@ -37,7 +35,7 @@ export const verifyOtpSchema = emailOnlySchema.extend({
 export const resetPasswordSchema = emailOnlySchema
   .extend({
     resetToken: z.string().min(32, "The reset session is invalid."),
-    newPassword: passwordSchema,
+    newPassword: passwordCreationSchema,
     confirmPassword: z.string().min(1, "Confirm your new password."),
   })
   .superRefine((value, ctx) => {

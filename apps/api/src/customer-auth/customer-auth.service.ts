@@ -174,7 +174,7 @@ export class CustomerAuthService {
     return bcrypt.compare(password, hash);
   }
 
-  // ── Login identifier resolution (parity with loginCustomerAction) ──────────
+  // ── Login identifier resolution ────────────────────────────────────────────
 
   resolveLoginLookup(identifier: string) {
     const email = identifier.includes("@")

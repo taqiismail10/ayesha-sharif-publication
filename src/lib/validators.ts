@@ -21,11 +21,6 @@ export function normalizeBangladeshPhone(value?: unknown) {
 
 const bangladeshPhonePattern = /^01[3-9]\d{8}$/;
 const formString = (value: unknown) => (typeof value === "string" ? value : "");
-const optionalTrimmedString = (value: unknown) => {
-  if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
-  return trimmed || undefined;
-};
 
 export const phoneSchema = z
   .string()
@@ -184,55 +179,6 @@ export const customerRegisterSchema = z
       });
     }
     if (value.password !== value.confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["confirmPassword"],
-        message: "Passwords do not match."
-      });
-    }
-  });
-
-export const customerLoginSchema = z.object({
-  identifier: z.preprocess(
-    formString,
-    z.string().trim().min(5, "Enter your email or phone number.")
-  ),
-  password: passwordSchema,
-  redirectTo: z.preprocess(optionalTrimmedString, z.string().optional())
-});
-
-export const customerProfileSchema = z
-  .object({
-    displayName: z.string().trim().min(2, "Display name is required."),
-    email: optionalEmailSchema,
-    phone: optionalPhoneSchema,
-    defaultDistrict: z.string().trim().optional(),
-    defaultDeliveryArea: z.string().trim().optional(),
-    defaultAddress: z.string().trim().optional(),
-    marketingConsent: z.boolean().optional(),
-    personalizationConsent: z.boolean().optional(),
-    preferredCategories: z.array(z.string()).optional(),
-    preferredTags: z.array(z.string()).optional(),
-    preferredLanguages: z.array(z.string()).optional()
-  })
-  .superRefine((value, ctx) => {
-    if (!value.email && !value.phone) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["email"],
-        message: "Keep at least an email address or phone number on your account."
-      });
-    }
-  });
-
-export const customerPasswordSchema = z
-  .object({
-    currentPassword: z.string().min(1, "Current password is required."),
-    newPassword: passwordSchema,
-    confirmPassword: z.string().min(1, "Confirm your new password.")
-  })
-  .superRefine((value, ctx) => {
-    if (value.newPassword !== value.confirmPassword) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["confirmPassword"],

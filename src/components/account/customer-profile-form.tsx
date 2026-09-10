@@ -1,11 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
-import {
-  updateCustomerProfileAction,
-  type CustomerActionState
-} from "@/app/(site)/account/actions";
+import type { CustomerActionState } from "@/app/(site)/account/actions";
+import { AuthApiError, putAuth } from "@/lib/auth-api-client";
 import type { DeliveryAreaOption } from "@/lib/constants";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -63,12 +62,48 @@ export function CustomerProfileForm({
   languages: string[];
   deliveryOptions: DeliveryAreaOption[];
 }) {
-  const [state, formAction, isPending] = useActionState(
-    updateCustomerProfileAction,
-    initialState
-  );
+  const router = useRouter();
+  const [state, setState] = useState<CustomerActionState>(initialState);
+  const [isPending, setIsPending] = useState(false);
   const toast = useToast();
   const prevStateRef = useRef<CustomerActionState>(initialState);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setState(initialState);
+    setIsPending(true);
+
+    const formData = new FormData(event.currentTarget);
+    try {
+      const result = await putAuth<{ message: string }>("/customers/me/profile", {
+        displayName: formData.get("displayName"),
+        email: formData.get("email"),
+        phone: formData.get("phone"),
+        defaultDistrict: formData.get("defaultDistrict"),
+        defaultDeliveryArea: formData.get("defaultDeliveryArea"),
+        defaultAddress: formData.get("defaultAddress"),
+        marketingConsent: formData.get("marketingConsent") === "on",
+        personalizationConsent:
+          formData.get("personalizationConsent") === "on",
+        preferredCategories: formData.getAll("preferredCategories").map(String),
+        preferredTags: formData.getAll("preferredTags").map(String),
+        preferredLanguages: formData.getAll("preferredLanguages").map(String)
+      });
+      setState({ success: result.message });
+      router.refresh();
+    } catch (caught) {
+      setState({
+        error:
+          caught instanceof Error
+            ? caught.message
+            : "Could not update your profile. Please try again.",
+        fieldErrors:
+          caught instanceof AuthApiError ? caught.fieldErrors : undefined
+      });
+    } finally {
+      setIsPending(false);
+    }
+  }
 
   useEffect(() => {
     const prev = prevStateRef.current;
@@ -101,7 +136,7 @@ export function CustomerProfileForm({
     Number(Boolean(customer.profile?.marketingConsent));
 
   return (
-    <form action={formAction} className="grid gap-6">
+    <form onSubmit={handleSubmit} className="grid gap-6">
       {state.error ? (
         <div role="alert" className="rounded-md bg-danger/10 p-3 text-sm font-semibold text-danger">
           {state.error}

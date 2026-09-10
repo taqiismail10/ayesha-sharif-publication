@@ -38,12 +38,28 @@ const optionalPhoneSchema = z.preprocess(
     .optional(),
 );
 
-const passwordSchema = z.preprocess(
+export const passwordCreationSchema = z.preprocess(
   formString,
   z
     .string()
     .min(8, "Password must be at least 8 characters.")
-    .max(128, "Password is too long."),
+    .max(128, "Password is too long.")
+    .regex(/[A-Z]/, "Password must contain an uppercase letter.")
+    .regex(/[a-z]/, "Password must contain a lowercase letter.")
+    .regex(/[0-9]/, "Password must contain a number.")
+    .regex(
+      /[^A-Za-z0-9\s]/,
+      "Password must contain a special character.",
+    )
+    .refine(
+      (password) => password === password.trim(),
+      "Password must not start or end with whitespace.",
+    ),
+);
+
+const loginPasswordSchema = z.preprocess(
+  formString,
+  z.string().min(1, "Password is required.").max(128, "Password is too long."),
 );
 
 export const customerRegisterSchema = z
@@ -51,7 +67,7 @@ export const customerRegisterSchema = z
     name: z.string().trim().min(2, "Name is required."),
     email: optionalEmailSchema,
     phone: optionalPhoneSchema,
-    password: passwordSchema,
+    password: passwordCreationSchema,
     confirmPassword: z.string().min(1, "Confirm your password."),
   })
   .superRefine((value, ctx) => {
@@ -76,7 +92,7 @@ export const customerLoginSchema = z.object({
     formString,
     z.string().trim().min(5, "Enter your email or phone number."),
   ),
-  password: passwordSchema,
+  password: loginPasswordSchema,
   // Accepted for request-shape compatibility with the old action; the API
   // ignores it — navigation is a frontend concern (contract §13.2).
   redirectTo: z.string().optional(),
@@ -109,7 +125,7 @@ export const customerProfileSchema = z
 export const customerPasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required."),
-    newPassword: passwordSchema,
+    newPassword: passwordCreationSchema,
     confirmPassword: z.string().min(1, "Confirm your new password."),
   })
   .superRefine((value, ctx) => {
