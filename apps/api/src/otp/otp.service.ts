@@ -3,9 +3,11 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
 } from "@nestjs/common";
-import type { OtpPurpose } from "../../generated/prisma";
+import type { OtpPurpose } from "../generated/prisma/client";
+import { D1AtomicService } from "../prisma/d1-atomic.service";
 import { PrismaService } from "../prisma/prisma.service";
 
 export const OTP_EXPIRES_MINUTES = 10;
@@ -23,7 +25,10 @@ function tooManyRequests(message: string) {
 
 @Injectable()
 export class OtpService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(D1AtomicService) private readonly atomic: D1AtomicService,
+  ) {}
 
   private secret() {
     const secret = process.env.NEXTAUTH_SECRET;
@@ -98,7 +103,7 @@ export class OtpService {
     return { otp, expiresAt, resendAfter };
   }
 
-  async verifyAndConsume(
+  private async verify(
     emailInput: string,
     purpose: OtpPurpose,
     otp: string,
@@ -132,33 +137,50 @@ export class OtpService {
       throw new BadRequestException("The code is invalid or has expired.");
     }
 
-    const consumed = await this.prisma.client.otpVerification.updateMany({
-      where: {
-        id: record.id,
-        consumedAt: null,
-        expiresAt: { gt: now },
-        attempts: { lt: OTP_MAX_ATTEMPTS },
-      },
-      data: { consumedAt: now },
+    return { record, actualHash };
+  }
+
+  async consumeSignupOtp(
+    emailInput: string,
+    otp: string,
+    customerId: string,
+  ): Promise<void> {
+    const verified = await this.verify(emailInput, "SIGNUP", otp);
+    const consumed = await this.atomic.consumeSignupOtp({
+      otpId: verified.record.id,
+      expectedOtpHash: verified.actualHash,
+      customerId,
+      email: normalizeEmail(emailInput),
     });
-    if (consumed.count !== 1) {
+    if (!consumed) {
       throw new BadRequestException("The code is invalid or has expired.");
     }
   }
 
-  async issueResetToken(emailInput: string) {
+  async consumePasswordResetOtp(
+    emailInput: string,
+    otp: string,
+    customerId: string,
+  ) {
     const email = normalizeEmail(emailInput);
+    const verified = await this.verify(email, "PASSWORD_RESET", otp);
     const token = crypto.randomBytes(32).toString("base64url");
     const expiresAt = new Date(
       Date.now() + RESET_TOKEN_EXPIRES_MINUTES * 60 * 1000,
     );
     const tokenHash = this.hash(token, `reset:${email}`);
-
-    await this.prisma.client.passwordResetToken.upsert({
-      where: { email },
-      update: { tokenHash, expiresAt, consumedAt: null },
-      create: { email, tokenHash, expiresAt },
+    const consumed = await this.atomic.consumeOtpAndIssueReset({
+      otpId: verified.record.id,
+      expectedOtpHash: verified.actualHash,
+      email,
+      customerId,
+      resetId: this.atomic.newId(),
+      resetTokenHash: tokenHash,
+      resetExpiresAt: expiresAt,
     });
+    if (!consumed) {
+      throw new BadRequestException("The code is invalid or has expired.");
+    }
     return token;
   }
 

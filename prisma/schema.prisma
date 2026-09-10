@@ -6,12 +6,13 @@ generator client {
 // gets its own generated client instead of resolving the Next app's
 // node_modules. Additive only; the Next.js app's generator above is unchanged.
 generator apiClient {
-  provider = "prisma-client-js"
-  output   = "../apps/api/generated/prisma"
+  provider = "prisma-client"
+  output   = "../apps/api/src/generated/prisma"
+  runtime  = "cloudflare"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 enum AdminRole {
@@ -80,9 +81,11 @@ model Admin {
   passwordHash String
   role         AdminRole @default(admin)
   isActive     Boolean   @default(true)
-  policies     Policy[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+
+  policies Policy[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Policy {
@@ -90,57 +93,68 @@ model Policy {
   title            String
   publishedTitle   String?
   slug             String       @unique
-  content          String       @db.Text
-  publishedContent String?      @db.Text
+  content          String
+  publishedContent String?
   status           PolicyStatus @default(draft)
-  updatedById      String?
-  updatedBy        Admin?       @relation(fields: [updatedById], references: [id], onDelete: SetNull)
-  publishedAt      DateTime?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+
+  updatedById String?
+  updatedBy   Admin? @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([status])
   @@index([updatedById])
 }
 
 model Book {
-  id               String              @id @default(cuid())
+  id               String     @id @default(cuid())
   title            String
-  slug             String              @unique
+  slug             String     @unique
   subtitle         String?
   author           String
-  publisher        String              @default("Ayesha-Sharif Publication")
-  isbn13           String?             @unique
+  publisher        String     @default("Ayesha-Sharif Publication")
+  isbn13           String?    @unique
   edition          String?
-  language         String              @default("Bangla")
+  language         String     @default("Bangla")
   pages            Int?
   binding          String?
   publicationDate  DateTime?
   shortDescription String?
   description      String?
-  regularPrice     Decimal             @db.Decimal(10, 2)
-  salePrice        Decimal             @db.Decimal(10, 2)
-  discountPercent  Int                 @default(0)
-  discountStart    DateTime?
-  discountEnd      DateTime?
-  stockQuantity    Int                 @default(0)
-  status           BookStatus          @default(draft)
-  coverImage       String?
-  galleryImages    String[]            @default([])
-  samplePdf        String?
-  weight           Int?
-  isFeatured       Boolean             @default(false)
-  isBestSeller     Boolean             @default(false)
-  isNewArrival     Boolean             @default(false)
-  isRecommended    Boolean             @default(false)
-  categoryId       String?
-  category         Category?           @relation(fields: [categoryId], references: [id])
+
+  regularPrice Decimal
+  salePrice    Decimal
+
+  discountPercent Int       @default(0)
+  discountStart   DateTime?
+  discountEnd     DateTime?
+
+  stockQuantity Int        @default(0)
+  status        BookStatus @default(draft)
+
+  coverImage    String?
+  galleryImages Json       @default("[]")
+  samplePdf     String?
+
+  weight Int?
+
+  isFeatured    Boolean @default(false)
+  isBestSeller  Boolean @default(false)
+  isNewArrival  Boolean @default(false)
+  isRecommended Boolean @default(false)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
   tags             BookTag[]
   orderItems       OrderItem[]
   customerEvents   CustomerBookEvent[]
   savedByCustomers SavedBook[]
-  createdAt        DateTime            @default(now())
-  updatedAt        DateTime            @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
   @@index([categoryId])
@@ -148,62 +162,76 @@ model Book {
 }
 
 model Category {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
-  slug        String   @unique
+  slug        String  @unique
   description String?
-  isActive    Boolean  @default(true)
-  books       Book[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean @default(true)
+
+  books Book[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Tag {
-  id        String    @id @default(cuid())
-  name      String
-  slug      String    @unique
-  isActive  Boolean   @default(true)
-  books     BookTag[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id       String  @id @default(cuid())
+  name     String
+  slug     String  @unique
+  isActive Boolean @default(true)
+
+  books BookTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BookTag {
   bookId String
   tagId  String
-  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  tag Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([bookId, tagId])
 }
 
 model Order {
-  id              String        @id @default(cuid())
-  orderNumber     String        @unique
-  customerId      String?
-  customerName    String
-  customerPhone   String
-  customerEmail   String?
+  id           String @id @default(cuid())
+  orderNumber  String @unique
+  customerId   String?
+  customerName String
+  customerPhone String
+  customerEmail String?
+
   shippingAddress String
   district        String
   deliveryArea    String
-  subtotal        Decimal       @db.Decimal(10, 2)
-  discountTotal   Decimal       @default(0) @db.Decimal(10, 2)
-  deliveryCharge  Decimal       @db.Decimal(10, 2)
-  grandTotal      Decimal       @db.Decimal(10, 2)
-  paymentMethod   PaymentMethod @default(cash_on_delivery)
-  paymentStatus   PaymentStatus @default(unpaid)
-  orderStatus     OrderStatus   @default(pending)
-  transactionId   String?
-  courierName     String?
-  trackingNumber  String?
-  notes           String?
-  adminNote       String?
-  stockReduced    Boolean       @default(false)
-  customer        Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  items           OrderItem[]
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+
+  subtotal       Decimal
+  discountTotal  Decimal @default(0)
+  deliveryCharge Decimal
+  grandTotal     Decimal
+
+  paymentMethod PaymentMethod @default(cash_on_delivery)
+  paymentStatus PaymentStatus @default(unpaid)
+  orderStatus   OrderStatus   @default(pending)
+
+  transactionId  String?
+  courierName    String?
+  trackingNumber String?
+  notes          String?
+  adminNote      String?
+
+  stockReduced Boolean @default(false)
+
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderNumber])
   @@index([customerId])
@@ -213,28 +241,33 @@ model Order {
 }
 
 model OrderItem {
-  id                String  @id @default(cuid())
+  id                String @id @default(cuid())
   orderId           String
   bookId            String
   bookTitleSnapshot String
   quantity          Int
-  unitPrice         Decimal @db.Decimal(10, 2)
-  totalPrice        Decimal @db.Decimal(10, 2)
-  order             Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  book              Book    @relation(fields: [bookId], references: [id])
+
+  unitPrice  Decimal
+  totalPrice Decimal
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  book Book @relation(fields: [bookId], references: [id])
 
   @@index([orderId])
   @@index([bookId])
 }
 
 model Banner {
-  id        String   @id @default(cuid())
-  title     String
-  subtitle  String?
-  image     String
-  link      String?
-  position  String
-  isActive  Boolean  @default(true)
+  id       String @id @default(cuid())
+  title    String
+  subtitle String?
+  image    String
+  link     String?
+  position String
+
+  isActive Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -243,76 +276,90 @@ model Banner {
 }
 
 model SiteSetting {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     Json
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Customer {
-  id                   String                 @id @default(cuid())
-  name                 String
-  email                String?                @unique
-  phone                String?                @unique
+  id   String @id @default(cuid())
+  name String
+
+  email String? @unique
+  phone String? @unique
+
   passwordHash         String
-  passwordLoginEnabled Boolean                @default(true)
-  emailVerifiedAt      DateTime?
-  isActive             Boolean                @default(true)
-  lastLoginAt          DateTime?
-  profile              CustomerProfile?
-  sessions             CustomerSession[]
-  preferences          CustomerPreference?
-  events               CustomerBookEvent[]
-  savedBooks           SavedBook[]
-  orders               Order[]
-  authProviders        CustomerAuthProvider[]
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
+  passwordLoginEnabled Boolean @default(true)
+
+  emailVerifiedAt DateTime?
+  isActive        Boolean   @default(true)
+  lastLoginAt     DateTime?
+
+  profile     CustomerProfile?
+  sessions    CustomerSession[]
+  preferences CustomerPreference?
+  events      CustomerBookEvent[]
+  savedBooks  SavedBook[]
+  orders      Order[]
+
+  authProviders CustomerAuthProvider[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([email])
   @@index([phone])
 }
 
 model OtpVerification {
-  id          String     @id @default(cuid())
-  email       String
-  otpHash     String
-  purpose     OtpPurpose
-  attempts    Int        @default(0)
+  id      String     @id @default(cuid())
+  email   String
+  otpHash String
+  purpose OtpPurpose
+
+  attempts Int @default(0)
+
   expiresAt   DateTime
   consumedAt  DateTime?
   resendAfter DateTime
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([email, purpose])
   @@index([expiresAt])
 }
 
 model PasswordResetToken {
-  id         String    @id @default(cuid())
-  email      String    @unique
-  tokenHash  String
+  id        String @id @default(cuid())
+  email     String @unique
+  tokenHash String
+
   expiresAt  DateTime
   consumedAt DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([expiresAt])
 }
 
-// OAuth provider links for customers (Phase 2C). Additive only — customers
-// created via email/password have no rows here. Admin auth is unaffected.
+// OAuth provider links for customers.
+// Customers created through email/password may have no provider rows.
 model CustomerAuthProvider {
-  id             String   @id @default(cuid())
+  id             String @id @default(cuid())
   customerId     String
   provider       String
   providerUserId String
   providerEmail  String?
-  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([provider, providerUserId])
   @@unique([customerId, provider])
@@ -320,47 +367,59 @@ model CustomerAuthProvider {
 }
 
 model CustomerProfile {
-  id                     String   @id @default(cuid())
-  customerId             String   @unique
-  displayName            String?
-  phone                  String?
-  email                  String?
-  defaultDistrict        String?
-  defaultDeliveryArea    String?
-  defaultAddress         String?
-  avatarUrl              String?
-  marketingConsent       Boolean  @default(false)
-  personalizationConsent Boolean  @default(false)
-  customer               Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  id         String @id @default(cuid())
+  customerId String @unique
+
+  displayName String?
+  phone       String?
+  email       String?
+
+  defaultDistrict     String?
+  defaultDeliveryArea String?
+  defaultAddress      String?
+  avatarUrl           String?
+
+  marketingConsent       Boolean @default(false)
+  personalizationConsent Boolean @default(false)
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CustomerSession {
-  id         String   @id @default(cuid())
+  id         String @id @default(cuid())
   customerId String
-  tokenHash  String   @unique
-  expiresAt  DateTime
-  userAgent  String?
-  ipHash     String?
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
+  tokenHash  String @unique
+
+  expiresAt DateTime
+  userAgent String?
+  ipHash    String?
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 
   @@index([customerId])
   @@index([expiresAt])
 }
 
 model CustomerBookEvent {
-  id          String                @id @default(cuid())
+  id          String  @id @default(cuid())
   customerId  String?
   anonymousId String?
   bookId      String
-  eventType   CustomerBookEventType
-  weight      Int                   @default(1)
-  source      String?
-  customer    Customer?             @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  book        Book                  @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  createdAt   DateTime              @default(now())
+
+  eventType CustomerBookEventType
+  weight    Int                   @default(1)
+  source    String?
+
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 
   @@index([customerId, createdAt])
   @@index([anonymousId, createdAt])
@@ -368,23 +427,29 @@ model CustomerBookEvent {
 }
 
 model CustomerPreference {
-  id                  String   @id @default(cuid())
-  customerId          String   @unique
-  preferredCategories Json     @default("[]")
-  preferredTags       Json     @default("[]")
+  id         String @id @default(cuid())
+  customerId String @unique
+
+  preferredCategories Json @default("[]")
+  preferredTags       Json @default("[]")
   preferredLanguages  Json?
-  customer            Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SavedBook {
-  id         String   @id @default(cuid())
+  id         String @id @default(cuid())
   customerId String
   bookId     String
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  book       Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 
   @@unique([customerId, bookId])
   @@index([customerId])

@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "asp-api",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-09-10",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+
+  "alias": {
+    "@nestjs/websockets/socket-module": "./src/worker-shims/unused-nest-transport.ts",
+    "@nestjs/microservices/microservices-module": "./src/worker-shims/unused-nest-transport.ts",
+    "@nestjs/microservices": "./src/worker-shims/unused-nest-transport.ts"
+  },
+
+  "d1_databases": [
+    {
+        "binding": "asp_db",
+        "database_name": "asp-db",
+        "database_id": "cb2a35a6-ac90-4008-a467-e8cc3adf6885"
+    }
+  ]
+}

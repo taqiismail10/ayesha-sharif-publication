@@ -23,7 +23,7 @@ Customer sessions are DB-backed httpOnly cookies **valid across both backends**,
 
 - **Frontend:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS
 - **Backend (new):** NestJS 11 · Zod validation · @nestjs/throttler · Helmet
-- **Database:** PostgreSQL · Prisma 7 (`@prisma/adapter-pg`), one shared schema with dual generators
+- **Database:** Cloudflare D1 · Prisma 7.10 (`@prisma/adapter-d1`) for NestJS; retained PostgreSQL assets support the pending data migration
 - **Auth:** separate Admin (HMAC cookie) and Customer (DB sessions) systems · Google OAuth via `CustomerAuthProvider`
 - **Cart:** client-side localStorage (no server cart)
 - **Design:** "Editorial Calm" system — Crimson Text + Inter + Noto Serif Bengali, sage/forest/cream/gold tokens
@@ -46,12 +46,12 @@ npm run dev                         # http://localhost:3000
 ```bash
 cd apps/api
 npm install
-cp .env.example .env                # same DATABASE_URL as root — exactly ONE line
-npm run prisma:generate             # generates into apps/api/generated/prisma
-npm run start:dev                   # http://localhost:4000
+npm run prisma:generate             # generates into apps/api/src/generated/prisma
+npm run worker:types                # refresh bindings after wrangler changes
+npm run worker:dev                  # Worker runtime + local D1 on http://localhost:8787
 ```
 
-Both servers must run for customer features (account menu, checkout, recommendations). The primary health check is `http://localhost:4000/health` (real DB ping). The legacy Next.js route `http://localhost:3000/api/health` remains only as a compatibility endpoint until external monitors are migrated.
+`src/worker.ts` is the Cloudflare entry and bridges the existing Nest/Express application through `httpServerHandler()`. `src/main.ts` remains available for conventional Node tooling, but it has no D1 binding and is not the production database runtime. The Worker health check is `http://localhost:8787/health`. Prisma remains the normal data-access layer; security- and commerce-critical multi-write flows use the narrow native-D1 batch layer in `src/prisma/d1-atomic.service.ts`, because Prisma transactions are not atomic on D1. This is not a whole-application production-readiness declaration.
 
 ## Compatibility route status
 

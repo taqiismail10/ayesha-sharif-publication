@@ -1,5 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { D1AtomicService } from "../prisma/d1-atomic.service";
 import { RecommendationEventsService, cleanAnonymousRecommendationId } from "../recommendations/recommendation-events.service";
 import type { CurrentCustomer } from "../customer-auth/customer-auth.service";
 import type { CheckoutInput } from "../common/contracts/checkout.schema";
@@ -32,7 +33,9 @@ function createOrderNumber() {
 @Injectable()
 export class OrdersService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(D1AtomicService) private readonly atomic: D1AtomicService,
+    @Inject(RecommendationEventsService)
     private readonly events: RecommendationEventsService,
   ) {}
 
@@ -74,7 +77,7 @@ export class OrdersService {
    *  - stock validated but NOT reduced (admin confirmation reduces stock)
    *  - subtotal from regularPrice, sale totals from salePrice
    *  - paymentStatus: unpaid (COD) / pending (manual methods)
-   *  - Order + OrderItems created atomically (single nested create)
+   *  - Order + OrderItems use one native D1 transactional batch
    *  - fire-and-forget purchase events per item
    */
   async createOrder(
@@ -121,16 +124,15 @@ export class OrdersService {
     const grandTotal = saleSubtotal + deliveryCharge;
     const orderNumber = await this.uniqueOrderNumber();
 
-    // Single nested create = one atomic transaction in Prisma. Stock is NOT
-    // touched here — the admin "confirm" flow owns stock reduction (old
-    // behavior preserved; do not invent new stock rules).
-    const order = await db.order.create({
-      data: {
+    // Stock is not touched here; the later admin confirmation flow owns it.
+    try {
+      await this.atomic.createOrder({
+        id: this.atomic.newId(),
         orderNumber,
-        customerId: customer?.id,
+        customerId: customer?.id ?? null,
         customerName: input.customerName,
         customerPhone: input.customerPhone,
-        customerEmail: input.customerEmail,
+        customerEmail: input.customerEmail ?? null,
         shippingAddress: input.shippingAddress,
         district: input.district,
         deliveryArea: input.deliveryArea,
@@ -141,20 +143,20 @@ export class OrdersService {
         paymentMethod: input.paymentMethod,
         paymentStatus:
           input.paymentMethod === "cash_on_delivery" ? "unpaid" : "pending",
-        orderStatus: "pending",
-        transactionId: input.transactionId,
-        notes: input.notes,
-        items: {
-          create: orderItems.map((item) => ({
-            bookId: item.book.id,
-            bookTitleSnapshot: item.book.title,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            totalPrice: item.totalPrice,
-          })),
-        },
-      },
-    });
+        transactionId: input.transactionId ?? null,
+        notes: input.notes ?? null,
+        items: orderItems.map((item) => ({
+          id: this.atomic.newId(),
+          bookId: item.book.id,
+          bookTitleSnapshot: item.book.title,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          totalPrice: item.totalPrice,
+        })),
+      });
+    } catch {
+      throw new Error("Could not create the order. Please try again.");
+    }
 
     // Fire-and-forget purchase events — identical to the old route (failures
     // must never break checkout).
@@ -170,6 +172,6 @@ export class OrdersService {
       ),
     ).catch(() => undefined);
 
-    return { orderNumber: order.orderNumber };
+    return { orderNumber };
   }
 }

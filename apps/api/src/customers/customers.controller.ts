@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Inject,
   Put,
   UseGuards,
 } from "@nestjs/common";
@@ -20,7 +21,9 @@ import { CustomersService } from "./customers.service";
 @Controller("customers/me")
 @UseGuards(CustomerGuard)
 export class CustomersController {
-  constructor(private readonly customers: CustomersService) {}
+  constructor(
+    @Inject(CustomersService) private readonly customers: CustomersService,
+  ) {}
 
   /** PUT /customers/me/profile */
   @Put("profile")

@@ -9,7 +9,7 @@ Every frontend dependency on the old backend, by mechanism. Risk level = blast r
 | Frontend file | API called | Feature | Old route/function | NestJS endpoint | Status | Risk level |
 |---|---|---|---|---|---|---|
 | `src/components/checkout/checkout-page-client.tsx` | ~~`POST /api/orders`~~ | Checkout submit | `app/api/orders/route.ts` (kept) | `POST /orders` | ✅ **retargeted (2F)** | 🔴 revenue path |
-| `src/components/site/account-menu.tsx` | ~~`GET /api/account/me`~~ + logout link | Header login state + logout | `app/api/account/me/route.ts`, `/account/logout` (compatibility only) | `GET /auth/customer/me`, `POST /auth/customer/logout` | ✅ **retargeted (2F)** | 🟠 every-page header |
+| `src/components/site/account-menu.tsx`, `src/components/site/header.tsx` | `GET /auth/customer/me` + `POST /auth/customer/logout` | Header login state + logout | removed `/account/logout` fallback | `GET /auth/customer/me`, `POST /auth/customer/logout` | ✅ **retargeted** | 🟠 every-page header |
 | `src/components/admin/upload-field.tsx` | `POST /api/admin/upload` | Book cover/gallery/PDF upload | `app/api/admin/upload/route.ts` | `POST /admin/uploads` | ⏳ Phase 3 — **not touched** | 🟠 admin workflow |
 | `src/components/books/client-recommendation-section.tsx` | ~~`GET/POST /api/recommendations`~~ | Personalized + cart recommendations | `app/api/recommendations/route.ts` (compatibility only) | `GET /recommendations`, `POST /recommendations/cart` | ✅ **retargeted (2F)** | 🟡 self-hides on failure |
 | `src/lib/tracking-client.ts` | ~~`POST /api/recommendation-events`~~ | Interaction tracking | `app/api/recommendation-events/route.ts` (compatibility only) | `POST /recommendations/events` | ✅ **retargeted (2F)** | 🟡 fire-and-forget |

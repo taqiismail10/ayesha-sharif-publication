@@ -83,7 +83,7 @@ All three accept an **optional** customer session cookie; guests use `anonymousI
 | paymentStatus / orderStatus | COD→`unpaid`, manual→`pending` / `pending` | ✅ identical |
 | Items | `bookTitleSnapshot`, `unitPrice`=salePrice, `totalPrice` | ✅ identical |
 | Purchase events | fire-and-forget per item, consent-aware, weight 8 | ✅ identical port |
-| Atomicity | single nested `order.create` (atomic) | ✅ same (nested create = one transaction) |
+| Atomicity | single nested `order.create` (PostgreSQL transaction) | ✅ native D1 prepared-statement `batch()`; parent + all items commit or roll back together |
 | Error JSON | `{ok:false,message}` 400/503 | ✅ byte-identical via custom HttpException |
 
 **Only intentional differences:** none in behavior. (Auth-module endpoints from 2A/2B use NestJS-standard error JSON `{message,error,statusCode}` — still client-compatible since `message` is present and `ok` is absent/falsy.)

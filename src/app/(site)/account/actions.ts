@@ -1,10 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import {
-  clearCustomerSession
-} from "@/lib/customer-auth";
-
 export type CustomerActionState = {
   error?: string;
   success?: string;
@@ -21,9 +16,4 @@ export async function registerCustomerAction(
     error:
       "Email verification is required. Start again from the registration page."
   };
-}
-
-export async function logoutCustomerAction() {
-  await clearCustomerSession();
-  redirect("/");
 }

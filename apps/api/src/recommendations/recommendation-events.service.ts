@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import type { CurrentCustomer } from "../customer-auth/customer-auth.service";
 
@@ -34,7 +34,7 @@ export function cleanAnonymousRecommendationId(value: unknown) {
 
 @Injectable()
 export class RecommendationEventsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   /**
    * Consent-aware event write — identical rules to the old lib:

@@ -5,6 +5,7 @@ import {
   Header,
   HttpCode,
   HttpException,
+  Inject,
   Post,
   Query,
   Req,
@@ -44,9 +45,11 @@ const eventSchema = z.object({
 @Controller("recommendations")
 export class RecommendationsController {
   constructor(
+    @Inject(RecommendationsService)
     private readonly recommendations: RecommendationsService,
+    @Inject(RecommendationEventsService)
     private readonly events: RecommendationEventsService,
-    private readonly auth: CustomerAuthService,
+    @Inject(CustomerAuthService) private readonly auth: CustomerAuthService,
   ) {}
 
   /** GET /recommendations?anonymousId= — personalized, 8 books. */

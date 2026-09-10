@@ -1,10 +1,15 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
 } from "@nestjs/common";
-import { Prisma } from "../../generated/prisma";
+import { Prisma } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
+import {
+  D1AtomicService,
+  isD1UniqueConstraintError,
+} from "../prisma/d1-atomic.service";
 import {
   CustomerAuthService,
   type CurrentCustomer,
@@ -30,63 +35,31 @@ function optionalString(value: string | undefined) {
 @Injectable()
 export class CustomersService {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly auth: CustomerAuthService,
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(D1AtomicService) private readonly atomic: D1AtomicService,
+    @Inject(CustomerAuthService) private readonly auth: CustomerAuthService,
   ) {}
 
-  /** PUT /customers/me/profile — contract §6 (3-op transaction preserved). */
+  /** PUT /customers/me/profile — contract §6. */
   async updateProfile(customer: CurrentCustomer, input: CustomerProfileInput) {
     try {
-      await this.prisma.client.$transaction([
-        this.prisma.client.customer.update({
-          where: { id: customer.id },
-          data: {
-            name: input.displayName,
-            email: input.email,
-            phone: input.phone,
-          },
-        }),
-        this.prisma.client.customerProfile.upsert({
-          where: { customerId: customer.id },
-          update: {
-            displayName: input.displayName,
-            email: input.email,
-            phone: input.phone,
-            defaultDistrict: optionalString(input.defaultDistrict),
-            defaultDeliveryArea: optionalString(input.defaultDeliveryArea),
-            defaultAddress: optionalString(input.defaultAddress),
-            marketingConsent: !!input.marketingConsent,
-            personalizationConsent: !!input.personalizationConsent,
-          },
-          create: {
-            customerId: customer.id,
-            displayName: input.displayName,
-            email: input.email,
-            phone: input.phone,
-            defaultDistrict: optionalString(input.defaultDistrict),
-            defaultDeliveryArea: optionalString(input.defaultDeliveryArea),
-            defaultAddress: optionalString(input.defaultAddress),
-            marketingConsent: !!input.marketingConsent,
-            personalizationConsent: !!input.personalizationConsent,
-          },
-        }),
-        this.prisma.client.customerPreference.upsert({
-          where: { customerId: customer.id },
-          update: {
-            preferredCategories: input.preferredCategories || [],
-            preferredTags: input.preferredTags || [],
-            preferredLanguages: input.preferredLanguages || [],
-          },
-          create: {
-            customerId: customer.id,
-            preferredCategories: input.preferredCategories || [],
-            preferredTags: input.preferredTags || [],
-            preferredLanguages: input.preferredLanguages || [],
-          },
-        }),
-      ]);
+      await this.atomic.updateProfile({
+        customerId: customer.id,
+        displayName: input.displayName,
+        email: input.email ?? null,
+        phone: input.phone ?? null,
+        defaultDistrict: optionalString(input.defaultDistrict) ?? null,
+        defaultDeliveryArea: optionalString(input.defaultDeliveryArea) ?? null,
+        defaultAddress: optionalString(input.defaultAddress) ?? null,
+        marketingConsent: !!input.marketingConsent,
+        personalizationConsent: !!input.personalizationConsent,
+        preferredCategories: input.preferredCategories || [],
+        preferredTags: input.preferredTags || [],
+        preferredLanguages: input.preferredLanguages || [],
+      });
     } catch (caught) {
       if (
+        isD1UniqueConstraintError(caught) ||
         caught instanceof Prisma.PrismaClientKnownRequestError &&
         caught.code === "P2002"
       ) {

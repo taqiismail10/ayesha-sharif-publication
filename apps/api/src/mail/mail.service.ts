@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Inject,
   Logger,
   OnModuleInit,
   ServiceUnavailableException,
@@ -17,7 +18,7 @@ export class MailService implements OnModuleInit {
   private readonly fromName: string;
   private readonly isDevelopment: boolean;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(@Inject(ConfigService) private readonly config: ConfigService) {
     this.fromEmail = this.config.get<string>("SMTP_FROM_EMAIL")?.trim() ?? "";
     this.fromName =
       this.config.get<string>("SMTP_FROM_NAME")?.trim() || "Ayesha Sharif Publications";

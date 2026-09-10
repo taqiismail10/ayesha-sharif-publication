@@ -21,7 +21,7 @@ function hashToken(token: string) {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
 
-export async function clearCustomerSession() {
+async function cleanUpInvalidCustomerSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get(CUSTOMER_SESSION_COOKIE)?.value;
   if (token) {
@@ -47,7 +47,7 @@ export async function getCurrentCustomer(): Promise<CurrentCustomer | null> {
   });
 
   if (!session || session.expiresAt < new Date() || !session.customer.isActive) {
-    await clearCustomerSession();
+    await cleanUpInvalidCustomerSession();
     return null;
   }
 

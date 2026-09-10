@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import type { Prisma } from "../../generated/prisma";
+import { Inject, Injectable } from "@nestjs/common";
+import type { Prisma } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import {
   cardInclude,
@@ -103,7 +103,7 @@ function sortRecommendations(
 
 @Injectable()
 export class RecommendationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   /** Popularity fallback — bestSeller > featured > newArrival > newest. */
   private async fallbackRecommendations(take: number): Promise<BookCardData[]> {
