@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useSyncExternalStore } from "react";
+import { apiFetch } from "@/lib/api-client";
 
 type SavedBooksState = {
   loaded: boolean;
@@ -54,10 +55,9 @@ async function loadSavedBooks() {
 
   publish(cloneState({ loading: true }));
 
-  loadPromise = fetch("/api/account/saved-books", {
+  loadPromise = apiFetch("/customers/me/saved-books", {
     method: "GET",
     cache: "no-store",
-    credentials: "same-origin",
   })
     .then(async (response) => {
       const payload = (await response.json().catch(() => null)) as
@@ -142,10 +142,9 @@ async function mutateSavedBook(
   publish(cloneState({ pendingBookIds }));
 
   try {
-    const response = await fetch("/api/account/saved-books", {
+    const response = await apiFetch("/customers/me/saved-books", {
       method,
       cache: "no-store",
-      credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ bookId }),
     });
