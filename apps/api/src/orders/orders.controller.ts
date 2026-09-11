@@ -4,6 +4,7 @@ import {
   Header,
   HttpCode,
   HttpException,
+  Inject,
   Post,
   Req,
 } from "@nestjs/common";
@@ -28,9 +29,9 @@ import { OrdersService } from "./orders.service";
 @Controller("orders")
 export class OrdersController {
   constructor(
-    private readonly orders: OrdersService,
-    private readonly auth: CustomerAuthService,
-    private readonly prisma: PrismaService,
+    @Inject(OrdersService) private readonly orders: OrdersService,
+    @Inject(CustomerAuthService) private readonly auth: CustomerAuthService,
+    @Inject(PrismaService) private readonly prisma: PrismaService,
   ) {}
 
   @Post()

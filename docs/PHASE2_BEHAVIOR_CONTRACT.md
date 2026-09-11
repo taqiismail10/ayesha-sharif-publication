@@ -18,7 +18,7 @@ Documented **before** implementation, from the live Next.js code. The NestJS por
 **Effect:** updates `lastLoginAt`, creates session + cookie.
 **Output:** redirect to safe `redirectTo` or `/account/profile` (frontend concern).
 
-## 3. Logout (`logoutCustomerAction`)
+## 3. Logout (`POST /auth/customer/logout`; former Next.js action/route removed)
 
 Reads cookie → deletes the matching `CustomerSession` row (`deleteMany` by tokenHash) → deletes cookie → redirect `/` (frontend concern).
 
@@ -39,20 +39,22 @@ Always **HTTP 200** (guests are not an error):
 ```
 Headers: `Cache-Control: private, no-store, max-age=0`.
 
-## 6. Profile update (`updateCustomerProfileAction`)
+## 6. Profile update (`PUT /customers/me/profile`; formerly `updateCustomerProfileAction`)
 
 **Validation** (`customerProfileSchema`): displayName min 2 · email/phone optional normalized, **at least one required** · consents boolean · preferred* string arrays.
-**Effect — single `$transaction` of 3 ops:**
+**Effect — one native D1 transactional `batch()` of 3 prepared statements:**
 1. `customer.update` — name/email/phone
 2. `customerProfile.upsert` — displayName/email/phone/defaultDistrict/defaultDeliveryArea/defaultAddress/marketingConsent/personalizationConsent
 3. `customerPreference.upsert` — preferredCategories/Tags/Languages (default `[]`)
 
+Prisma remains the ordinary query layer, but this multi-write mutation uses the API's narrow D1 atomic infrastructure because Prisma transactions are not atomic on D1.
+
 **Quirk preserved:** empty default-address fields become `undefined` → Prisma *skips* them on update, so a user cannot clear a saved default via empty input. (Pre-existing behavior, kept for parity.)
 **Errors:** P2002 → same conflict message as register. **Success:** `"Profile saved."`
 
-## 7. Password change (`changeCustomerPasswordAction`)
+## 7. Password change (`PUT /customers/me/password`; formerly `changeCustomerPasswordAction`)
 
-Requires logged-in customer. Verify `currentPassword` against stored hash → on mismatch `"Current password is incorrect."` New password 8–128 + confirm match → bcrypt(12) → `customer.update`. Success: `"Password changed."` No session invalidation (existing sessions stay valid — pre-existing behavior).
+Requires logged-in customer. Verify `currentPassword` against stored hash → on mismatch `"Current password is incorrect."` New passwords used by password change, OTP signup, and password reset share one creation policy: 8–128 characters, at least one uppercase ASCII letter, lowercase ASCII letter, digit, and non-whitespace special character; leading/trailing whitespace is rejected; confirmation must match. Login intentionally uses a separate basic input schema so historical passwords still reach bcrypt verification. Accepted passwords are passed unchanged to bcrypt(12) → `customer.update`. Success: `"Password changed."` No session invalidation (existing sessions stay valid — pre-existing behavior).
 
 ## 8. Checkout request/response (`POST /api/orders`)
 
@@ -68,7 +70,7 @@ Per item: book must be `published|pre_order` AND `stockQuantity ≥ quantity`, e
 - `grandTotal` = saleSubtotal + deliveryCharge
 - `paymentStatus` = `unpaid` for COD else `pending`; `orderStatus` = `pending`; stock **NOT** reduced at checkout (admin confirm does that).
 - Order number: `ASP-YYMMDD-NNNN` (4-digit random, ≤5 uniqueness retries). Items snapshot `bookTitleSnapshot`, `unitPrice` = salePrice.
-- After create: fire-and-forget `purchase` events per item.
+- Order + all OrderItems persist in one native D1 transactional `batch()`; after commit, fire-and-forget `purchase` events run outside the commerce transaction.
 
 ## 10. Delivery charge calculation
 

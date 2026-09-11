@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Inject, Post } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import {
   emailOnlySchema,
@@ -15,7 +15,7 @@ import { OtpAuthService } from "./otp-auth.service";
 
 @Controller("auth")
 export class OtpAuthController {
-  constructor(private readonly otpAuth: OtpAuthService) {}
+  constructor(@Inject(OtpAuthService) private readonly otpAuth: OtpAuthService) {}
 
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post("signup/request-otp")

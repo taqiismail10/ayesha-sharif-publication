@@ -1,4 +1,4 @@
-import { Controller, Get, Header } from "@nestjs/common";
+import { Controller, Get, Header, Inject } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 
 /**
@@ -7,7 +7,7 @@ import { PrismaService } from "../prisma/prisma.service";
  */
 @Controller("health")
 export class HealthController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   @Get()
   @Header("Cache-Control", "private, no-store, max-age=0")

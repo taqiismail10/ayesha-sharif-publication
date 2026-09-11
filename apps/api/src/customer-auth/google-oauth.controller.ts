@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { Controller, Get, Logger, Query, Req, Res } from "@nestjs/common";
+import { Controller, Get, Inject, Logger, Query, Req, Res } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { CustomerAuthService } from "./customer-auth.service";
 import { GoogleOAuthService } from "./google-oauth.service";
@@ -22,8 +22,8 @@ export class GoogleOAuthController {
   private readonly logger = new Logger(GoogleOAuthController.name);
 
   constructor(
-    private readonly google: GoogleOAuthService,
-    private readonly auth: CustomerAuthService,
+    @Inject(GoogleOAuthService) private readonly google: GoogleOAuthService,
+    @Inject(CustomerAuthService) private readonly auth: CustomerAuthService,
   ) {}
 
   /**

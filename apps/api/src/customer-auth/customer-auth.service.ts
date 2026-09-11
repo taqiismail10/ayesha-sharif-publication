@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import type { Request, Response } from "express";
-import type { Prisma } from "../../generated/prisma";
+import type { Prisma } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import {
   bangladeshPhonePattern,
@@ -58,7 +58,7 @@ function randomToken() {
 
 @Injectable()
 export class CustomerAuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   // ── Session primitives (parity with src/lib/customer-auth.ts) ─────────────
 
@@ -89,7 +89,12 @@ export class CustomerAuthService {
   }
 
   private clearSessionCookie(res: Response) {
-    res.clearCookie(CUSTOMER_SESSION_COOKIE, { path: "/" });
+    res.clearCookie(CUSTOMER_SESSION_COOKIE, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    });
   }
 
   async createSession(req: Request, res: Response, customerId: string) {
@@ -174,7 +179,7 @@ export class CustomerAuthService {
     return bcrypt.compare(password, hash);
   }
 
-  // ── Login identifier resolution (parity with loginCustomerAction) ──────────
+  // ── Login identifier resolution ────────────────────────────────────────────
 
   resolveLoginLookup(identifier: string) {
     const email = identifier.includes("@")

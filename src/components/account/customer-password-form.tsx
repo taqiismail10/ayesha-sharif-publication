@@ -1,22 +1,18 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { KeyRound } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { Field, FieldControl, FieldError } from "@/components/ui/field";
 import { FormSuccess } from "@/components/forms/form-success";
-import {
-  changeCustomerPasswordAction,
-  type CustomerActionState
-} from "@/app/(site)/account/actions";
+import type { CustomerActionState } from "@/app/(site)/account/actions";
+import { AuthApiError, putAuth } from "@/lib/auth-api-client";
 
 const initialState: CustomerActionState = {};
 
 export function CustomerPasswordForm() {
-  const [state, formAction, isPending] = useActionState(
-    changeCustomerPasswordAction,
-    initialState
-  );
+  const [state, setState] = useState<CustomerActionState>(initialState);
+  const [isPending, setIsPending] = useState(false);
   const toast = useToast();
   const prevStateRef = useRef<CustomerActionState>(initialState);
 
@@ -37,8 +33,37 @@ export function CustomerPasswordForm() {
     prevStateRef.current = state;
   }, [state, toast]);
 
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    setIsPending(true);
+    setState(initialState);
+
+    try {
+      const result = await putAuth<{ message: string }>(
+        "/customers/me/password",
+        {
+          currentPassword: formData.get("currentPassword"),
+          newPassword: formData.get("newPassword"),
+          confirmPassword: formData.get("confirmPassword")
+        }
+      );
+      setState({ success: result.message });
+      form.reset();
+    } catch (caught) {
+      if (caught instanceof AuthApiError) {
+        setState({ error: caught.message, fieldErrors: caught.fieldErrors });
+      } else {
+        setState({ error: "The request could not be completed. Please try again." });
+      }
+    } finally {
+      setIsPending(false);
+    }
+  }
+
   return (
-    <form action={formAction} className="grid gap-4">
+    <form onSubmit={handleSubmit} className="grid gap-4">
       {state.error ? (
         <div role="alert" className="rounded-md bg-danger/10 p-3 text-sm font-semibold text-danger">
           {state.error}
@@ -82,11 +107,18 @@ export function CustomerPasswordForm() {
               name="newPassword"
               type="password"
               autoComplete="new-password"
+              minLength={8}
+              maxLength={128}
               required
               className="mt-1"
             />
             <FieldError />
           </Field>
+          <p className="text-sm leading-6 text-muted">
+            Use 8–128 characters with at least one uppercase letter, one lowercase
+            letter, one number, and one special character. Do not start or end
+            with whitespace.
+          </p>
           <Field name="confirmPassword" error={state.fieldErrors?.confirmPassword}>
             <label className="form-label" htmlFor="customer-confirmPassword">Confirm new password</label>
             <FieldControl

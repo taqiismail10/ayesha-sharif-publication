@@ -2,12 +2,16 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import {
   BadRequestException,
+  Inject,
   Injectable,
   Logger,
   ServiceUnavailableException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { Prisma } from "../../generated/prisma";
+import {
+  D1AtomicService,
+  isD1UniqueConstraintError,
+} from "../prisma/d1-atomic.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { normalizeEmail } from "../common/contracts/customer.schemas";
 import type { CurrentCustomer } from "./customer-auth.service";
@@ -29,7 +33,10 @@ const customerInclude = { profile: true, preferences: true } as const;
 export class GoogleOAuthService {
   private readonly logger = new Logger(GoogleOAuthService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(D1AtomicService) private readonly atomic: D1AtomicService,
+  ) {}
 
   // ── Configuration ───────────────────────────────────────────────────────────
 
@@ -185,34 +192,38 @@ export class GoogleOAuthService {
         throw new UnauthorizedException("This account has been disabled.");
       }
       try {
-        await db.$transaction([
-          db.customerAuthProvider.create({
-            data: {
-              customerId: existingCustomer.id,
-              provider: "google",
-              providerUserId: profile.sub,
-              providerEmail: email,
-            },
-          }),
-          db.customer.update({
-            where: { id: existingCustomer.id },
-            data: { emailVerifiedAt: new Date() },
-          }),
-        ]);
+        await this.atomic.linkGoogleCustomer({
+          providerId: this.atomic.newId(),
+          customerId: existingCustomer.id,
+          providerUserId: profile.sub,
+          providerEmail: email,
+        });
       } catch (caught) {
-        // @@unique([customerId, provider]) — this customer is already linked
-        // to a DIFFERENT Google account. Refuse rather than overwrite.
-        if (
-          caught instanceof Prisma.PrismaClientKnownRequestError &&
-          caught.code === "P2002"
-        ) {
+        if (isD1UniqueConstraintError(caught)) {
+          const racedLink = await db.customerAuthProvider.findUnique({
+            where: {
+              provider_providerUserId: {
+                provider: "google",
+                providerUserId: profile.sub,
+              },
+            },
+            include: { customer: { include: customerInclude } },
+          });
+          if (racedLink?.customerId === existingCustomer.id) {
+            return racedLink.customer;
+          }
           throw new UnauthorizedException(
             "This account is already linked to a different Google account.",
           );
         }
         throw caught;
       }
-      return { ...existingCustomer, emailVerifiedAt: new Date() };
+      const linked = await db.customer.findUnique({
+        where: { id: existingCustomer.id },
+        include: customerInclude,
+      });
+      if (!linked) throw new UnauthorizedException("Google sign-in failed.");
+      return linked;
     }
 
     // 3. New customer. passwordHash is REQUIRED by the schema and the old
@@ -223,26 +234,35 @@ export class GoogleOAuthService {
     const passwordHash = await bcrypt.hash(unusablePassword, 12);
     const displayName = profile.name?.trim() || email.split("@")[0];
 
-    return db.customer.create({
-      data: {
-        name: displayName,
-        email,
-        passwordHash,
-        passwordLoginEnabled: false,
-        emailVerifiedAt: new Date(),
-        profile: {
-          create: { displayName, email },
+    const customerId = this.atomic.newId();
+    try {
+      await this.atomic.createGoogleCustomer({
+        customer: {
+          id: customerId,
+          name: displayName,
+          email,
+          passwordHash,
+          passwordLoginEnabled: false,
+          emailVerifiedAt: new Date(),
         },
-        preferences: { create: {} },
-        authProviders: {
-          create: {
-            provider: "google",
-            providerUserId: profile.sub,
-            providerEmail: email,
-          },
-        },
-      },
+        displayName,
+        providerId: this.atomic.newId(),
+        providerUserId: profile.sub,
+        providerEmail: email,
+      });
+    } catch (caught) {
+      if (isD1UniqueConstraintError(caught)) {
+        // A concurrent callback may have won either unique race. Re-resolve
+        // once through the now-committed provider/email state.
+        return this.loginOrLinkCustomer(profile);
+      }
+      throw caught;
+    }
+    const created = await db.customer.findUnique({
+      where: { id: customerId },
       include: customerInclude,
     });
+    if (!created) throw new UnauthorizedException("Google sign-in failed.");
+    return created;
   }
 }

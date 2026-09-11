@@ -1,4 +1,4 @@
-import type { Prisma } from "../../../generated/prisma";
+import type { Prisma } from "../../generated/prisma/client";
 
 /**
  * BookCardData serialization — ported 1:1 from src/lib/data.ts

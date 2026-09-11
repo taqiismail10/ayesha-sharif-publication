@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
 } from "@nestjs/common";
 import type {
@@ -16,6 +17,10 @@ import {
   OtpService,
 } from "../otp/otp.service";
 import { PrismaService } from "../prisma/prisma.service";
+import {
+  D1AtomicService,
+  isD1UniqueConstraintError,
+} from "../prisma/d1-atomic.service";
 import { CustomerAuthService } from "./customer-auth.service";
 
 const ACCOUNT_CONFLICT_MESSAGE =
@@ -26,10 +31,11 @@ const FORGOT_MESSAGE =
 @Injectable()
 export class OtpAuthService {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly auth: CustomerAuthService,
-    private readonly otp: OtpService,
-    private readonly mail: MailService,
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(D1AtomicService) private readonly atomic: D1AtomicService,
+    @Inject(CustomerAuthService) private readonly auth: CustomerAuthService,
+    @Inject(OtpService) private readonly otp: OtpService,
+    @Inject(MailService) private readonly mail: MailService,
   ) {}
 
   async requestSignup(input: SignupOtpRequestInput) {
@@ -44,34 +50,23 @@ export class OtpAuthService {
     }
 
     const passwordHash = await this.auth.hashPassword(input.password);
-    if (existing) {
-      await this.prisma.client.customer.update({
-        where: { id: existing.id },
-        data: {
-          name: input.name,
-          passwordHash,
-          passwordLoginEnabled: true,
-          profile: {
-            upsert: {
-              update: { displayName: input.name, email },
-              create: { displayName: input.name, email },
-            },
-          },
-          preferences: { upsert: { update: {}, create: {} } },
-        },
-      });
-    } else {
-      await this.prisma.client.customer.create({
-        data: {
+    try {
+      await this.atomic.upsertSignupCustomer(
+        {
+          id: this.atomic.newId(),
           name: input.name,
           email,
           passwordHash,
           passwordLoginEnabled: true,
           emailVerifiedAt: null,
-          profile: { create: { displayName: input.name, email } },
-          preferences: { create: {} },
         },
-      });
+        existing?.id,
+      );
+    } catch (caught) {
+      if (isD1UniqueConstraintError(caught)) {
+        throw new ConflictException(ACCOUNT_CONFLICT_MESSAGE);
+      }
+      throw caught;
     }
 
     const issued = await this.otp.issue(email, "SIGNUP");
@@ -98,11 +93,7 @@ export class OtpAuthService {
       throw new BadRequestException("The code is invalid or has expired.");
     }
 
-    await this.otp.verifyAndConsume(email, "SIGNUP", input.otp);
-    await this.prisma.client.customer.update({
-      where: { id: customer.id },
-      data: { emailVerifiedAt: new Date() },
-    });
+    await this.otp.consumeSignupOtp(email, input.otp, customer.id);
 
     return {
       ok: true,
@@ -183,8 +174,11 @@ export class OtpAuthService {
       throw new BadRequestException("The code is invalid or has expired.");
     }
 
-    await this.otp.verifyAndConsume(email, "PASSWORD_RESET", input.otp);
-    const resetToken = await this.otp.issueResetToken(email);
+    const resetToken = await this.otp.consumePasswordResetOtp(
+      email,
+      input.otp,
+      customer.id,
+    );
     return { ok: true, resetToken, expiresInSeconds: 10 * 60 };
   }
 
@@ -199,26 +193,17 @@ export class OtpAuthService {
     }
 
     const passwordHash = await this.auth.hashPassword(input.newPassword);
-    await this.prisma.client.$transaction(async (tx) => {
-      const consumed = await tx.passwordResetToken.updateMany({
-        where: {
-          id: reset.id,
-          consumedAt: null,
-          expiresAt: { gt: new Date() },
-        },
-        data: { consumedAt: new Date() },
-      });
-      if (consumed.count !== 1) {
-        throw new BadRequestException("The password reset session has expired.");
-      }
-      await tx.customer.update({
-        where: { id: customer.id },
-        data: { passwordHash, emailVerifiedAt: customer.emailVerifiedAt ?? new Date() },
-      });
-      await tx.customerSession.deleteMany({
-        where: { customerId: customer.id },
-      });
+    const consumed = await this.atomic.resetPassword({
+      resetId: reset.id,
+      expectedTokenHash: reset.tokenHash,
+      customerId: customer.id,
+      email,
+      passwordHash,
+      verifyEmail: !customer.emailVerifiedAt,
     });
+    if (!consumed) {
+      throw new BadRequestException("The password reset session has expired.");
+    }
 
     return {
       ok: true,

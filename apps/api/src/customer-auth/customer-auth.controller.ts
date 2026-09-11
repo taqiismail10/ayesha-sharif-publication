@@ -4,6 +4,7 @@ import {
   Get,
   Header,
   HttpCode,
+  Inject,
   Post,
   Req,
   Res,
@@ -25,8 +26,8 @@ import {
 @Controller("auth/customer")
 export class CustomerAuthController {
   constructor(
-    private readonly auth: CustomerAuthService,
-    private readonly prisma: PrismaService,
+    @Inject(CustomerAuthService) private readonly auth: CustomerAuthService,
+    @Inject(PrismaService) private readonly prisma: PrismaService,
   ) {}
 
   /** POST /auth/customer/login — contract §2. Strict brute-force limit. */

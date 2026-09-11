@@ -12,8 +12,8 @@ import { RecommendationsModule } from "./recommendations/recommendations.module"
 
 @Module({
   imports: [
-    // .env is loaded from apps/api/.env. Variables are NOT renamed yet —
-    // the API reuses DATABASE_URL exactly as the Next.js app does (Phase 0 rule).
+    // Conventional Node startup still loads non-database settings from local
+    // env files. The D1 database binding is supplied separately by a Worker.
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [".env.local", ".env"],

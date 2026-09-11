@@ -9,10 +9,13 @@ Every frontend dependency on the old backend, by mechanism. Risk level = blast r
 | Frontend file | API called | Feature | Old route/function | NestJS endpoint | Status | Risk level |
 |---|---|---|---|---|---|---|
 | `src/components/checkout/checkout-page-client.tsx` | ~~`POST /api/orders`~~ | Checkout submit | `app/api/orders/route.ts` (kept) | `POST /orders` | ✅ **retargeted (2F)** | 🔴 revenue path |
-| `src/components/site/account-menu.tsx` | ~~`GET /api/account/me`~~ + logout link | Header login state + logout | `app/api/account/me/route.ts`, `/account/logout` (compatibility only) | `GET /auth/customer/me`, `POST /auth/customer/logout` | ✅ **retargeted (2F)** | 🟠 every-page header |
+| `src/components/site/account-menu.tsx`, `src/components/site/header.tsx` | `GET /auth/customer/me` + `POST /auth/customer/logout` | Header login state + logout | removed `/account/logout` fallback | `GET /auth/customer/me`, `POST /auth/customer/logout` | ✅ **retargeted** | 🟠 every-page header |
 | `src/components/admin/upload-field.tsx` | `POST /api/admin/upload` | Book cover/gallery/PDF upload | `app/api/admin/upload/route.ts` | `POST /admin/uploads` | ⏳ Phase 3 — **not touched** | 🟠 admin workflow |
 | `src/components/books/client-recommendation-section.tsx` | ~~`GET/POST /api/recommendations`~~ | Personalized + cart recommendations | `app/api/recommendations/route.ts` (compatibility only) | `GET /recommendations`, `POST /recommendations/cart` | ✅ **retargeted (2F)** | 🟡 self-hides on failure |
 | `src/lib/tracking-client.ts` | ~~`POST /api/recommendation-events`~~ | Interaction tracking | `app/api/recommendation-events/route.ts` (compatibility only) | `POST /recommendations/events` | ✅ **retargeted (2F)** | 🟡 fire-and-forget |
+| `src/components/account/customer-auth-form.tsx` | `POST /auth/customer/login` via `postAuth()` | Customer password login | removed `loginCustomerAction` | `POST /auth/customer/login` | ✅ **retargeted** | 🔴 authentication path |
+| `src/components/account/customer-profile-form.tsx` | `PUT /customers/me/profile` via `putAuth()` | Profile, preferences, and consent | removed `updateCustomerProfileAction` | `PUT /customers/me/profile` | ✅ **retargeted** | 🟠 account settings |
+| `src/components/account/customer-password-form.tsx` | `PUT /customers/me/password` via `putAuth()` | Password change | removed `changeCustomerPasswordAction` | `PUT /customers/me/password` | ✅ **retargeted** | 🟠 account security |
 
 Also: admin orders page links to `GET /api/admin/orders/export` (anchor) — ⏳ Phase 3, untouched. The Google login button (`customer-auth-form.tsx`) now also uses `apiUrl()` from the shared client. The old admin policy JSON API routes were removed in Phase 2A because the policy editor already uses server actions.
 
@@ -22,9 +25,7 @@ Also: admin orders page links to `GET /api/admin/orders/export` (anchor) — ⏳
 |---|---|---|---|---|
 | `src/components/admin/login-form.tsx` | `loginAction` | Admin login | `POST /auth/admin/login` | 🔴 admin lockout if broken |
 | `src/components/admin/admin-shell.tsx` | `logoutAction` | Admin logout | `POST /auth/admin/logout` | 🟡 |
-| `src/components/account/customer-auth-form.tsx` | `registerCustomerAction`, `loginCustomerAction` | Customer register/login | `POST /auth/customer/{register,login}` | 🔴 |
-| `src/components/account/customer-profile-form.tsx` | `updateCustomerProfileAction` | Profile edit | `PUT /customers/me/profile` | 🟠 |
-| `src/components/account/customer-password-form.tsx` | `changeCustomerPasswordAction` | Password change | `PUT /customers/me/password` | 🟠 |
+| `src/components/account/customer-auth-form.tsx` | `registerCustomerAction` (legacy register mode only) | Customer register fallback | `POST /auth/customer/register` | 🔴 |
 | `src/app/admin/(protected)/books/new` + `[id]/edit` + list pages | book CRUD actions | Book management | `/admin/books*` | 🟠 |
 | `src/app/admin/(protected)/categories/page.tsx` | category actions | Category management | `/admin/categories*` | 🟠 |
 | `src/app/admin/(protected)/tags/page.tsx` | tag actions | Tag management | `/admin/tags*` | 🟠 |
