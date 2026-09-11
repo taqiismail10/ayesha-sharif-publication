@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { D1AtomicService } from "../prisma/d1-atomic.service";
 import { RecommendationEventsService, cleanAnonymousRecommendationId } from "../recommendations/recommendation-events.service";
@@ -38,6 +38,61 @@ export class OrdersService {
     @Inject(RecommendationEventsService)
     private readonly events: RecommendationEventsService,
   ) {}
+
+  async listCustomerOrders(customerId: string) {
+    const orders = await this.prisma.client.order.findMany({
+      where: { customerId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        orderNumber: true,
+        createdAt: true,
+        grandTotal: true,
+        orderStatus: true,
+        paymentStatus: true,
+        _count: { select: { items: true } },
+      },
+    });
+    return orders;
+  }
+
+  async getCustomerOrder(customerId: string, orderNumber: string) {
+    const order = await this.prisma.client.order.findFirst({
+      where: { customerId, orderNumber },
+      select: {
+        id: true,
+        orderNumber: true,
+        createdAt: true,
+        subtotal: true,
+        discountTotal: true,
+        deliveryCharge: true,
+        grandTotal: true,
+        paymentMethod: true,
+        paymentStatus: true,
+        orderStatus: true,
+        customerName: true,
+        customerPhone: true,
+        shippingAddress: true,
+        district: true,
+        deliveryArea: true,
+        courierName: true,
+        trackingNumber: true,
+        items: {
+          select: {
+            id: true,
+            bookTitleSnapshot: true,
+            quantity: true,
+            unitPrice: true,
+            totalPrice: true,
+            book: { select: { slug: true, author: true } },
+          },
+        },
+      },
+    });
+
+    if (!order) throw new NotFoundException("Order not found.");
+    return order;
+  }
 
   /**
    * Delivery options — ported from src/lib/settings.ts: constants overridden

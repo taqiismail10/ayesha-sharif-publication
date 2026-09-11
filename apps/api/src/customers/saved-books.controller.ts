@@ -35,7 +35,7 @@ export class SavedBooksController {
     return {
       ok: true,
       authenticated: true,
-      savedBookIds: await this.savedBooks.list(customer),
+      ...(await this.savedBooks.list(customer)),
     };
   }
 

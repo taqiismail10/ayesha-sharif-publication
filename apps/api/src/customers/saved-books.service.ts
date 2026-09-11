@@ -9,10 +9,28 @@ export class SavedBooksService {
   async list(customer: CurrentCustomer) {
     const rows = await this.prisma.client.savedBook.findMany({
       where: { customerId: customer.id },
-      select: { bookId: true },
+      select: {
+        bookId: true,
+        book: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            author: true,
+            salePrice: true,
+            regularPrice: true,
+            stockQuantity: true,
+            status: true,
+            coverImage: true,
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
-    return rows.map((row) => row.bookId);
+    return {
+      savedBookIds: rows.map((row) => row.bookId),
+      books: rows.map((row) => row.book),
+    };
   }
 
   async save(customer: CurrentCustomer, bookId: string) {

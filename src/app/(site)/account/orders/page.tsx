@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PackageCheck } from "lucide-react";
-import { prisma } from "@/lib/prisma";
-import { requireCustomer } from "@/lib/customer-auth";
+import { fetchCustomerApi, requireCustomer } from "@/lib/customer-auth";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { orderStatusLabels, paymentStatusLabels } from "@/lib/constants";
 import { EmptyState } from "@/components/site/empty-state";
@@ -13,14 +12,19 @@ export const metadata: Metadata = {
 };
 
 export default async function CustomerOrdersPage() {
-  const customer = await requireCustomer();
-  const orders = await prisma.order.findMany({
-    where: { customerId: customer.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      _count: { select: { items: true } }
-    }
-  });
+  await requireCustomer();
+  const response = await fetchCustomerApi("/customers/me/orders");
+  const orders = response?.ok
+    ? ((await response.json()) as Array<{
+        id: string;
+        orderNumber: string;
+        createdAt: string;
+        grandTotal: number | string;
+        orderStatus: keyof typeof orderStatusLabels;
+        paymentStatus: keyof typeof paymentStatusLabels;
+        _count: { items: number };
+      }>)
+    : [];
 
   return (
     <div className="container-px mx-auto max-w-6xl py-8">
@@ -59,7 +63,7 @@ export default async function CustomerOrdersPage() {
                 </div>
                 <div className="grid gap-1 text-sm sm:text-right">
                   <p className="font-medium text-forest">
-                    {formatCurrency(order.grandTotal)}
+                    {formatCurrency(Number(order.grandTotal))}
                   </p>
                   <p className="font-semibold text-muted">
                     {orderStatusLabels[order.orderStatus]} ·{" "}
