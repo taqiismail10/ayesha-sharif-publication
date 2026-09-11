@@ -417,6 +417,16 @@ export class D1AtomicService {
     await this.batch(statements);
   }
 
+  async setBookStock(bookId: string, expectedStock: number, stockQuantity: number): Promise<boolean> {
+    const result = await this.batch([
+      this.statement(
+        `UPDATE "Book" SET "stockQuantity" = ?, "updatedAt" = ? WHERE "id" = ? AND "stockQuantity" = ?`,
+        [stockQuantity, dateValue(new Date()), bookId, expectedStock],
+      ),
+    ]);
+    return changes(result[0]) === 1;
+  }
+
   async linkGoogleCustomer(input: {
     providerId: string;
     customerId: string;

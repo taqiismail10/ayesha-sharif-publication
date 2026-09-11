@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { BookStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   revalidatePublicCatalogue,
@@ -25,10 +24,6 @@ function formBoolean(formData: FormData, key: string) {
   return formData.get(key) === "on";
 }
 
-function dateOrNull(value?: string) {
-  return value ? new Date(value) : null;
-}
-
 function nullableString(value?: string) {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
@@ -41,6 +36,11 @@ function galleryFrom(value?: string) {
       .map((item) => item.trim())
       .filter(Boolean) ?? []
   );
+}
+
+function bookApiInput(input: ReturnType<typeof parseBookForm>) {
+  const { tagIds = [], galleryImages, ...book } = input;
+  return { ...book, tagIds, galleryImages: galleryFrom(galleryImages) };
 }
 
 function parseBookForm(formData: FormData) {
@@ -81,44 +81,13 @@ function parseBookForm(formData: FormData) {
 export async function createBookAction(formData: FormData) {
   await assertAdminRole(["super_admin", "admin", "editor"]);
   const input = parseBookForm(formData);
-  const { tagIds = [], galleryImages, ...book } = input;
-
-  const created = await prisma.book.create({
-    data: {
-      title: book.title,
-      slug: book.slug,
-      subtitle: nullableString(book.subtitle),
-      author: book.author,
-      publisher: book.publisher,
-      isbn13: nullableString(book.isbn13),
-      edition: nullableString(book.edition),
-      language: book.language,
-      pages: book.pages || null,
-      binding: nullableString(book.binding),
-      publicationDate: dateOrNull(book.publicationDate),
-      shortDescription: nullableString(book.shortDescription),
-      description: nullableString(book.description),
-      regularPrice: book.regularPrice,
-      salePrice: book.salePrice,
-      discountPercent: book.discountPercent,
-      discountStart: dateOrNull(book.discountStart),
-      discountEnd: dateOrNull(book.discountEnd),
-      stockQuantity: book.stockQuantity,
-      status: book.status as BookStatus,
-      coverImage: nullableString(book.coverImage),
-      galleryImages: galleryFrom(galleryImages),
-      samplePdf: nullableString(book.samplePdf),
-      weight: book.weight || null,
-      categoryId: nullableString(book.categoryId),
-      isFeatured: !!book.isFeatured,
-      isBestSeller: !!book.isBestSeller,
-      isNewArrival: !!book.isNewArrival,
-      isRecommended: !!book.isRecommended,
-      tags: {
-        create: tagIds.map((tagId) => ({ tagId }))
-      }
-    }
+  const response = await adminApi("/admin/books", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(bookApiInput(input)),
   });
+  if (!response.ok) throw new Error("Could not create the book.");
+  const created = (await response.json()) as { id: string; slug: string };
 
   revalidatePath("/admin/books");
   revalidatePublicCatalogue([created.slug]);
@@ -128,67 +97,30 @@ export async function createBookAction(formData: FormData) {
 export async function updateBookAction(bookId: string, formData: FormData) {
   await assertAdminRole(["super_admin", "admin", "editor"]);
   const input = parseBookForm(formData);
-  const { tagIds = [], galleryImages, ...book } = input;
-  const existing = await prisma.book.findUnique({
-    where: { id: bookId },
-    select: { slug: true }
+  const response = await adminApi(`/admin/books/${encodeURIComponent(bookId)}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(bookApiInput(input)),
   });
-
-  const updated = await prisma.book.update({
-    where: { id: bookId },
-    data: {
-      title: book.title,
-      slug: book.slug,
-      subtitle: nullableString(book.subtitle),
-      author: book.author,
-      publisher: book.publisher,
-      isbn13: nullableString(book.isbn13),
-      edition: nullableString(book.edition),
-      language: book.language,
-      pages: book.pages || null,
-      binding: nullableString(book.binding),
-      publicationDate: dateOrNull(book.publicationDate),
-      shortDescription: nullableString(book.shortDescription),
-      description: nullableString(book.description),
-      regularPrice: book.regularPrice,
-      salePrice: book.salePrice,
-      discountPercent: book.discountPercent,
-      discountStart: dateOrNull(book.discountStart),
-      discountEnd: dateOrNull(book.discountEnd),
-      stockQuantity: book.stockQuantity,
-      status: book.status as BookStatus,
-      coverImage: nullableString(book.coverImage),
-      galleryImages: galleryFrom(galleryImages),
-      samplePdf: nullableString(book.samplePdf),
-      weight: book.weight || null,
-      categoryId: nullableString(book.categoryId),
-      isFeatured: !!book.isFeatured,
-      isBestSeller: !!book.isBestSeller,
-      isNewArrival: !!book.isNewArrival,
-      isRecommended: !!book.isRecommended,
-      tags: {
-        deleteMany: {},
-        create: tagIds.map((tagId) => ({ tagId }))
-      }
-    }
-  });
+  if (!response.ok) throw new Error("Could not update the book.");
+  const updated = (await response.json()) as { slug: string };
 
   revalidatePath("/admin/books");
   revalidatePath(`/admin/books/${bookId}/edit`);
-  revalidatePublicCatalogue([existing?.slug, updated.slug]);
+  revalidatePublicCatalogue([updated.slug]);
   redirect("/admin/books");
 }
 
 export async function archiveBookAction(formData: FormData) {
   await assertAdminRole(["super_admin", "admin", "editor"]);
   const id = String(formData.get("id"));
-  const archived = await prisma.book.update({
-    where: { id },
-    data: { status: "archived" },
-    select: { slug: true }
+  const response = await adminApi(`/admin/books/${encodeURIComponent(id)}/archive`, {
+    method: "PATCH", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ archived: true }),
   });
+  if (!response.ok) throw new Error("Could not archive the book.");
   revalidatePath("/admin/books");
-  revalidatePublicCatalogue([archived.slug]);
+  revalidatePublicCatalogue();
 }
 
 export async function deleteBookAction(formData: FormData) {

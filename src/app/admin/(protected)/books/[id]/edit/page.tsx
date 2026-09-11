@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { adminApi, requireAdmin } from "@/lib/auth";
+import type { Book, BookTag } from "@prisma/client";
 import { updateBookAction } from "@/app/admin/actions";
 import { AdminBookForm } from "@/components/admin/admin-book-form";
 
@@ -13,12 +14,19 @@ type PageProps = {
 export default async function EditBookPage({ params }: PageProps) {
   await requireAdmin(["super_admin", "admin", "editor"]);
   const { id } = await params;
-  const [book, categories, tags] = await Promise.all([
-    prisma.book.findUnique({ where: { id }, include: { tags: true } }),
+  const [bookResponse, categories, tags] = await Promise.all([
+    adminApi(`/admin/books/${encodeURIComponent(id)}`),
     prisma.category.findMany({ orderBy: { name: "asc" } }),
     prisma.tag.findMany({ orderBy: { name: "asc" } })
   ]);
-  if (!book) notFound();
+  if (!bookResponse.ok) notFound();
+  const payload = await bookResponse.json();
+  const book = {
+    ...payload,
+    publicationDate: payload.publicationDate ? new Date(payload.publicationDate) : null,
+    discountStart: payload.discountStart ? new Date(payload.discountStart) : null,
+    discountEnd: payload.discountEnd ? new Date(payload.discountEnd) : null,
+  } as unknown as Book & { tags: BookTag[] };
 
   const action = updateBookAction.bind(null, book.id);
 
