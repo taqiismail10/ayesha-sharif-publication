@@ -7,8 +7,7 @@ import {
   CircleHelp,
   PackageCheck,
 } from "lucide-react";
-import { prisma } from "@/lib/prisma";
-import { requireCustomer } from "@/lib/customer-auth";
+import { fetchCustomerApi, requireCustomer } from "@/lib/customer-auth";
 import { AccountCartOverviewCard } from "@/components/account/account-cart-summary";
 
 export const metadata: Metadata = {
@@ -18,10 +17,15 @@ export const metadata: Metadata = {
 
 export default async function CustomerAccountDashboardPage() {
   const customer = await requireCustomer();
-  const [orderCount, savedCount] = await Promise.all([
-    prisma.order.count({ where: { customerId: customer.id } }),
-    prisma.savedBook.count({ where: { customerId: customer.id } }),
-  ]);
+  const dashboardResponse = await fetchCustomerApi("/customers/me/dashboard");
+  const dashboard = dashboardResponse?.ok
+    ? ((await dashboardResponse.json()) as {
+        ordersCount?: number;
+        savedBooksCount?: number;
+      })
+    : {};
+  const orderCount = dashboard.ordersCount ?? 0;
+  const savedCount = dashboard.savedBooksCount ?? 0;
 
   const displayName = customer.profile?.displayName || customer.name || "Reader";
 

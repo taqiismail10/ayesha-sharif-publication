@@ -4,6 +4,7 @@ import {
   Controller,
   Inject,
   Put,
+  Get,
   UseGuards,
 } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
@@ -24,6 +25,12 @@ export class CustomersController {
   constructor(
     @Inject(CustomersService) private readonly customers: CustomersService,
   ) {}
+
+  /** GET /customers/me/dashboard */
+  @Get("dashboard")
+  dashboard(@CurrentCustomer() customer: CurrentCustomerType) {
+    return this.customers.dashboard(customer.id);
+  }
 
   /** PUT /customers/me/profile */
   @Put("profile")
