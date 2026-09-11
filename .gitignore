@@ -25,3 +25,29 @@ public/uploads/
 
 homepage-*.png
 phase34-*.png
+
+
+# AI agent generated files
+.agents/
+
+# Puku / AI indexing files
+.puku/
+
+# Python generated files
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated reports
+reports/**/.python-deps/
+reports/**/*.tmp
+reports/**/*verification-failure.png
+
+# Temporary files
+*.tmp
+*.log
