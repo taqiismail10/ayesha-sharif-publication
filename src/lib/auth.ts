@@ -32,6 +32,10 @@ async function adminApi(path: string, init: RequestInit = {}) {
   });
 }
 
+function rolesQuery(allowedRoles?: AdminRole[]) {
+  return allowedRoles?.length ? `?roles=${allowedRoles.join(",")}` : "";
+}
+
 export async function getCurrentAdmin(): Promise<CurrentAdmin | null> {
   try {
     const response = await adminApi("/admin/auth/me");
@@ -44,19 +48,23 @@ export async function getCurrentAdmin(): Promise<CurrentAdmin | null> {
 }
 
 export async function requireAdmin(allowedRoles?: AdminRole[]) {
-  const admin = await getCurrentAdmin();
-  if (!admin) redirect("/admin/login");
-  if (allowedRoles?.length && !allowedRoles.includes(admin.role)) {
-    redirect("/admin/unauthorized");
-  }
-  return admin;
+  const response = await adminApi(`/admin/auth/me${rolesQuery(allowedRoles)}`);
+  if (response.status === 401) redirect("/admin/login");
+  if (response.status === 403) redirect("/admin/unauthorized");
+  if (!response.ok) redirect("/admin/login");
+  const data = (await response.json()) as { admin?: CurrentAdmin | null };
+  if (!data.admin) redirect("/admin/login");
+  return data.admin;
 }
 
 export async function assertAdminRole(allowedRoles?: AdminRole[]) {
-  const admin = await getCurrentAdmin();
-  if (!admin) throw new Error("Unauthorized admin access.");
-  if (allowedRoles?.length && !allowedRoles.includes(admin.role)) {
+  const response = await adminApi(`/admin/auth/me${rolesQuery(allowedRoles)}`);
+  if (response.status === 401) throw new Error("Unauthorized admin access.");
+  if (response.status === 403) {
     throw new Error("You do not have permission to perform this action.");
   }
-  return admin;
+  if (!response.ok) throw new Error("Unable to verify admin access.");
+  const data = (await response.json()) as { admin?: CurrentAdmin | null };
+  if (!data.admin) throw new Error("Unauthorized admin access.");
+  return data.admin;
 }

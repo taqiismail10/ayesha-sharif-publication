@@ -1,15 +1,20 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post, Query, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import type { Request, Response } from "express";
 import { z } from "zod";
 import { AdminAuthService } from "./admin-auth.service";
 import { AdminGuard, type RequestWithAdmin } from "./admin.guard";
+import { AdminPermissionService } from "./admin-permission.service";
+import type { AdminRole } from "../generated/prisma/enums";
 
 const loginSchema = z.object({ email: z.string().trim().email(), password: z.string().min(1) });
 
 @Controller("admin/auth")
 export class AdminAuthController {
-  constructor(private readonly auth: AdminAuthService) {}
+  constructor(
+    private readonly auth: AdminAuthService,
+    private readonly permissions: AdminPermissionService,
+  ) {}
 
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post("login")
@@ -31,7 +36,15 @@ export class AdminAuthController {
 
   @Get("me")
   @UseGuards(AdminGuard)
-  async me(@Req() req: RequestWithAdmin) {
+  async me(@Req() req: RequestWithAdmin, @Query("roles") roles?: string) {
+    const requestedRoles = roles?.split(",").filter(Boolean);
+    const allowedRoles = requestedRoles?.filter((role): role is AdminRole =>
+      ["super_admin", "admin", "editor", "order_manager"].includes(role),
+    );
+    if (requestedRoles?.length && !allowedRoles?.length) {
+      throw new UnauthorizedException("Invalid admin role policy.");
+    }
+    this.permissions.assertAnyRole(req.admin.role, allowedRoles);
     return { ok: true, admin: this.auth.safeAdmin(req.admin) };
   }
 }
