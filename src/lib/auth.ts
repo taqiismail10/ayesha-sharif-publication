@@ -1,106 +1,51 @@
 import "server-only";
 
-import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Admin, AdminRole } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
-import type { AdminSession } from "@/types";
 
 export const ADMIN_SESSION_COOKIE = "asp_admin_session";
-const SESSION_DAYS = 7;
+export type AdminRole = "super_admin" | "admin" | "editor" | "order_manager";
 
-function getSecret() {
-  const secret = process.env.NEXTAUTH_SECRET;
-  if (!secret && process.env.NODE_ENV === "production") {
-    throw new Error("NEXTAUTH_SECRET is required in production.");
-  }
-  return secret || "development-only-change-this-secret";
+export type CurrentAdmin = {
+  id: string;
+  name: string;
+  email: string;
+  role: AdminRole;
+};
+
+function apiBaseUrl() {
+  return (
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:4000"
+  ).replace(/\/+$/, "");
 }
 
-function encode(value: unknown) {
-  return Buffer.from(JSON.stringify(value)).toString("base64url");
+async function adminApi(path: string, init: RequestInit = {}) {
+  const token = (await cookies()).get(ADMIN_SESSION_COOKIE)?.value;
+  const headers = new Headers(init.headers);
+  if (token) headers.set("cookie", `${ADMIN_SESSION_COOKIE}=${token}`);
+  return fetch(`${apiBaseUrl()}${path}`, {
+    ...init,
+    headers,
+    cache: "no-store",
+  });
 }
 
-function sign(payload: string) {
-  return crypto.createHmac("sha256", getSecret()).update(payload).digest("base64url");
-}
-
-function verifyToken(token: string): AdminSession | null {
-  const [payload, signature] = token.split(".");
-  if (!payload || !signature) return null;
-  const expected = sign(payload);
-  if (signature.length !== expected.length) return null;
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
-    return null;
-  }
-
+export async function getCurrentAdmin(): Promise<CurrentAdmin | null> {
   try {
-    const session = JSON.parse(
-      Buffer.from(payload, "base64url").toString("utf8")
-    ) as AdminSession;
-    if (!session.exp || session.exp < Date.now()) return null;
-    return session;
+    const response = await adminApi("/admin/auth/me");
+    if (!response.ok) return null;
+    const data = (await response.json()) as { admin?: CurrentAdmin | null };
+    return data.admin || null;
   } catch {
     return null;
   }
 }
 
-export async function verifyPassword(password: string, hash: string) {
-  return bcrypt.compare(password, hash);
-}
-
-export async function createAdminSession(admin: Pick<Admin, "id" | "name" | "email" | "role">) {
-  const expiresAt = Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000;
-  const payload = encode({
-    id: admin.id,
-    name: admin.name,
-    email: admin.email,
-    role: admin.role,
-    exp: expiresAt
-  });
-  const token = `${payload}.${sign(payload)}`;
-
-  const cookieStore = await cookies();
-  cookieStore.set(ADMIN_SESSION_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: SESSION_DAYS * 24 * 60 * 60,
-    path: "/"
-  });
-}
-
-export async function clearAdminSession() {
-  const cookieStore = await cookies();
-  cookieStore.delete(ADMIN_SESSION_COOKIE);
-}
-
-export async function readAdminSession() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
-  if (!token) return null;
-  return verifyToken(token);
-}
-
-export async function getCurrentAdmin() {
-  const session = await readAdminSession();
-  if (!session) return null;
-
-  const admin = await prisma.admin.findUnique({
-    where: { id: session.id }
-  });
-
-  if (!admin?.isActive) return null;
-  return admin;
-}
-
 export async function requireAdmin(allowedRoles?: AdminRole[]) {
   const admin = await getCurrentAdmin();
-  if (!admin) {
-    redirect("/admin/login");
-  }
+  if (!admin) redirect("/admin/login");
   if (allowedRoles?.length && !allowedRoles.includes(admin.role)) {
     redirect("/admin/unauthorized");
   }
@@ -109,9 +54,7 @@ export async function requireAdmin(allowedRoles?: AdminRole[]) {
 
 export async function assertAdminRole(allowedRoles?: AdminRole[]) {
   const admin = await getCurrentAdmin();
-  if (!admin) {
-    throw new Error("Unauthorized admin access.");
-  }
+  if (!admin) throw new Error("Unauthorized admin access.");
   if (allowedRoles?.length && !allowedRoles.includes(admin.role)) {
     throw new Error("You do not have permission to perform this action.");
   }

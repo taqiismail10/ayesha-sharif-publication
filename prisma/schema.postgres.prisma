@@ -81,8 +81,23 @@ model Admin {
   role         AdminRole @default(admin)
   isActive     Boolean   @default(true)
   policies     Policy[]
+  sessions     AdminSession[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+}
+
+model AdminSession {
+  id         String   @id @default(cuid())
+  adminId    String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime?
+
+  admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([expiresAt])
 }
 
 model Policy {

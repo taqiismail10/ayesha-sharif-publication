@@ -44,6 +44,20 @@ function apiBaseUrl() {
   ).replace(/\/+$/, "");
 }
 
+export async function fetchCustomerApi(path: string, init: RequestInit = {}) {
+  const sessionCookie = (await cookies()).get(CUSTOMER_SESSION_COOKIE);
+  if (!sessionCookie?.value) return null;
+
+  return fetch(`${apiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`, {
+    ...init,
+    headers: {
+      ...init.headers,
+      cookie: `${CUSTOMER_SESSION_COOKIE}=${sessionCookie.value}`,
+    },
+    cache: "no-store",
+  });
+}
+
 /**
  * Resolve customer identity through NestJS. The browser session cookie is
  * forwarded to the API; Next.js does not query or mutate CustomerSession.
@@ -54,12 +68,9 @@ export async function getCurrentCustomer(): Promise<CurrentCustomer | null> {
   if (!sessionCookie?.value) return null;
 
   try {
-    const response = await fetch(`${apiBaseUrl()}/auth/customer/me`, {
-      headers: { cookie: `${CUSTOMER_SESSION_COOKIE}=${sessionCookie.value}` },
-      cache: "no-store",
-    });
+    const response = await fetchCustomerApi("/auth/customer/me");
 
-    if (!response.ok) return null;
+    if (!response || !response.ok) return null;
 
     const data = (await response.json()) as CustomerMeResponse;
     if (!data.customer) {

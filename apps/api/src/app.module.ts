@@ -9,6 +9,7 @@ import { HealthModule } from "./health/health.module";
 import { OrdersModule } from "./orders/orders.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { RecommendationsModule } from "./recommendations/recommendations.module";
+import { AdminModule } from "./admin/admin.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RecommendationsModule } from "./recommendations/recommendations.module"
     CustomersModule,
     OrdersModule,
     RecommendationsModule,
+    AdminModule,
   ],
   providers: [
     // Maps Prisma known errors to proper HTTP codes (P2002→409, P2025→404).

@@ -10,15 +10,11 @@ import {
 } from "@/lib/cache-invalidation";
 import { deliveryAreas } from "@/lib/constants";
 import {
-  assertAdminRole,
-  clearAdminSession,
-  createAdminSession,
-  verifyPassword
+  assertAdminRole
 } from "@/lib/auth";
 import {
   bookFormSchema,
   categoryFormSchema,
-  loginSchema,
   tagFormSchema
 } from "@/lib/validators";
 import { slugify } from "@/lib/format";
@@ -26,45 +22,6 @@ import { slugify } from "@/lib/format";
 export type ActionState = {
   error?: string;
 };
-
-export async function loginAction(
-  _previousState: ActionState,
-  formData: FormData
-): Promise<ActionState> {
-  const parsed = loginSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password")
-  });
-
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid login details." };
-  }
-
-  const admin = await prisma.admin.findUnique({
-    where: { email: parsed.data.email }
-  });
-
-  if (!admin?.isActive) {
-    return { error: "Invalid admin email or password." };
-  }
-
-  const validPassword = await verifyPassword(
-    parsed.data.password,
-    admin.passwordHash
-  );
-
-  if (!validPassword) {
-    return { error: "Invalid admin email or password." };
-  }
-
-  await createAdminSession(admin);
-  redirect("/admin");
-}
-
-export async function logoutAction() {
-  await clearAdminSession();
-  redirect("/admin/login");
-}
 
 function formBoolean(formData: FormData, key: string) {
   return formData.get(key) === "on";
