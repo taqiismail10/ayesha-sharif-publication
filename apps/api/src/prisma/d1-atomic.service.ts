@@ -52,6 +52,17 @@ export type AtomicOrderInput = {
   }>;
 };
 
+export type AtomicOrderStatusInput = {
+  orderId: string;
+  orderStatus: string;
+  paymentStatus: string;
+  courierName: string | null;
+  trackingNumber: string | null;
+  adminNote: string | null;
+  stockReduced: boolean;
+  stockChanges: Array<{ bookId: string; quantity: number; direction: "increment" | "decrement" }>;
+};
+
 export type AtomicCustomerCreateInput = {
   id: string;
   name: string;
@@ -377,6 +388,32 @@ export class D1AtomicService {
         ),
       ),
     ];
+    await this.batch(statements);
+  }
+
+  async updateOrderStatus(input: AtomicOrderStatusInput): Promise<void> {
+    const now = dateValue(new Date());
+    const statements = input.stockChanges.map((change) =>
+      this.statement(
+        `UPDATE "Book" SET "stockQuantity" = "stockQuantity" ${change.direction === "increment" ? "+" : "-"} ? , "updatedAt" = ? WHERE "id" = ?`,
+        [change.quantity, now, change.bookId],
+      ),
+    );
+    statements.push(
+      this.statement(
+        `UPDATE "Order" SET "orderStatus" = ?, "paymentStatus" = ?, "courierName" = ?, "trackingNumber" = ?, "adminNote" = ?, "stockReduced" = ?, "updatedAt" = ? WHERE "id" = ?`,
+        [
+          input.orderStatus,
+          input.paymentStatus,
+          input.courierName,
+          input.trackingNumber,
+          input.adminNote,
+          input.stockReduced ? 1 : 0,
+          now,
+          input.orderId,
+        ],
+      ),
+    );
     await this.batch(statements);
   }
 

@@ -2,16 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { BookStatus, OrderStatus, PaymentStatus } from "@prisma/client";
+import type { BookStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   revalidatePublicCatalogue,
   revalidatePublicSettings
 } from "@/lib/cache-invalidation";
 import { deliveryAreas } from "@/lib/constants";
-import {
-  assertAdminRole
-} from "@/lib/auth";
+import { adminApi, assertAdminRole } from "@/lib/auth";
 import {
   bookFormSchema,
   categoryFormSchema,
@@ -282,69 +280,21 @@ export async function archiveTagAction(formData: FormData) {
 
 export async function updateOrderAction(orderId: string, formData: FormData) {
   await assertAdminRole(["super_admin", "admin", "order_manager"]);
-  const orderStatus = String(formData.get("orderStatus")) as OrderStatus;
-  const paymentStatus = String(formData.get("paymentStatus")) as PaymentStatus;
+  const orderStatus = String(formData.get("orderStatus"));
+  const paymentStatus = String(formData.get("paymentStatus"));
   const courierName = nullableString(String(formData.get("courierName") || ""));
   const trackingNumber = nullableString(String(formData.get("trackingNumber") || ""));
   const adminNote = nullableString(String(formData.get("adminNote") || ""));
-  const affectedBookIds = new Set<string>();
-
-  await prisma.$transaction(async (tx) => {
-    const order = await tx.order.findUnique({
-      where: { id: orderId },
-      include: { items: true }
-    });
-    if (!order) throw new Error("Order not found.");
-
-    let stockReduced = order.stockReduced;
-    if (orderStatus === "confirmed" && !order.stockReduced) {
-      for (const item of order.items) {
-        await tx.book.update({
-          where: { id: item.bookId },
-          data: { stockQuantity: { decrement: item.quantity } }
-        });
-        affectedBookIds.add(item.bookId);
-      }
-      stockReduced = true;
-    }
-
-    if (
-      orderStatus === "cancelled" &&
-      order.stockReduced &&
-      order.orderStatus !== "delivered"
-    ) {
-      for (const item of order.items) {
-        await tx.book.update({
-          where: { id: item.bookId },
-          data: { stockQuantity: { increment: item.quantity } }
-        });
-        affectedBookIds.add(item.bookId);
-      }
-      stockReduced = false;
-    }
-
-    await tx.order.update({
-      where: { id: orderId },
-      data: {
-        orderStatus,
-        paymentStatus,
-        courierName,
-        trackingNumber,
-        adminNote,
-        stockReduced
-      }
-    });
+  const response = await adminApi(`/admin/orders/${encodeURIComponent(orderId)}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ orderStatus, paymentStatus, courierName, trackingNumber, adminNote }),
   });
+  if (!response.ok) throw new Error("Could not update the order.");
 
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${orderId}`);
-  if (affectedBookIds.size) {
-    const affectedBooks = await prisma.book.findMany({
-      where: { id: { in: [...affectedBookIds] } },
-      select: { slug: true }
-    });
-    revalidatePublicCatalogue(affectedBooks.map((book) => book.slug));
-  }
+  revalidatePublicCatalogue();
 }
 
 export async function updateDeliverySettingsAction(formData: FormData) {

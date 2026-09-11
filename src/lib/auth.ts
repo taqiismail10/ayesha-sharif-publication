@@ -21,7 +21,7 @@ function apiBaseUrl() {
   ).replace(/\/+$/, "");
 }
 
-async function adminApi(path: string, init: RequestInit = {}) {
+export async function adminApi(path: string, init: RequestInit = {}) {
   const token = (await cookies()).get(ADMIN_SESSION_COOKIE)?.value;
   const headers = new Headers(init.headers);
   if (token) headers.set("cookie", `${ADMIN_SESSION_COOKIE}=${token}`);
