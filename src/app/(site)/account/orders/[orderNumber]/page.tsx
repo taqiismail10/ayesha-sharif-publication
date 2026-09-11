@@ -3,8 +3,7 @@ import type { ComponentType } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MapPin, PackageCheck, Truck } from "lucide-react";
-import { prisma } from "@/lib/prisma";
-import { requireCustomer } from "@/lib/customer-auth";
+import { fetchCustomerApi, requireCustomer } from "@/lib/customer-auth";
 import { formatCurrency, formatDate } from "@/lib/format";
 import {
   orderStatusLabels,
@@ -24,21 +23,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CustomerOrderDetailPage({ params }: PageProps) {
-  const customer = await requireCustomer();
+  await requireCustomer();
   const { orderNumber } = await params;
-  const order = await prisma.order.findFirst({
-    where: {
-      orderNumber,
-      customerId: customer.id
-    },
-    include: {
-      items: {
-        include: {
-          book: { select: { slug: true, coverImage: true, author: true } }
-        }
-      }
-    }
-  });
+  const response = await fetchCustomerApi(
+    `/customers/me/orders/${encodeURIComponent(orderNumber)}`,
+  );
+  const order = response?.ok ? await response.json() : null;
 
   if (!order) notFound();
 
@@ -90,18 +80,18 @@ export default async function CustomerOrderDetailPage({ params }: PageProps) {
           </div>
 
           <div className="mt-5 grid gap-3 border-t border-line pt-4 text-sm">
-            <TotalLine label="Subtotal" value={formatCurrency(order.subtotal)} />
+            <TotalLine label="Subtotal" value={formatCurrency(Number(order.subtotal))} />
             <TotalLine
               label="Discount"
-              value={`-${formatCurrency(order.discountTotal)}`}
+              value={`-${formatCurrency(Number(order.discountTotal))}`}
             />
             <TotalLine
               label="Delivery"
-              value={formatCurrency(order.deliveryCharge)}
+              value={formatCurrency(Number(order.deliveryCharge))}
             />
             <TotalLine
               label="Grand total"
-              value={formatCurrency(order.grandTotal)}
+              value={formatCurrency(Number(order.grandTotal))}
               strong
             />
           </div>

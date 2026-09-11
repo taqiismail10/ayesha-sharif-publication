@@ -1,21 +1,46 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useState } from "react";
 import { LogIn } from "lucide-react";
-import { loginAction, type ActionState } from "@/app/admin/actions";
+import { apiFetch } from "@/lib/api-client";
 import { PasswordToggleButton } from "@/components/ui/password-toggle-button";
 
-const initialState: ActionState = {};
-
 export function LoginForm() {
-  const [state, formAction, isPending] = useActionState(loginAction, initialState);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
-    <form action={formAction} className="grid gap-4">
-      {state.error ? (
+    <form
+      onSubmit={async (event) => {
+        event.preventDefault();
+        setError(null);
+        setIsPending(true);
+        const form = new FormData(event.currentTarget);
+        try {
+          const response = await apiFetch("/admin/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: form.get("email"),
+              password: form.get("password"),
+            }),
+          });
+          if (!response.ok) {
+            const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+            throw new Error(payload?.message || "Invalid admin email or password.");
+          }
+          window.location.assign("/admin");
+        } catch (caught) {
+          setError(caught instanceof Error ? caught.message : "Unable to sign in.");
+          setIsPending(false);
+        }
+      }}
+      className="grid gap-4"
+    >
+      {error ? (
         <div className="rounded-md bg-danger/10 p-3 text-sm font-semibold text-danger">
-          {state.error}
+          {error}
         </div>
       ) : null}
       <label>

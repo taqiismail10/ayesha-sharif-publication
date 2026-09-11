@@ -40,6 +40,15 @@ export class CustomersService {
     @Inject(CustomerAuthService) private readonly auth: CustomerAuthService,
   ) {}
 
+  async dashboard(customerId: string) {
+    const [ordersCount, savedBooksCount] = await Promise.all([
+      this.prisma.client.order.count({ where: { customerId } }),
+      this.prisma.client.savedBook.count({ where: { customerId } }),
+    ]);
+
+    return { ordersCount, savedBooksCount };
+  }
+
   /** PUT /customers/me/profile — contract §6. */
   async updateProfile(customer: CurrentCustomer, input: CustomerProfileInput) {
     try {

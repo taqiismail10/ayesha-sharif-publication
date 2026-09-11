@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Archive, Eye, Pencil, Plus, Trash2 } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { adminApi } from "@/lib/auth";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { bookStatusLabels } from "@/lib/constants";
 import { requireAdmin } from "@/lib/auth";
@@ -19,27 +19,19 @@ function pick(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+type AdminBookListItem = {
+  id: string; title: string; author: string; status: keyof typeof bookStatusLabels;
+  salePrice: number | string; regularPrice: number | string; stockQuantity: number;
+  updatedAt: string; category: { name: string } | null; _count: { orderItems: number };
+};
+
 export default async function AdminBooksPage({ searchParams }: PageProps) {
   await requireAdmin(["super_admin", "admin", "editor"]);
   const params = await searchParams;
   const q = pick(params.q);
 
-  const books = await prisma.book.findMany({
-    where: q
-      ? {
-          OR: [
-            { title: { contains: q, mode: "insensitive" } },
-            { author: { contains: q, mode: "insensitive" } },
-            { isbn13: { contains: q, mode: "insensitive" } }
-          ]
-        }
-      : undefined,
-    include: {
-      category: true,
-      _count: { select: { orderItems: true } }
-    },
-    orderBy: { createdAt: "desc" }
-  });
+  const response = await adminApi(`/admin/books${q ? `?q=${encodeURIComponent(q)}` : ""}`);
+  const books: AdminBookListItem[] = response.ok ? await response.json() : [];
 
   return (
     <div>

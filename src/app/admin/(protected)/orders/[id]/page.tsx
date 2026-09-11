@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Printer } from "lucide-react";
-import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { adminApi, requireAdmin } from "@/lib/auth";
 import {
   orderStatusLabels,
   paymentMethodLabels,
@@ -17,40 +16,41 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+type AdminOrderDetail = {
+  id: string;
+  orderNumber: string;
+  createdAt: string;
+  customerName: string | null;
+  customerPhone: string | null;
+  customerEmail: string | null;
+  district: string | null;
+  deliveryArea: string | null;
+  shippingAddress: string | null;
+  notes: string | null;
+  stockReduced: boolean;
+  orderStatus: keyof typeof orderStatusLabels;
+  paymentMethod: keyof typeof paymentMethodLabels;
+  paymentStatus: keyof typeof paymentStatusLabels;
+  transactionId: string | null;
+  subtotal: number | string;
+  discountTotal: number | string;
+  deliveryCharge: number | string;
+  grandTotal: number | string;
+  courierName: string | null;
+  trackingNumber: string | null;
+  adminNote: string | null;
+  customer: { name: string; email: string | null; phone: string | null; isActive: boolean } | null;
+  items: Array<{ id: string; bookTitleSnapshot: string; quantity: number; unitPrice: number | string; totalPrice: number | string; book: { stockQuantity: number } }>;
+  linkedOrders: Array<{ id: string; orderNumber: string; grandTotal: number | string; orderStatus: keyof typeof orderStatusLabels }>;
+};
+
 export default async function AdminOrderDetailPage({ params }: PageProps) {
   await requireAdmin(["super_admin", "admin", "order_manager"]);
   const { id } = await params;
-  const order = await prisma.order.findUnique({
-    where: { id },
-    include: {
-      items: { include: { book: true } },
-      customer: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          phone: true,
-          isActive: true,
-          createdAt: true
-        }
-      }
-    }
-  });
-  if (!order) notFound();
-  const linkedOrders = order.customerId
-    ? await prisma.order.findMany({
-        where: { customerId: order.customerId, id: { not: order.id } },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-        select: {
-          id: true,
-          orderNumber: true,
-          grandTotal: true,
-          orderStatus: true,
-          createdAt: true
-        }
-      })
-    : [];
+  const response = await adminApi(`/admin/orders/${encodeURIComponent(id)}`);
+  if (!response.ok) notFound();
+  const order = (await response.json()) as AdminOrderDetail;
+  const linkedOrders = order.linkedOrders;
 
   const action = updateOrderAction.bind(null, order.id);
 

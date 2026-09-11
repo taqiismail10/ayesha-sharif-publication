@@ -15,9 +15,9 @@ import {
   Ticket,
   Users,
 } from "lucide-react";
-import type { Admin } from "@prisma/client";
 import { adminRoleLabels } from "@/lib/constants";
-import { logoutAction } from "@/app/admin/actions";
+import type { CurrentAdmin } from "@/lib/auth";
+import { apiFetch } from "@/lib/api-client";
 import { ToastProvider } from "@/components/ui/toast";
 
 const links = [
@@ -33,7 +33,7 @@ const links = [
   { href: "/admin/settings",     label: "Settings",     icon: Settings,        exact: false },
 ];
 
-function AdminNav({ admin }: { admin: Admin }) {
+function AdminNav({ admin }: { admin: CurrentAdmin }) {
   const pathname = usePathname();
 
   const isActive = (href: string, exact: boolean) =>
@@ -85,7 +85,14 @@ function AdminNav({ admin }: { admin: Admin }) {
 
         {/* Logout */}
         <div className="flex-shrink-0 px-3 pb-5">
-          <form action={logoutAction}>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void apiFetch("/admin/auth/logout", { method: "POST" }).finally(() => {
+                window.location.href = "/admin/login";
+              });
+            }}
+          >
             <button
               type="submit"
               className="admin-logout-button flex w-full items-center gap-3 rounded-[6px] px-3 py-2 text-[13px] font-medium"
@@ -108,7 +115,14 @@ function AdminNav({ admin }: { admin: Admin }) {
           >
             ASP Admin
           </Link>
-          <form action={logoutAction}>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void apiFetch("/admin/auth/logout", { method: "POST" }).finally(() => {
+                window.location.href = "/admin/login";
+              });
+            }}
+          >
             <button
               type="submit"
               className="admin-mobile-logout inline-flex h-11 w-11 items-center justify-center rounded-md"
@@ -143,7 +157,7 @@ export function AdminShell({
   admin,
   children,
 }: {
-  admin: Admin;
+  admin: CurrentAdmin;
   children: React.ReactNode;
 }) {
   return (

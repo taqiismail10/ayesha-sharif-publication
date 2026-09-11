@@ -23,12 +23,32 @@ export type CurrentCustomer = Prisma.CustomerGetPayload<{
   include: typeof customerInclude;
 }>;
 
-/** Public-safe customer summary — identical shape to old GET /api/account/me. */
+/** Public-safe customer identity/profile payload for session-aware frontend reads. */
 export function customerSummary(customer: CurrentCustomer) {
   return {
+    id: customer.id,
     name: customer.profile?.displayName || customer.name,
     email: customer.email,
     phone: customer.phone,
+    profile: customer.profile
+      ? {
+          displayName: customer.profile.displayName,
+          email: customer.profile.email,
+          phone: customer.profile.phone,
+          defaultDistrict: customer.profile.defaultDistrict,
+          defaultDeliveryArea: customer.profile.defaultDeliveryArea,
+          defaultAddress: customer.profile.defaultAddress,
+          marketingConsent: customer.profile.marketingConsent,
+          personalizationConsent: customer.profile.personalizationConsent,
+        }
+      : null,
+    preferences: customer.preferences
+      ? {
+          preferredCategories: customer.preferences.preferredCategories,
+          preferredTags: customer.preferences.preferredTags,
+          preferredLanguages: customer.preferences.preferredLanguages,
+        }
+      : null,
   };
 }
 

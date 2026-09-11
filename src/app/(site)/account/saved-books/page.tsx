@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import type { BookStatus } from "@prisma/client";
 import Link from "next/link";
 import { BookMarked } from "lucide-react";
-import { prisma } from "@/lib/prisma";
-import { requireCustomer } from "@/lib/customer-auth";
+import { fetchCustomerApi, requireCustomer } from "@/lib/customer-auth";
 import { EmptyState } from "@/components/site/empty-state";
 import { AccountSavedBooksSection } from "@/components/account/account-saved-books-section";
 
@@ -12,26 +12,16 @@ export const metadata: Metadata = {
 };
 
 export default async function CustomerSavedBooksPage() {
-  const customer = await requireCustomer();
-  const savedBooks = await prisma.savedBook.findMany({
-    where: { customerId: customer.id },
-    orderBy: { createdAt: "desc" },
-    select: {
-      book: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          author: true,
-          salePrice: true,
-          regularPrice: true,
-          stockQuantity: true,
-          status: true,
-          coverImage: true,
-        },
-      },
-    },
-  });
+  await requireCustomer();
+  const response = await fetchCustomerApi("/customers/me/saved-books");
+  const payload = response?.ok
+    ? ((await response.json()) as { books?: Array<{
+        id: string; title: string; slug: string; author: string;
+        salePrice: number | string; regularPrice: number | string;
+        stockQuantity: number; status: string; coverImage: string | null;
+      }> })
+    : null;
+  const savedBooks = payload?.books || [];
 
   return (
     <div className="container-px mx-auto max-w-6xl py-8">
@@ -53,7 +43,7 @@ export default async function CustomerSavedBooksPage() {
       {savedBooks.length ? (
         <section className="rounded-lg border border-line bg-white p-5 shadow-sm sm:p-6">
           <AccountSavedBooksSection
-            books={savedBooks.map(({ book }) => ({
+          books={savedBooks.map((book) => ({
               id: book.id,
               title: book.title,
               slug: book.slug,
@@ -61,7 +51,7 @@ export default async function CustomerSavedBooksPage() {
               salePrice: Number(book.salePrice),
               regularPrice: Number(book.regularPrice),
               stockQuantity: book.stockQuantity,
-              status: book.status,
+              status: book.status as BookStatus,
               coverImage: book.coverImage,
             }))}
           />

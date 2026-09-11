@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { Download, Eye } from "lucide-react";
 import type { OrderStatus, PaymentStatus } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { adminApi, requireAdmin } from "@/lib/auth";
 import {
   orderStatusLabels,
   paymentMethodLabels,
@@ -20,6 +19,20 @@ function pick(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+type AdminOrderListItem = {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  grandTotal: number | string;
+  paymentMethod: keyof typeof paymentMethodLabels;
+  paymentStatus: keyof typeof paymentStatusLabels;
+  orderStatus: keyof typeof orderStatusLabels;
+  createdAt: string;
+  _count: { items: number };
+  customer: { email: string | null; phone: string | null } | null;
+};
+
 export default async function AdminOrdersPage({ searchParams }: PageProps) {
   await requireAdmin(["super_admin", "admin", "order_manager"]);
   const params = await searchParams;
@@ -27,31 +40,12 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
   const orderStatus = pick(params.orderStatus) as OrderStatus | undefined;
   const paymentStatus = pick(params.paymentStatus) as PaymentStatus | undefined;
 
-  const orders = await prisma.order.findMany({
-    where: {
-      AND: [
-        q
-          ? {
-              OR: [
-                { orderNumber: { contains: q, mode: "insensitive" } },
-                { customerName: { contains: q, mode: "insensitive" } },
-                { customerPhone: { contains: q, mode: "insensitive" } },
-                { customerEmail: { contains: q, mode: "insensitive" } },
-                { customer: { is: { email: { contains: q, mode: "insensitive" } } } },
-                { customer: { is: { phone: { contains: q, mode: "insensitive" } } } }
-              ]
-            }
-          : {},
-        orderStatus ? { orderStatus } : {},
-        paymentStatus ? { paymentStatus } : {}
-      ]
-    },
-    include: {
-      _count: { select: { items: true } },
-      customer: { select: { id: true, name: true, email: true, phone: true } }
-    },
-    orderBy: { createdAt: "desc" }
-  });
+  const response = await adminApi(`/admin/orders?${new URLSearchParams({
+    ...(q ? { q } : {}),
+    ...(orderStatus ? { orderStatus } : {}),
+    ...(paymentStatus ? { paymentStatus } : {}),
+  }).toString()}`);
+  const orders: AdminOrderListItem[] = response.ok ? await response.json() : [];
 
   const query = new URLSearchParams();
   if (q) query.set("q", q);

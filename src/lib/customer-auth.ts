@@ -1,57 +1,88 @@
 import "server-only";
 
-import crypto from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Prisma } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 
 export const CUSTOMER_SESSION_COOKIE = "asp_customer_session";
 
-const customerInclude = {
-  profile: true,
-  preferences: true
-} satisfies Prisma.CustomerInclude;
+type CustomerProfile = {
+  displayName: string | null;
+  email: string | null;
+  phone: string | null;
+  defaultDistrict: string | null;
+  defaultDeliveryArea: string | null;
+  defaultAddress: string | null;
+  marketingConsent: boolean;
+  personalizationConsent: boolean;
+};
 
-export type CurrentCustomer = Prisma.CustomerGetPayload<{
-  include: typeof customerInclude;
-}>;
+type CustomerPreferences = {
+  preferredCategories: unknown;
+  preferredTags: unknown;
+  preferredLanguages: unknown;
+};
 
-function hashToken(token: string) {
-  return crypto.createHash("sha256").update(token).digest("hex");
+export type CurrentCustomer = {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  profile: CustomerProfile | null;
+  preferences: CustomerPreferences | null;
+};
+
+type CustomerMeResponse = {
+  ok?: boolean;
+  customer?: CurrentCustomer | null;
+};
+
+function apiBaseUrl() {
+  return (
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:4000"
+  ).replace(/\/+$/, "");
 }
 
-async function cleanUpInvalidCustomerSession() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(CUSTOMER_SESSION_COOKIE)?.value;
-  if (token) {
-    await prisma.customerSession.deleteMany({
-      where: { tokenHash: hashToken(token) }
-    });
-  }
-  cookieStore.delete(CUSTOMER_SESSION_COOKIE);
+export async function fetchCustomerApi(path: string, init: RequestInit = {}) {
+  const sessionCookie = (await cookies()).get(CUSTOMER_SESSION_COOKIE);
+  if (!sessionCookie?.value) return null;
+
+  return fetch(`${apiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`, {
+    ...init,
+    headers: {
+      ...init.headers,
+      cookie: `${CUSTOMER_SESSION_COOKIE}=${sessionCookie.value}`,
+    },
+    cache: "no-store",
+  });
 }
 
+/**
+ * Resolve customer identity through NestJS. The browser session cookie is
+ * forwarded to the API; Next.js does not query or mutate CustomerSession.
+ */
 export async function getCurrentCustomer(): Promise<CurrentCustomer | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get(CUSTOMER_SESSION_COOKIE)?.value;
-  if (!token) return null;
+  const sessionCookie = cookieStore.get(CUSTOMER_SESSION_COOKIE);
+  if (!sessionCookie?.value) return null;
 
-  const session = await prisma.customerSession.findUnique({
-    where: { tokenHash: hashToken(token) },
-    include: {
-      customer: {
-        include: customerInclude
-      }
+  try {
+    const response = await fetchCustomerApi("/auth/customer/me");
+
+    if (!response || !response.ok) return null;
+
+    const data = (await response.json()) as CustomerMeResponse;
+    if (!data.customer) {
+      // NestJS owns database cleanup and response cookie clearing. A server
+      // component cannot safely mutate cookies during ordinary rendering.
+      return null;
     }
-  });
 
-  if (!session || session.expiresAt < new Date() || !session.customer.isActive) {
-    await cleanUpInvalidCustomerSession();
+    return data.customer;
+  } catch {
     return null;
   }
-
-  return session.customer;
 }
 
 export async function requireCustomer() {

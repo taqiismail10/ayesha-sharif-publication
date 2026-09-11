@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { adminApi, requireAdmin } from "@/lib/auth";
 import { bookStatusLabels } from "@/lib/constants";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { BookCover } from "@/components/books/book-cover";
@@ -11,17 +10,19 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+type PreviewBook = {
+  title: string; author: string; status: keyof typeof bookStatusLabels; coverImage: string | null;
+  salePrice: number | string; regularPrice: number | string; publisher: string; category: { name: string } | null;
+  isbn13: string | null; edition: string | null; language: string; publicationDate: string | null;
+  stockQuantity: number; tags: Array<{ tag: { name: string } }>; description: string | null;
+};
+
 export default async function BookPreviewPage({ params }: PageProps) {
   await requireAdmin(["super_admin", "admin", "editor"]);
   const { id } = await params;
-  const book = await prisma.book.findUnique({
-    where: { id },
-    include: {
-      category: true,
-      tags: { include: { tag: true } }
-    }
-  });
-  if (!book) notFound();
+  const response = await adminApi(`/admin/books/${encodeURIComponent(id)}`);
+  if (!response.ok) notFound();
+  const book = await response.json() as PreviewBook;
 
   return (
     <div>
