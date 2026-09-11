@@ -98,7 +98,7 @@ model Policy {
   status           PolicyStatus @default(draft)
 
   updatedById String?
-  updatedBy   Admin? @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  updatedBy   Admin?  @relation(fields: [updatedById], references: [id], onDelete: SetNull)
 
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
@@ -109,15 +109,15 @@ model Policy {
 }
 
 model Book {
-  id               String     @id @default(cuid())
+  id               String    @id @default(cuid())
   title            String
-  slug             String     @unique
+  slug             String    @unique
   subtitle         String?
   author           String
-  publisher        String     @default("Ayesha-Sharif Publication")
-  isbn13           String?    @unique
+  publisher        String    @default("Ayesha-Sharif Publication")
+  isbn13           String?   @unique
   edition          String?
-  language         String     @default("Bangla")
+  language         String    @default("Bangla")
   pages            Int?
   binding          String?
   publicationDate  DateTime?
@@ -135,7 +135,7 @@ model Book {
   status        BookStatus @default(draft)
 
   coverImage    String?
-  galleryImages Json       @default("[]")
+  galleryImages Json    @default("[]")
   samplePdf     String?
 
   weight Int?
@@ -198,10 +198,10 @@ model BookTag {
 }
 
 model Order {
-  id           String @id @default(cuid())
-  orderNumber  String @unique
-  customerId   String?
-  customerName String
+  id            String  @id @default(cuid())
+  orderNumber   String  @unique
+  customerId    String?
+  customerName  String
   customerPhone String
   customerEmail String?
 
@@ -259,7 +259,7 @@ model OrderItem {
 }
 
 model Banner {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   title    String
   subtitle String?
   image    String
@@ -350,7 +350,7 @@ model PasswordResetToken {
 // OAuth provider links for customers.
 // Customers created through email/password may have no provider rows.
 model CustomerAuthProvider {
-  id             String @id @default(cuid())
+  id             String  @id @default(cuid())
   customerId     String
   provider       String
   providerUserId String
@@ -430,8 +430,8 @@ model CustomerPreference {
   id         String @id @default(cuid())
   customerId String @unique
 
-  preferredCategories Json @default("[]")
-  preferredTags       Json @default("[]")
+  preferredCategories Json  @default("[]")
+  preferredTags       Json  @default("[]")
   preferredLanguages  Json?
 
   customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
