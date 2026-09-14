@@ -19,6 +19,7 @@
     "test:admin-book-delete:local": "npm run build && node test/admin-reads.local.cjs",
     "test:public-catalogue:local": "npm run build && node test/public-catalogue.local.cjs",
     "test:order-confirmation:local": "npm run build && node test/order-confirmation.local.cjs",
+    "test:recommendations:local": "npm run build && node test/recommendations.local.cjs",
     "lint": "eslint \"src/**/*.ts\"",
     "prisma:generate": "prisma generate --schema=../../prisma/schema.prisma --generator apiClient"
   },

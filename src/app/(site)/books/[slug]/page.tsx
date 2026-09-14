@@ -41,7 +41,7 @@ export default async function BookDetailsPage({ params }: PageProps) {
   if (!data) notFound();
 
   const { book, related } = data;
-  const similarBooks = await getSimilarBooks(slug, 4);
+  const similarBooks = await getSimilarBooks(book.id, 4);
   const hasDiscount = book.salePrice < book.regularPrice;
 
   const jsonLd = {

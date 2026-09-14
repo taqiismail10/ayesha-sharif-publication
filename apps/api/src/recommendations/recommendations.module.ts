@@ -1,6 +1,9 @@
 import { Module } from "@nestjs/common";
 import { RecommendationEventsService } from "./recommendation-events.service";
-import { RecommendationsController } from "./recommendations.controller";
+import {
+  BookRecommendationsController,
+  RecommendationsController,
+} from "./recommendations.controller";
 import { RecommendationsService } from "./recommendations.service";
 
 /**
@@ -9,7 +12,7 @@ import { RecommendationsService } from "./recommendations.service";
  *   GET  /recommendations · POST /recommendations/cart · POST /recommendations/events
  */
 @Module({
-  controllers: [RecommendationsController],
+  controllers: [RecommendationsController, BookRecommendationsController],
   providers: [RecommendationEventsService, RecommendationsService],
   exports: [RecommendationEventsService],
 })
