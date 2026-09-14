@@ -38,6 +38,9 @@ export class AdminOrdersController {
     response.status(200).send(result.csv);
   }
 
+  @Get(":id/invoice")
+  invoice(@Param("id") id: string) { return this.orders.invoice(id); }
+
   @Get(":id")
   detail(@Param("id") id: string) { return this.orders.detail(id); }
 
