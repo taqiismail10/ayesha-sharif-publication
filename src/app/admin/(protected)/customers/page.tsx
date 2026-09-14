@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Eye } from "lucide-react";
-import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { adminApi, requireAdmin } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -14,30 +13,21 @@ function pick(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+type AdminCustomer = {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  isActive: boolean;
+  createdAt: string;
+  _count: { orders: number; savedBooks: number };
+};
+
 export default async function AdminCustomersPage({ searchParams }: PageProps) {
   await requireAdmin(["super_admin", "admin", "order_manager"]);
   const q = pick((await searchParams).q);
-  const customers = await prisma.customer.findMany({
-    where: q
-      ? {
-          OR: [
-            { name: { contains: q, mode: "insensitive" } },
-            { email: { contains: q, mode: "insensitive" } },
-            { phone: { contains: q, mode: "insensitive" } }
-          ]
-        }
-      : undefined,
-    include: {
-      _count: {
-        select: {
-          orders: true,
-          savedBooks: true
-        }
-      }
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100
-  });
+  const response = await adminApi(`/admin/customers?${new URLSearchParams(q ? { q } : {}).toString()}`);
+  const customers: AdminCustomer[] = response.ok ? await response.json() : [];
 
   return (
     <div>

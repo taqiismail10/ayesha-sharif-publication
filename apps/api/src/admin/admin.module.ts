@@ -11,10 +11,12 @@ import { AdminContentController } from "./admin-content.controller";
 import { AdminContentService } from "./admin-content.service";
 import { AdminDashboardController } from "./admin-dashboard.controller";
 import { AdminDashboardService } from "./admin-dashboard.service";
+import { AdminCustomersController } from "./admin-customers.controller";
+import { AdminCustomersService } from "./admin-customers.service";
 
 @Module({
-  controllers: [AdminAuthController, AdminCategoriesController, AdminTagsController, AdminContentController, AdminDashboardController],
-  providers: [AdminAuthService, AdminGuard, AdminPermissionService, AdminRolesGuard, AdminTaxonomyService, AdminContentService, AdminDashboardService],
+  controllers: [AdminAuthController, AdminCategoriesController, AdminTagsController, AdminContentController, AdminDashboardController, AdminCustomersController],
+  providers: [AdminAuthService, AdminGuard, AdminPermissionService, AdminRolesGuard, AdminTaxonomyService, AdminContentService, AdminDashboardService, AdminCustomersService],
   exports: [AdminAuthService, AdminGuard, AdminPermissionService, AdminRolesGuard],
 })
 export class AdminModule {}
