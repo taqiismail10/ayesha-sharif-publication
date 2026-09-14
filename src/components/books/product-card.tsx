@@ -3,7 +3,7 @@
 import { memo, useCallback, useState } from "react";
 import Link from "next/link";
 import { ShoppingCart, Trash2 } from "lucide-react";
-import type { BookStatus } from "@prisma/client";
+import type { BookStatus } from "@/types";
 import {
   addCartItem,
   decrementCartItem,

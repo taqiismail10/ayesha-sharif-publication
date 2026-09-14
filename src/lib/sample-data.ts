@@ -1,4 +1,4 @@
-import type { BookStatus } from "@prisma/client";
+import type { BookStatus } from "@/types";
 import { slugify } from "@/lib/format";
 import type { BookCardData, BookDetailData } from "@/types";
 

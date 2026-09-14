@@ -6,11 +6,8 @@ Never commit real values — only the `.env.example` files are tracked.
 
 | Variable | Required | Used by | Notes |
 |---|---|---|---|
-| `DATABASE_URL` | yes (until Phase 4) | Prisma readers, old API routes, server actions | ⚠️ keep exactly ONE line (a duplicate empty `DATABASE_URL=` breaks env loading) |
-| `DIRECT_URL` | declared, unused | — | verify hosting needs before removing |
 | `NEXTAUTH_SECRET` | yes | admin HMAC tokens, customer ipHash | misnomer — NextAuth is not used |
 | `NEXTAUTH_URL` | yes | `metadataBase` | |
-| `ADMIN_SEED_EMAIL` / `ADMIN_SEED_PASSWORD` | seed only | `prisma/seed.ts` | |
 | `UPLOAD_PROVIDER` | `"local"` | upload route | Cloudinary vars are unused placeholders |
 | `NEXT_PUBLIC_API_BASE_URL` | recommended | `src/lib/api-client.ts` (Phase 2F) | **No `/api` prefix** — e.g. `http://localhost:4000`. Browser-visible, inlined at build. |
 | `NEXT_PUBLIC_API_URL` | legacy fallback | same | older name from Phase 2C; `API_BASE_URL` wins when both set |
@@ -21,7 +18,7 @@ Local dev works with neither `NEXT_PUBLIC_API_*` set — the client falls back t
 
 | Variable | Required | Notes |
 |---|---|---|
-| `DATABASE_URL` | yes | same PostgreSQL DB as the Next app; ONE line only |
+| `asp_db` | Worker binding | Cloudflare D1 database | provided by the Worker runtime; not a process environment variable |
 | `API_PORT` | no (4000) | |
 | `FRONTEND_ORIGIN` | no (`http://localhost:3000`) | CORS allow-list, comma-separated, credentials enabled |
 | `FRONTEND_URL` | for OAuth | post-OAuth redirect target (defaults to first `FRONTEND_ORIGIN`) |

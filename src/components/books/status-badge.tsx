@@ -1,4 +1,4 @@
-import type { BookStatus } from "@prisma/client";
+import type { BookStatus } from "@/types";
 import { bookStatusLabels } from "@/lib/constants";
 
 const styles: Record<BookStatus, string> = {

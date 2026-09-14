@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2, History, ShoppingCart } from "lucide-react";
-import type { PaymentMethod } from "@prisma/client";
+import type { PaymentMethod } from "@/types";
 import {
   type DeliveryAreaOption,
   paymentInstructions,

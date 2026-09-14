@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { BookMarked } from "lucide-react";
-import type { BookStatus } from "@prisma/client";
+import type { BookStatus } from "@/types";
 import { useRouter } from "next/navigation";
 import { addCartItem } from "@/lib/cart-client";
 import { formatCurrency } from "@/lib/format";

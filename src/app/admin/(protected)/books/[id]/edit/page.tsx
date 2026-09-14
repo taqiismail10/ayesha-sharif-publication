@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getAdminTaxonomy } from "@/lib/admin-taxonomy";
 import { adminApi, requireAdmin } from "@/lib/auth";
-import type { Book, BookTag } from "@prisma/client";
+import type { Book, BookTag } from "@/types";
 import { updateBookAction } from "@/app/admin/actions";
 import { AdminBookForm } from "@/components/admin/admin-book-form";
 

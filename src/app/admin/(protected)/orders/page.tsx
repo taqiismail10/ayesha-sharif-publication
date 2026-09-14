@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Eye } from "lucide-react";
-import type { OrderStatus, PaymentStatus } from "@prisma/client";
+import type { OrderStatus, PaymentStatus } from "@/types";
 import { adminApi, requireAdmin } from "@/lib/auth";
 import {
   orderStatusLabels,

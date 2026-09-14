@@ -3,8 +3,8 @@ import type {
   BookStatus,
   OrderStatus,
   PaymentMethod,
-  PaymentStatus
-} from "@prisma/client";
+  PaymentStatus,
+} from "@/types";
 
 export const brand = {
   name: "Ayesha-Sharif Publication",
