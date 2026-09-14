@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import {
   revalidatePublicCatalogue,
   revalidatePublicSettings
@@ -122,17 +121,16 @@ export async function archiveBookAction(formData: FormData) {
 export async function deleteBookAction(formData: FormData) {
   await assertAdminRole(["super_admin", "admin"]);
   const id = String(formData.get("id"));
-  const book = await prisma.book.findUnique({
-    where: { id },
-    select: { slug: true }
+  const response = await adminApi(`/admin/books/${encodeURIComponent(id)}`, {
+    method: "DELETE",
   });
-  const orderItemCount = await prisma.orderItem.count({ where: { bookId: id } });
-  if (orderItemCount > 0) {
-    throw new Error("This book has orders and cannot be deleted.");
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(body?.message || "Could not delete the book.");
   }
-  await prisma.book.delete({ where: { id } });
+  const deleted = (await response.json()) as { slug: string };
   revalidatePath("/admin/books");
-  revalidatePublicCatalogue([book?.slug]);
+  revalidatePublicCatalogue([deleted.slug]);
 }
 
 export async function updateOrderAction(orderId: string, formData: FormData) {
