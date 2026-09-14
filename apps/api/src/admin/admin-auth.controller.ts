@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Query, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Inject, Post, Query, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Throttle } from "@nestjs/throttler";
 import type { Request, Response } from "express";
 import { z } from "zod";
@@ -12,8 +12,8 @@ const loginSchema = z.object({ email: z.string().trim().email(), password: z.str
 @Controller("admin/auth")
 export class AdminAuthController {
   constructor(
-    private readonly auth: AdminAuthService,
-    private readonly permissions: AdminPermissionService,
+    @Inject(AdminAuthService) private readonly auth: AdminAuthService,
+    @Inject(AdminPermissionService) private readonly permissions: AdminPermissionService,
   ) {}
 
   @Throttle({ default: { limit: 10, ttl: 60_000 } })

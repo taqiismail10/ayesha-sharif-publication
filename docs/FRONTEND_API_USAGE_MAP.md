@@ -17,7 +17,7 @@ Every frontend dependency on the old backend, by mechanism. Risk level = blast r
 | `src/components/account/customer-profile-form.tsx` | `PUT /customers/me/profile` via `putAuth()` | Profile, preferences, and consent | removed `updateCustomerProfileAction` | `PUT /customers/me/profile` | ✅ **retargeted** | 🟠 account settings |
 | `src/components/account/customer-password-form.tsx` | `PUT /customers/me/password` via `putAuth()` | Password change | removed `changeCustomerPasswordAction` | `PUT /customers/me/password` | ✅ **retargeted** | 🟠 account security |
 
-Also: admin orders page links to `GET /api/admin/orders/export` (anchor) — ⏳ Phase 3, untouched. The Google login button (`customer-auth-form.tsx`) now also uses `apiUrl()` from the shared client. The old admin policy JSON API routes were removed in Phase 2A because the policy editor already uses server actions.
+Also: the admin orders page fetches `GET /admin/orders/export` with credentials and downloads the returned Blob — ✅ retargeted in Test 24. The Google login button (`customer-auth-form.tsx`) now also uses `apiUrl()` from the shared client. The old admin policy JSON API routes were removed in Phase 2A because the policy editor already uses server actions.
 
 ## B. Server-Action form bindings (convert with Phase 2/3, form-by-form)
 
@@ -45,7 +45,7 @@ Also: admin orders page links to `GET /api/admin/orders/export` (anchor) — ⏳
 | `src/components/site/footer.tsx`, `contact/page.tsx`, `about/page.tsx` | `getFooterContent/Contact/About` | CMS content | `GET /site-content/*` | 🟡 |
 | `src/app/(site)/account/orders/page.tsx` (+`[orderNumber]`) | inline `prisma.order.*` + `requireCustomer` | Customer order history | `GET /customers/me/orders{,/:n}` | 🟠 |
 | `src/app/(site)/account/profile/page.tsx` | inline prisma counts (orders, events, savedBooks) | Profile stats | `GET /customers/me/stats` | 🟡 |
-| `src/app/(site)/order-success/[orderNumber]/page.tsx` | inline `prisma.order.findUnique` | Post-checkout confirmation | `GET /orders/:orderNumber/public` | 🟠 |
+| `src/app/(site)/order-success/[orderNumber]/page.tsx` | `fetchPublicApi()` | Post-checkout confirmation | `GET /orders/confirmation/:orderNumber` | 🟡 public order-number capability; response is confirmation-safe |
 | `src/app/(site)/account/login` + `register` pages | `getCurrentCustomer()` redirect guard | Auth gating | `GET /auth/customer/me` server-side | 🟠 |
 | 11 admin pages (`admin/(protected)/**`) | inline prisma queries | All admin lists/details/stats | `GET /admin/*` family | 🟠 |
 

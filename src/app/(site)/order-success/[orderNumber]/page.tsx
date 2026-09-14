@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
-import { prisma } from "@/lib/prisma";
-import { getCurrentCustomer } from "@/lib/customer-auth";
+import { fetchCustomerApi, getCurrentCustomer } from "@/lib/customer-auth";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { fetchPublicApi } from "@/lib/public-api";
 import {
   orderStatusLabels,
   paymentMethodLabels,
@@ -16,13 +16,31 @@ type PageProps = {
   params: Promise<{ orderNumber: string }>;
 };
 
+type PublicOrderConfirmation = {
+  orderNumber: string;
+  createdAt: string;
+  paymentMethod: keyof typeof paymentMethodLabels;
+  paymentStatus: keyof typeof paymentStatusLabels;
+  orderStatus: keyof typeof orderStatusLabels;
+  items: Array<{
+    title: string;
+    quantity: number;
+    price: number;
+  }>;
+  totals: {
+    subtotal: number;
+    discount: number;
+    delivery: number;
+    grandTotal: number;
+  };
+};
+
 export default async function OrderSuccessPage({ params }: PageProps) {
   const { orderNumber } = await params;
   const [order, currentCustomer] = await Promise.all([
-    prisma.order.findUnique({
-      where: { orderNumber },
-      include: { items: true }
-    }),
+    fetchPublicApi<PublicOrderConfirmation>(
+      `/orders/confirmation/${encodeURIComponent(orderNumber)}`,
+    ).catch(() => null),
     getCurrentCustomer()
   ]);
 
@@ -42,8 +60,15 @@ export default async function OrderSuccessPage({ params }: PageProps) {
     );
   }
 
-  const belongsToCurrentCustomer =
-    !!currentCustomer && order.customerId === currentCustomer.id;
+  // The confirmation endpoint intentionally does not expose customer IDs.
+  // When signed in, the existing guarded customer endpoint authoritatively
+  // decides whether this order belongs to the current customer.
+  const customerOrderResponse = currentCustomer
+    ? await fetchCustomerApi(
+        `/customers/me/orders/${encodeURIComponent(order.orderNumber)}`,
+      )
+    : null;
+  const belongsToCurrentCustomer = Boolean(customerOrderResponse?.ok);
 
   return (
     <div className="container-px mx-auto max-w-3xl py-10">
@@ -76,17 +101,17 @@ export default async function OrderSuccessPage({ params }: PageProps) {
           <Info label="Payment method" value={paymentMethodLabels[order.paymentMethod]} />
           <Info label="Payment status" value={paymentStatusLabels[order.paymentStatus]} />
           <Info label="Order status" value={orderStatusLabels[order.orderStatus]} />
-          <Info label="Delivery charge" value={formatCurrency(order.deliveryCharge)} />
-          <Info label="Grand total" value={formatCurrency(order.grandTotal)} />
+          <Info label="Delivery charge" value={formatCurrency(order.totals.delivery)} />
+          <Info label="Grand total" value={formatCurrency(order.totals.grandTotal)} />
         </div>
 
         <div className="mt-5 border-t border-line pt-4">
-          {order.items.map((item) => (
-            <div key={item.id} className="flex justify-between gap-4 py-2 text-sm">
+          {order.items.map((item, index) => (
+            <div key={`${item.title}-${index}`} className="flex justify-between gap-4 py-2 text-sm">
               <span>
-                {item.bookTitleSnapshot} × {item.quantity}
+                {item.title} × {item.quantity}
               </span>
-              <span className="font-bold">{formatCurrency(item.totalPrice)}</span>
+              <span className="font-bold">{formatCurrency(item.price)}</span>
             </div>
           ))}
         </div>

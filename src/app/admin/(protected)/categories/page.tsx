@@ -1,20 +1,17 @@
 import { Archive } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { getAdminTaxonomy } from "@/lib/admin-taxonomy";
 import { requireAdmin } from "@/lib/auth";
 import {
   archiveCategoryAction,
   createCategoryAction,
   updateCategoryAction
-} from "@/app/admin/actions";
+} from "@/app/admin/taxonomy-actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCategoriesPage() {
   await requireAdmin(["super_admin", "admin", "editor"]);
-  const categories = await prisma.category.findMany({
-    orderBy: { name: "asc" },
-    include: { _count: { select: { books: true } } }
-  });
+  const categories = await getAdminTaxonomy("categories");
 
   return (
     <div>
@@ -29,9 +26,9 @@ export default async function AdminCategoriesPage() {
         action={createCategoryAction}
         className="mb-6 grid gap-3 rounded-lg border border-line bg-white p-4 shadow-sm md:grid-cols-[1fr_1fr_2fr_auto]"
       >
-        <input name="name" placeholder="Category name" className="form-input" required />
-        <input name="slug" placeholder="category-slug" className="form-input" />
-        <input name="description" placeholder="Description" className="form-input" />
+        <input name="name" aria-label="Category name" placeholder="Category name" className="form-input" required />
+        <input name="slug" aria-label="Slug" placeholder="category-slug" className="form-input" />
+        <input name="description" aria-label="Description" placeholder="Description" className="form-input" />
         <button className="rounded-md bg-emerald px-4 py-2 text-sm font-extrabold text-white">
           Create
         </button>
@@ -61,17 +58,17 @@ export default async function AdminCategoriesPage() {
                         className="grid gap-3 md:grid-cols-[1fr_1fr_2fr_80px_100px_60px]"
                       >
                         <input
-                          name="name"
+                          name="name" aria-label="Category name"
                           defaultValue={category.name}
                           className="form-input"
                         />
                         <input
-                          name="slug"
+                          name="slug" aria-label="Slug"
                           defaultValue={category.slug}
                           className="form-input"
                         />
                         <input
-                          name="description"
+                          name="description" aria-label="Description"
                           defaultValue={category.description || ""}
                           className="form-input"
                         />
