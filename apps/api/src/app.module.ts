@@ -11,7 +11,8 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { RecommendationsModule } from "./recommendations/recommendations.module";
 import { AdminModule } from "./admin/admin.module";
 import { BooksModule } from "./books/books.module";
-
+import { UploadsModule } from "./uploads/uploads.module";
+import { D1_DATABASE_BINDING } from "./prisma/prisma.service";
 @Module({
   imports: [
     // Conventional Node startup still loads non-database settings from local
@@ -32,12 +33,15 @@ import { BooksModule } from "./books/books.module";
     RecommendationsModule,
     AdminModule,
     BooksModule,
+    UploadsModule,
   ],
   providers: [
     // Maps Prisma known errors to proper HTTP codes (P2002→409, P2025→404).
     { provide: APP_FILTER, useClass: PrismaExceptionFilter },
     // Rate limiting on every route (overridable per-handler with @Throttle).
     { provide: APP_GUARD, useClass: ThrottlerGuard },
+    // D1 binding reserved for the narrow D1 atomic-operation layer.
   ],
+  
 })
 export class AppModule {}

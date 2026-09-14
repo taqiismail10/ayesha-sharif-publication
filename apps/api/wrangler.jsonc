@@ -19,5 +19,11 @@
         "database_name": "asp-db",
         "database_id": "cb2a35a6-ac90-4008-a467-e8cc3adf6885"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ASP_STORAGE",
+      "bucket_name": "asp-storage"
+    }
   ]
 }
