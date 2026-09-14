@@ -95,6 +95,57 @@ export class OrdersService {
   }
 
   /**
+   * Minimal guest-safe confirmation contract. Order numbers are intentionally
+   * treated as the existing guest checkout confirmation capability; this
+   * method must never select customer, delivery, payment-reference, or
+   * internal identity fields.
+   */
+  async getPublicConfirmation(orderNumber: string) {
+    const order = await this.prisma.client.order.findUnique({
+      where: { orderNumber },
+      select: {
+        orderNumber: true,
+        createdAt: true,
+        subtotal: true,
+        discountTotal: true,
+        deliveryCharge: true,
+        grandTotal: true,
+        paymentMethod: true,
+        paymentStatus: true,
+        orderStatus: true,
+        items: {
+          select: {
+            bookTitleSnapshot: true,
+            quantity: true,
+            totalPrice: true,
+          },
+        },
+      },
+    });
+
+    if (!order) throw new NotFoundException("Order not found.");
+
+    return {
+      orderNumber: order.orderNumber,
+      createdAt: order.createdAt.toISOString(),
+      paymentMethod: order.paymentMethod,
+      paymentStatus: order.paymentStatus,
+      orderStatus: order.orderStatus,
+      items: order.items.map((item) => ({
+        title: item.bookTitleSnapshot,
+        quantity: item.quantity,
+        price: toNumber(item.totalPrice),
+      })),
+      totals: {
+        subtotal: toNumber(order.subtotal),
+        discount: toNumber(order.discountTotal),
+        delivery: toNumber(order.deliveryCharge),
+        grandTotal: toNumber(order.grandTotal),
+      },
+    };
+  }
+
+  /**
    * Delivery options — ported from src/lib/settings.ts: constants overridden
    * by the admin-editable SiteSetting "delivery_charges"; constants on error.
    * (No unstable_cache here — that was a Next-only mechanism.)

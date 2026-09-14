@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { getAdminTaxonomy } from "@/lib/admin-taxonomy";
 import { requireAdmin } from "@/lib/auth";
 import { createBookAction } from "@/app/admin/actions";
 import { AdminBookForm } from "@/components/admin/admin-book-form";
@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
 export default async function NewBookPage() {
   await requireAdmin(["super_admin", "admin", "editor"]);
   const [categories, tags] = await Promise.all([
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
-    prisma.tag.findMany({ orderBy: { name: "asc" } })
+    getAdminTaxonomy("categories"),
+    getAdminTaxonomy("tags")
   ]);
 
   return (

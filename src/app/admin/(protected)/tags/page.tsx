@@ -1,20 +1,17 @@
 import { Archive } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { getAdminTaxonomy } from "@/lib/admin-taxonomy";
 import { requireAdmin } from "@/lib/auth";
 import {
   archiveTagAction,
   createTagAction,
   updateTagAction
-} from "@/app/admin/actions";
+} from "@/app/admin/taxonomy-actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminTagsPage() {
   await requireAdmin(["super_admin", "admin", "editor"]);
-  const tags = await prisma.tag.findMany({
-    orderBy: { name: "asc" },
-    include: { _count: { select: { books: true } } }
-  });
+  const tags = await getAdminTaxonomy("tags");
 
   return (
     <div>
@@ -27,8 +24,8 @@ export default async function AdminTagsPage() {
         action={createTagAction}
         className="mb-6 grid gap-3 rounded-lg border border-line bg-white p-4 shadow-sm md:grid-cols-[1fr_1fr_auto]"
       >
-        <input name="name" placeholder="Tag name" className="form-input" required />
-        <input name="slug" placeholder="tag-slug" className="form-input" />
+        <input name="name" aria-label="Tag name" placeholder="Tag name" className="form-input" required />
+        <input name="slug" aria-label="Slug" placeholder="tag-slug" className="form-input" />
         <button className="rounded-md bg-emerald px-4 py-2 text-sm font-extrabold text-white">
           Create
         </button>
@@ -56,8 +53,8 @@ export default async function AdminTagsPage() {
                         action={updateAction}
                         className="grid gap-3 md:grid-cols-[1fr_1fr_80px_100px_60px]"
                       >
-                        <input name="name" defaultValue={tag.name} className="form-input" />
-                        <input name="slug" defaultValue={tag.slug} className="form-input" />
+                        <input name="name" aria-label="Tag name" defaultValue={tag.name} className="form-input" />
+                        <input name="slug" aria-label="Slug" defaultValue={tag.slug} className="form-input" />
                         <span className="self-center text-sm font-bold">
                           {tag._count.books}
                         </span>

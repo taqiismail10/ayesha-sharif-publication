@@ -51,6 +51,32 @@ export class AdminOrdersService {
     return { ...order, linkedOrders };
   }
 
+  async invoice(id: string) {
+    const order = await this.prisma.client.order.findUnique({
+      where: { id },
+      select: {
+        orderNumber: true,
+        customerName: true,
+        customerPhone: true,
+        shippingAddress: true,
+        district: true,
+        createdAt: true,
+        paymentMethod: true,
+        paymentStatus: true,
+        orderStatus: true,
+        subtotal: true,
+        discountTotal: true,
+        deliveryCharge: true,
+        grandTotal: true,
+        items: {
+          select: { id: true, bookTitleSnapshot: true, quantity: true, unitPrice: true, totalPrice: true },
+        },
+      },
+    });
+    if (!order) throw new NotFoundException("Order not found.");
+    return order;
+  }
+
   async update(id: string, input: { orderStatus?: string; paymentStatus?: string; courierName?: string | null; trackingNumber?: string | null; adminNote?: string | null }) {
     const order = await this.prisma.client.order.findUnique({ where: { id }, include: { items: true } });
     if (!order) throw new NotFoundException("Order not found.");

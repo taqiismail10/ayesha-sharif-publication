@@ -427,6 +427,24 @@ export class D1AtomicService {
     return changes(result[0]) === 1;
   }
 
+  /**
+   * A book may be deleted only when its historical OrderItem snapshots do not
+   * reference it. SQLite applies the declared cascades for BookTag, SavedBook,
+   * and CustomerBookEvent within this one conditional statement.
+   */
+  async deleteBookIfNoOrderItems(bookId: string): Promise<boolean> {
+    const result = await this.batch([
+      this.statement(
+        `DELETE FROM "Book"
+         WHERE "id" = ?
+           AND NOT EXISTS (SELECT 1 FROM "OrderItem" WHERE "bookId" = ?)
+         RETURNING "id"`,
+        [bookId, bookId],
+      ),
+    ]);
+    return result[0]?.results?.length === 1;
+  }
+
   async linkGoogleCustomer(input: {
     providerId: string;
     customerId: string;

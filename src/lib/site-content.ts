@@ -2,8 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from "@/lib/cache-tags";
-import { hasUsableDatabaseUrl } from "@/lib/env";
-import { prisma } from "@/lib/prisma";
+import { fetchPublicApi } from "@/lib/public-api";
 import { defaultContact } from "@/lib/constants";
 import {
   DEFAULT_HOMEPAGE_CONTENT,
@@ -90,80 +89,49 @@ function normalizeHomepageContent(value: unknown): HomepageContent {
   };
 }
 
-// ─── Internal DB reader ───────────────────────────────────────────────────────
-
-async function readSetting<T extends object>(key: string, defaults: T): Promise<T> {
-  try {
-    const row = await prisma.siteSetting.findUnique({ where: { key } });
-    if (!row) return defaults;
-    return { ...defaults, ...(row.value as Partial<T>) };
-  } catch {
-    return defaults;
-  }
-}
-
-async function readHomepageSetting(): Promise<HomepageContent> {
-  try {
-    const row = await prisma.siteSetting.findUnique({
-      where: { key: "site_content.homepage" },
-    });
-    if (!row) return DEFAULT_HOMEPAGE_CONTENT;
-    return normalizeHomepageContent(row.value);
-  } catch {
-    return DEFAULT_HOMEPAGE_CONTENT;
-  }
-}
-
-// ─── Cached public readers ────────────────────────────────────────────────────
-
-const cacheOpts: { revalidate: number; tags: string[] } = {
-  revalidate: CACHE_REVALIDATE_SECONDS.settings,
-  tags: [CACHE_TAGS.settings],
+type PublicSiteContent = {
+  footer?: Partial<FooterContent>;
+  contact?: Partial<ContactContent>;
+  about?: Partial<AboutContent>;
+  homepage?: Partial<HomepageContent>;
 };
 
-const cachedFooter = unstable_cache(
-  () => readSetting("site_content.footer",  DEFAULT_FOOTER_CONTENT),
-  ["site-content-footer"],
-  cacheOpts,
-);
+async function querySiteContent() {
+  try {
+    const content = await fetchPublicApi<PublicSiteContent>("/content/site");
+    return {
+      footer: { ...DEFAULT_FOOTER_CONTENT, ...content.footer },
+      contact: { ...DEFAULT_CONTACT_CONTENT, ...content.contact },
+      about: { ...DEFAULT_ABOUT_CONTENT, ...content.about },
+      homepage: normalizeHomepageContent(content.homepage),
+    };
+  } catch {
+    return {
+      footer: DEFAULT_FOOTER_CONTENT,
+      contact: DEFAULT_CONTACT_CONTENT,
+      about: DEFAULT_ABOUT_CONTENT,
+      homepage: DEFAULT_HOMEPAGE_CONTENT,
+    };
+  }
+}
 
-const cachedContact = unstable_cache(
-  () => readSetting("site_content.contact", DEFAULT_CONTACT_CONTENT),
-  ["site-content-contact"],
-  cacheOpts,
-);
-
-const cachedAbout = unstable_cache(
-  () => readSetting("site_content.about",   DEFAULT_ABOUT_CONTENT),
-  ["site-content-about"],
-  cacheOpts,
-);
-
-const cachedHomepage = unstable_cache(
-  readHomepageSetting,
-  ["site-content-homepage"],
-  {
-    revalidate: CACHE_REVALIDATE_SECONDS.homepage,
-    tags: [CACHE_TAGS.homepage],
-  },
-);
+const cachedSiteContent = unstable_cache(querySiteContent, ["public-site-content"], {
+  revalidate: CACHE_REVALIDATE_SECONDS.settings,
+  tags: [CACHE_TAGS.settings, CACHE_TAGS.homepage],
+});
 
 export async function getFooterContent(): Promise<FooterContent> {
-  if (!hasUsableDatabaseUrl()) return DEFAULT_FOOTER_CONTENT;
-  return cachedFooter();
+  return (await cachedSiteContent()).footer;
 }
 
 export async function getContactContent(): Promise<ContactContent> {
-  if (!hasUsableDatabaseUrl()) return DEFAULT_CONTACT_CONTENT;
-  return cachedContact();
+  return (await cachedSiteContent()).contact;
 }
 
 export async function getAboutContent(): Promise<AboutContent> {
-  if (!hasUsableDatabaseUrl()) return DEFAULT_ABOUT_CONTENT;
-  return cachedAbout();
+  return (await cachedSiteContent()).about;
 }
 
 export async function getHomepageContent(): Promise<HomepageContent> {
-  if (!hasUsableDatabaseUrl()) return DEFAULT_HOMEPAGE_CONTENT;
-  return cachedHomepage();
+  return (await cachedSiteContent()).homepage;
 }

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { requireCustomer } from "@/lib/customer-auth";
 import { deliveryAreas } from "@/lib/constants";
+import { fetchPublicApi } from "@/lib/public-api";
 import { CustomerProfileForm } from "@/components/account/customer-profile-form";
 
 export const metadata: Metadata = {
@@ -12,26 +12,11 @@ export const metadata: Metadata = {
 
 export default async function CustomerSettingsPage() {
   const customer = await requireCustomer();
-  const [categories, tags, languageRows] = await Promise.all([
-    prisma.category.findMany({
-      where: { isActive: true },
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
-    prisma.tag.findMany({
-      where: { isActive: true },
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
-    prisma.book.findMany({
-      where: { status: { in: ["published", "pre_order", "upcoming"] } },
-      select: { language: true },
-      distinct: ["language"],
-      orderBy: { language: "asc" },
-    }),
+  const [categories, tags, languages] = await Promise.all([
+    fetchPublicApi<Array<{ id: string; name: string }>>("/categories"),
+    fetchPublicApi<Array<{ id: string; name: string }>>("/tags"),
+    fetchPublicApi<string[]>("/languages"),
   ]);
-
-  const languages = languageRows.map((row) => row.language).filter(Boolean);
 
   const profileData = {
     name: customer.name,

@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Get,
   Header,
   HttpCode,
   HttpException,
@@ -8,11 +10,20 @@ import {
   Post,
   Req,
 } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import type { Request } from "express";
+import { z } from "zod";
 import { CustomerAuthService } from "../customer-auth/customer-auth.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { checkoutSchema, type CheckoutInput } from "../common/contracts/checkout.schema";
 import { OrdersService } from "./orders.service";
+
+const confirmationOrderNumberSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(64)
+  .regex(/^[A-Za-z0-9-]+$/, "Invalid order number.");
 
 /**
  * POST /orders — drop-in replacement for the old Next.js POST /api/orders.
@@ -33,6 +44,29 @@ export class OrdersController {
     @Inject(CustomerAuthService) private readonly auth: CustomerAuthService,
     @Inject(PrismaService) private readonly prisma: PrismaService,
   ) {}
+
+  /**
+   * Guest checkout confirmation. Deliberately exposes only confirmation-safe
+   * order fields; customer and operational data stay on guarded endpoints.
+   */
+  @Get("confirmation")
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
+  @Header("Cache-Control", "private, no-store, max-age=0, must-revalidate")
+  missingConfirmationOrderNumber() {
+    throw new BadRequestException("Invalid order number.");
+  }
+
+  @Get("confirmation/:orderNumber")
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
+  @Header("Cache-Control", "private, no-store, max-age=0, must-revalidate")
+  confirmation(@Req() req: Request) {
+    const rawOrderNumber = req.params.orderNumber;
+    const parsed = confirmationOrderNumberSchema.safeParse(rawOrderNumber);
+    if (!parsed.success) {
+      throw new BadRequestException("Invalid order number.");
+    }
+    return this.orders.getPublicConfirmation(parsed.data);
+  }
 
   @Post()
   @HttpCode(200)

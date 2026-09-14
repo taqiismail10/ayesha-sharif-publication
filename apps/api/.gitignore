@@ -13,3 +13,9 @@ generated/
 .wrangler/
 
 *.tsbuildinfo
+
+
+coverage/
+*.log
+.cache/
+.tmp/

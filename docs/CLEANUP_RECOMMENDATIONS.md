@@ -19,9 +19,9 @@ This is the current cleanup inventory after the completed low-risk cleanup phase
 | `src/app/api/account/me/route.ts` | Replaced by `GET /auth/customer/me` (Phase 2) | **No** | 🟠 med | Frontend is already retargeted; keep only until external verification is complete. |
 | `src/app/api/recommendations/route.ts` | Replaced by recommendations module (Phase 2) | **No** | 🟡 low | Frontend is already retargeted; keep only until external verification is complete. |
 | `src/app/api/recommendation-events/route.ts` | Replaced (Phase 2) | **No** | 🟡 low | Frontend is already retargeted; keep only until external verification is complete. |
-| `src/app/api/policies/[slug]/route.ts` | Unused internally, but it is a public JSON API with no NestJS replacement | **No** | 🟠 med | Keep unless product explicitly retires the public JSON surface. |
+| `src/app/api/policies/[slug]/route.ts` | Replaced by NestJS public policy endpoints in Test 29 | **Yes** | — | Removed after internal reference search; external consumers must use `GET /policies/:slug`. |
 | `src/app/api/admin/upload/route.ts` | Replaced by `POST /admin/uploads` (Phase 3) | **No** | 🟠 med | Blocked on storage decision; old uploads in `public/uploads/books/` must keep serving. |
-| `src/app/api/admin/orders/export/route.ts` | Replaced by CSV endpoint (Phase 3) | **No** | 🟡 low | |
+| `src/app/api/admin/orders/export/route.ts` | Replaced by `GET /admin/orders/export` (Test 24) | **No** | 🟢 low | Route removed after local D1 and Worker verification. |
 | `src/app/admin/actions.ts` | All 14 actions become admin REST endpoints (Phase 3) | **No** | 🔴 high | Contains the stock-transaction logic; last to go. |
 | `src/app/admin/(protected)/site-content/actions.ts` | Becomes `PUT /admin/site-content/*` (Phase 3) | **No** | 🟡 low | |
 | `src/app/(site)/account/actions.ts` | Becomes customer auth/profile endpoints (Phase 2) | **No** | 🔴 high | Auth path. |

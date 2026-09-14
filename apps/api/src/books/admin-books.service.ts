@@ -100,4 +100,20 @@ export class AdminBooksService {
     if (!changed) throw new ConflictException("Stock changed concurrently. Reload and try again.");
     return this.detail(id);
   }
+
+  async delete(id: string) {
+    const book = await this.prisma.client.book.findUnique({
+      where: { id },
+      select: { id: true, slug: true },
+    });
+    if (!book) throw new NotFoundException("Book not found.");
+
+    const deleted = await this.atomic.deleteBookIfNoOrderItems(id);
+    if (!deleted) {
+      const stillExists = await this.prisma.client.book.findUnique({ where: { id }, select: { id: true } });
+      if (!stillExists) throw new NotFoundException("Book not found.");
+      throw new ConflictException("This book has orders and cannot be deleted.");
+    }
+    return { slug: book.slug };
+  }
 }

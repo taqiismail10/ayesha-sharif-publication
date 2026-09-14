@@ -1,13 +1,13 @@
 import { LayoutGrid } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
-import { getHomepageContent } from "@/lib/site-content";
+import { getAdminHomepageContent } from "@/lib/admin-content";
 import { HomepageContentEditor } from "@/components/admin/homepage-content-editor";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminHomepageContentPage() {
   await requireAdmin(["super_admin", "admin"]);
-  const homepage = await getHomepageContent();
+  const homepage = await getAdminHomepageContent();
 
   return (
     <div>

@@ -7,10 +7,18 @@
     "build": "nest build",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
-    "worker:dev": "wrangler dev",
+    "worker:dev": "wrangler dev --local",
+    "worker:dev:remote": "wrangler dev --remote",
     "worker:types": "wrangler types src/worker-configuration.d.ts --env-interface WorkerEnv",
     "worker:dry-run": "wrangler deploy --dry-run",
     "test:d1-integrity": "npm run build && node test/d1-integrity.local.cjs",
+    "test:uploads:local": "npm run build && node test/uploads.local.cjs",
+    "test:orders-export:local": "npm run build && node test/orders-export.local.cjs",
+    "test:admin-reads:local": "npm run build && node test/admin-reads.local.cjs",
+    "test:admin-customers:local": "npm run build && node test/admin-reads.local.cjs",
+    "test:admin-book-delete:local": "npm run build && node test/admin-reads.local.cjs",
+    "test:public-catalogue:local": "npm run build && node test/public-catalogue.local.cjs",
+    "test:order-confirmation:local": "npm run build && node test/order-confirmation.local.cjs",
     "lint": "eslint \"src/**/*.ts\"",
     "prisma:generate": "prisma generate --schema=../../prisma/schema.prisma --generator apiClient"
   },
@@ -30,7 +38,6 @@
     "nodemailer": "^9.0.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "wrangler": "^4.130.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -41,6 +48,7 @@
     "@types/node": "^22.15.18",
     "@types/nodemailer": "^8.0.1",
     "prisma": "^7.10.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "wrangler": "^4.131.1"
   }
 }

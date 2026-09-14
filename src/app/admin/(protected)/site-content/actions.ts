@@ -2,9 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { ZodError } from "zod";
-import { assertAdminRole } from "@/lib/auth";
+import { adminApi, assertAdminRole } from "@/lib/auth";
 import { revalidatePublicHomepage, revalidatePublicSettings } from "@/lib/cache-invalidation";
-import { prisma } from "@/lib/prisma";
 import {
   DEFAULT_HOMEPAGE_CONTENT,
   homepageContentSchema,
@@ -28,11 +27,8 @@ export type ContentActionState = {
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
 async function upsertSetting(key: string, value: object) {
-  await prisma.siteSetting.upsert({
-    where:  { key },
-    update: { value },
-    create: { key, value },
-  });
+  const response = await adminApi(`/admin/settings/${encodeURIComponent(key)}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ value }) });
+  if (!response.ok) throw new Error("Unable to save site content.");
 }
 
 function failure(error: unknown, fallback: string): ContentActionState {
@@ -47,9 +43,8 @@ function failure(error: unknown, fallback: string): ContentActionState {
 
 async function readHomepageContent(): Promise<HomepageContent> {
   try {
-    const row = await prisma.siteSetting.findUnique({
-      where: { key: "site_content.homepage" },
-    });
+    const response = await adminApi("/admin/settings/site_content.homepage");
+    const row = response.ok ? await response.json() as { value?: unknown } : null;
     const value = row?.value as Partial<HomepageContent> | null;
     return {
       heroEyebrow: String(value?.heroEyebrow ?? DEFAULT_HOMEPAGE_CONTENT.heroEyebrow).trim(),

@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Inject, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import type { AdminRole } from "../generated/prisma/enums";
 import { AdminPermissionService } from "./admin-permission.service";
@@ -8,8 +8,8 @@ import type { RequestWithAdmin } from "./admin.guard";
 @Injectable()
 export class AdminRolesGuard implements CanActivate {
   constructor(
-    private readonly reflector: Reflector,
-    private readonly permissions: AdminPermissionService,
+    @Inject(Reflector) private readonly reflector: Reflector,
+    @Inject(AdminPermissionService) private readonly permissions: AdminPermissionService,
   ) {}
 
   canActivate(context: ExecutionContext) {

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Inject, Param, Patch, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, Patch, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { z } from "zod";
 import { AdminGuard } from "../admin/admin.guard";
 import { AdminRolesGuard } from "../admin/admin-roles.guard";
@@ -44,6 +44,10 @@ export class AdminBooksController {
     if (!parsed.success) throw new BadRequestException("Invalid stock quantity.");
     return this.books.setStock(id, parsed.data.stockQuantity);
   }
+
+  @Delete(":id")
+  @RequireAdminRoles("super_admin", "admin")
+  delete(@Param("id") id: string) { return this.books.delete(id); }
 
   private parse(body: unknown) {
     const parsed = adminBookSchema.safeParse(body);

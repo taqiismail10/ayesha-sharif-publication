@@ -12,8 +12,8 @@ export function AdminBookForm({
   action
 }: {
   book?: BookWithTags | null;
-  categories: Category[];
-  tags: Tag[];
+  categories: Pick<Category, "id" | "name">[];
+  tags: Pick<Tag, "id" | "name">[];
   action: (formData: FormData) => Promise<void>;
 }) {
   const selectedTags = new Set(book?.tags.map((item) => item.tagId) ?? []);

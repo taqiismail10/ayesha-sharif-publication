@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { UploadCloud } from "lucide-react";
+import { apiFetch } from "@/lib/api-client";
 
 export function UploadField({
   name,
@@ -30,7 +31,7 @@ export function UploadField({
         const formData = new FormData();
         formData.append("file", file);
         formData.append("type", type);
-        const response = await fetch("/api/admin/upload", {
+        const response = await apiFetch("/admin/uploads", {
           method: "POST",
           body: formData
         });

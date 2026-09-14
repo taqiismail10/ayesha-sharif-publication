@@ -10,6 +10,11 @@ import nodemailer, { type Transporter } from "nodemailer";
 
 type OtpEmailKind = "signup" | "password-reset";
 
+function isCloudflareWorkerRuntime(): boolean {
+  return typeof (globalThis as typeof globalThis & { WebSocketPair?: unknown })
+    .WebSocketPair !== "undefined";
+}
+
 @Injectable()
 export class MailService implements OnModuleInit {
   private readonly logger = new Logger(MailService.name);
@@ -59,6 +64,14 @@ export class MailService implements OnModuleInit {
           "SMTP transport is not configured. OTP emails will be logged locally in development.",
         );
       }
+      return;
+    }
+
+    // Nodemailer's verify() opens an additional SMTP/STARTTLS connection at
+    // isolate startup. Workers already keep this service singleton per
+    // isolate, so defer that unnecessary connection until real delivery.
+    if (isCloudflareWorkerRuntime()) {
+      this.logger.log("SMTP transport initialized; delivery will be verified on first send.");
       return;
     }
 

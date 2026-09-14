@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { adminApi, requireAdmin } from "@/lib/auth";
 import { formatCurrency, formatDate } from "@/lib/format";
 import {
   orderStatusLabels,
@@ -15,14 +14,35 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+type InvoiceOrder = {
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  shippingAddress: string;
+  district: string;
+  createdAt: string;
+  paymentMethod: keyof typeof paymentMethodLabels;
+  paymentStatus: keyof typeof paymentStatusLabels;
+  orderStatus: keyof typeof orderStatusLabels;
+  subtotal: number | string;
+  discountTotal: number | string;
+  deliveryCharge: number | string;
+  grandTotal: number | string;
+  items: Array<{
+    id: string;
+    bookTitleSnapshot: string;
+    quantity: number;
+    unitPrice: number | string;
+    totalPrice: number | string;
+  }>;
+};
+
 export default async function InvoicePage({ params }: PageProps) {
   await requireAdmin(["super_admin", "admin", "order_manager"]);
   const { id } = await params;
-  const order = await prisma.order.findUnique({
-    where: { id },
-    include: { items: true }
-  });
-  if (!order) notFound();
+  const response = await adminApi(`/admin/orders/${encodeURIComponent(id)}/invoice`);
+  if (!response.ok) notFound();
+  const order = (await response.json()) as InvoiceOrder;
 
   return (
     <div className="mx-auto max-w-3xl bg-white p-6 shadow-sm print:shadow-none">

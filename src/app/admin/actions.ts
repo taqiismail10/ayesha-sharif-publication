@@ -2,18 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import {
   revalidatePublicCatalogue,
   revalidatePublicSettings
 } from "@/lib/cache-invalidation";
 import { deliveryAreas } from "@/lib/constants";
 import { adminApi, assertAdminRole } from "@/lib/auth";
-import {
-  bookFormSchema,
-  categoryFormSchema,
-  tagFormSchema
-} from "@/lib/validators";
+import { bookFormSchema } from "@/lib/validators";
 import { slugify } from "@/lib/format";
 
 export type ActionState = {
@@ -126,88 +121,16 @@ export async function archiveBookAction(formData: FormData) {
 export async function deleteBookAction(formData: FormData) {
   await assertAdminRole(["super_admin", "admin"]);
   const id = String(formData.get("id"));
-  const book = await prisma.book.findUnique({
-    where: { id },
-    select: { slug: true }
+  const response = await adminApi(`/admin/books/${encodeURIComponent(id)}`, {
+    method: "DELETE",
   });
-  const orderItemCount = await prisma.orderItem.count({ where: { bookId: id } });
-  if (orderItemCount > 0) {
-    throw new Error("This book has orders and cannot be deleted.");
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(body?.message || "Could not delete the book.");
   }
-  await prisma.book.delete({ where: { id } });
+  const deleted = (await response.json()) as { slug: string };
   revalidatePath("/admin/books");
-  revalidatePublicCatalogue([book?.slug]);
-}
-
-export async function createCategoryAction(formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  const input = categoryFormSchema.parse({
-    name: formData.get("name"),
-    slug: formData.get("slug") || slugify(String(formData.get("name") || "")),
-    description: formData.get("description"),
-    isActive: true
-  });
-
-  await prisma.category.create({ data: input });
-  revalidatePath("/admin/categories");
-  revalidatePublicCatalogue();
-}
-
-export async function updateCategoryAction(id: string, formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  const input = categoryFormSchema.parse({
-    name: formData.get("name"),
-    slug: formData.get("slug"),
-    description: formData.get("description"),
-    isActive: formBoolean(formData, "isActive")
-  });
-  await prisma.category.update({ where: { id }, data: input });
-  revalidatePath("/admin/categories");
-  revalidatePublicCatalogue();
-}
-
-export async function archiveCategoryAction(formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  await prisma.category.update({
-    where: { id: String(formData.get("id")) },
-    data: { isActive: false }
-  });
-  revalidatePath("/admin/categories");
-  revalidatePublicCatalogue();
-}
-
-export async function createTagAction(formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  const input = tagFormSchema.parse({
-    name: formData.get("name"),
-    slug: formData.get("slug") || slugify(String(formData.get("name") || "")),
-    isActive: true
-  });
-  await prisma.tag.create({ data: input });
-  revalidatePath("/admin/tags");
-  revalidatePublicCatalogue();
-}
-
-export async function updateTagAction(id: string, formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  const input = tagFormSchema.parse({
-    name: formData.get("name"),
-    slug: formData.get("slug"),
-    isActive: formBoolean(formData, "isActive")
-  });
-  await prisma.tag.update({ where: { id }, data: input });
-  revalidatePath("/admin/tags");
-  revalidatePublicCatalogue();
-}
-
-export async function archiveTagAction(formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  await prisma.tag.update({
-    where: { id: String(formData.get("id")) },
-    data: { isActive: false }
-  });
-  revalidatePath("/admin/tags");
-  revalidatePublicCatalogue();
+  revalidatePublicCatalogue([deleted.slug]);
 }
 
 export async function updateOrderAction(orderId: string, formData: FormData) {
@@ -238,11 +161,8 @@ export async function updateDeliverySettingsAction(formData: FormData) {
     ])
   );
 
-  await prisma.siteSetting.upsert({
-    where: { key: "delivery_charges" },
-    update: { value },
-    create: { key: "delivery_charges", value }
-  });
+  const response = await adminApi("/admin/settings/delivery_charges", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ value }) });
+  if (!response.ok) throw new Error("Could not update delivery settings.");
 
   revalidatePath("/admin/settings");
   revalidatePath("/cart");

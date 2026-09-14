@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { getAdminTaxonomy } from "@/lib/admin-taxonomy";
 import { adminApi, requireAdmin } from "@/lib/auth";
 import type { Book, BookTag } from "@prisma/client";
 import { updateBookAction } from "@/app/admin/actions";
@@ -16,8 +16,8 @@ export default async function EditBookPage({ params }: PageProps) {
   const { id } = await params;
   const [bookResponse, categories, tags] = await Promise.all([
     adminApi(`/admin/books/${encodeURIComponent(id)}`),
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
-    prisma.tag.findMany({ orderBy: { name: "asc" } })
+    getAdminTaxonomy("categories"),
+    getAdminTaxonomy("tags")
   ]);
   if (!bookResponse.ok) notFound();
   const payload = await bookResponse.json();
