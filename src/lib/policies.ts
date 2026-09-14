@@ -2,8 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS, policyCacheTag } from "@/lib/cache-tags";
-import { hasUsableDatabaseUrl } from "@/lib/env";
-import { prisma } from "@/lib/prisma";
+import { fetchPublicApi } from "@/lib/public-api";
 import { getDefaultPolicy, type PolicySlug } from "@/lib/policy-definitions";
 
 export {
@@ -25,37 +24,16 @@ export type PublicPolicy = {
 };
 
 async function readPublishedPolicy(slug: PolicySlug): Promise<PublicPolicy | null> {
-  const row = await prisma.policy.findUnique({
-    where: { slug },
-    select: {
-      slug: true,
-      title: true,
-      publishedTitle: true,
-      publishedContent: true,
-      publishedAt: true,
-      updatedAt: true,
-    },
-  });
-
-  if (!row) {
-    const fallback = getDefaultPolicy(slug);
-    return { ...fallback, publishedAt: new Date(0) };
-  }
-  if (!row.publishedContent || !row.publishedAt) return null;
-
-  return {
-    slug,
-    title: row.publishedTitle ?? row.title,
-    content: row.publishedContent,
-    publishedAt: row.publishedAt ?? row.updatedAt,
-  };
+  const policy = await fetchPublicApi<{
+    slug: PolicySlug;
+    title: string;
+    content: string;
+    publishedAt: string;
+  }>(`/policies/${encodeURIComponent(slug)}`);
+  return { ...policy, publishedAt: new Date(policy.publishedAt) };
 }
 
 export async function getPublishedPolicy(slug: PolicySlug): Promise<PublicPolicy | null> {
-  if (!hasUsableDatabaseUrl()) {
-    return { ...getDefaultPolicy(slug), publishedAt: new Date(0) };
-  }
-
   try {
     const policy = await unstable_cache(
       () => readPublishedPolicy(slug),
@@ -69,7 +47,7 @@ export async function getPublishedPolicy(slug: PolicySlug): Promise<PublicPolicy
       ? { ...policy, publishedAt: new Date(policy.publishedAt) }
       : null;
   } catch {
-    // Keeps static builds and rolling deploys healthy until the migration runs.
+    // Keeps static builds and rolling deploys healthy when the API is unavailable.
     return { ...getDefaultPolicy(slug), publishedAt: new Date(0) };
   }
 }

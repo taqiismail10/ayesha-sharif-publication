@@ -3,21 +3,11 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS } from "@/lib/cache-tags";
 import { deliveryAreas, type DeliveryAreaOption } from "@/lib/constants";
-import { hasUsableDatabaseUrl } from "@/lib/env";
-import { prisma } from "@/lib/prisma";
-
-type DeliverySettingValue = Record<string, number>;
+import { fetchPublicApi } from "@/lib/public-api";
 
 async function queryDeliveryOptions(): Promise<DeliveryAreaOption[]> {
   try {
-    const setting = await prisma.siteSetting.findUnique({
-      where: { key: "delivery_charges" }
-    });
-    const value = (setting?.value || {}) as DeliverySettingValue;
-    return deliveryAreas.map((area) => ({
-      ...area,
-      charge: Number(value[area.value] ?? area.charge)
-    }));
+    return await fetchPublicApi<DeliveryAreaOption[]>("/settings/delivery");
   } catch {
     return deliveryAreas;
   }
@@ -33,6 +23,5 @@ const getCachedDeliveryOptions = unstable_cache(
 );
 
 export async function getDeliveryOptions(): Promise<DeliveryAreaOption[]> {
-  if (!hasUsableDatabaseUrl()) return deliveryAreas;
   return getCachedDeliveryOptions();
 }
