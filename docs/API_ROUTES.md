@@ -8,6 +8,12 @@ Base URL (local): `http://localhost:4000` — **no global prefix**. All cookies 
 |---|---|---|---|
 | GET | `/health` | — | `{status, service, environment, database: ok\|unreachable\|not_configured, checkedAt}` |
 
+## SEO
+
+| Method | Route | Auth | Response |
+|---|---|---|---|
+| GET | `/seo/sitemap` | — | `200 {books:[{slug,updatedAt}]}` — public statuses only, capped at 5,000 rows |
+
 ## Customer auth (Phase 2A/2C)
 
 | Method | Route | Auth | Success | Errors |

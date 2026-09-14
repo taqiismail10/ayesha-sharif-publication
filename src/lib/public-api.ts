@@ -9,9 +9,17 @@ function apiBaseUrl() {
 }
 
 /** Server-component transport for public NestJS reads. */
-export async function fetchPublicApi<T>(path: string): Promise<T> {
+type PublicApiRequestInit = RequestInit & {
+  next?: { revalidate?: number; tags?: string[] };
+};
+
+export async function fetchPublicApi<T>(
+  path: string,
+  init: PublicApiRequestInit = {},
+): Promise<T> {
   const response = await fetch(`${apiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`, {
     cache: "no-store",
+    ...init,
   });
   if (!response.ok) throw new Error(`Public API request failed: ${response.status}`);
   return response.json() as Promise<T>;

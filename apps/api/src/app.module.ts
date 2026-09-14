@@ -15,6 +15,7 @@ import { UploadsModule } from "./uploads/uploads.module";
 import { CatalogueModule } from "./catalogue/catalogue.module";
 import { ContentModule } from "./content/content.module";
 import { PoliciesModule } from "./policies/policies.module";
+import { SeoModule } from "./seo/seo.module";
 import { D1_DATABASE_BINDING } from "./prisma/prisma.service";
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { D1_DATABASE_BINDING } from "./prisma/prisma.service";
     CatalogueModule,
     ContentModule,
     PoliciesModule,
+    SeoModule,
   ],
   providers: [
     // Maps Prisma known errors to proper HTTP codes (P2002→409, P2025→404).
