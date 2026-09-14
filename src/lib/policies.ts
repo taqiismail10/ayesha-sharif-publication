@@ -4,12 +4,7 @@ import { unstable_cache } from "next/cache";
 import { CACHE_REVALIDATE_SECONDS, CACHE_TAGS, policyCacheTag } from "@/lib/cache-tags";
 import { hasUsableDatabaseUrl } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
-import {
-  DEFAULT_POLICIES,
-  POLICY_SLUGS,
-  getDefaultPolicy,
-  type PolicySlug,
-} from "@/lib/policy-definitions";
+import { getDefaultPolicy, type PolicySlug } from "@/lib/policy-definitions";
 
 export {
   DEFAULT_POLICIES,
@@ -21,46 +16,6 @@ export {
   policySlugSchema,
   type PolicySlug,
 } from "@/lib/policy-definitions";
-
-export async function ensureDefaultPolicies() {
-  const publishedAt = new Date();
-  await prisma.$transaction(
-    DEFAULT_POLICIES.map((policy) =>
-      prisma.policy.upsert({
-        where: { slug: policy.slug },
-        update: {},
-        create: {
-          ...policy,
-          publishedTitle: policy.title,
-          publishedContent: policy.content,
-          status: "published",
-          publishedAt,
-        },
-      }),
-    ),
-  );
-}
-
-export async function getAdminPolicies() {
-  await ensureDefaultPolicies();
-  const policies = await prisma.policy.findMany({
-    where: { slug: { in: [...POLICY_SLUGS] } },
-    include: { updatedBy: { select: { name: true, email: true } } },
-  });
-
-  const bySlug = new Map(policies.map((policy) => [policy.slug, policy]));
-  return POLICY_SLUGS.map((slug) => bySlug.get(slug)).filter(
-    (policy): policy is NonNullable<typeof policy> => Boolean(policy),
-  );
-}
-
-export async function getAdminPolicy(slug: PolicySlug) {
-  await ensureDefaultPolicies();
-  return prisma.policy.findUnique({
-    where: { slug },
-    include: { updatedBy: { select: { name: true, email: true } } },
-  });
-}
 
 export type PublicPolicy = {
   slug: PolicySlug;

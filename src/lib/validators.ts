@@ -141,27 +141,6 @@ export const bookFormSchema = z.object({
   isRecommended: z.boolean().optional()
 });
 
-export const categoryFormSchema = z.object({
-  name: z.string().trim().min(2),
-  slug: z
-    .string()
-    .trim()
-    .min(2)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use a URL-friendly slug."),
-  description: z.string().trim().optional(),
-  isActive: z.boolean().optional()
-});
-
-export const tagFormSchema = z.object({
-  name: z.string().trim().min(2),
-  slug: z
-    .string()
-    .trim()
-    .min(2)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use a URL-friendly slug."),
-  isActive: z.boolean().optional()
-});
-
 export const customerRegisterSchema = z
   .object({
     name: z.string().trim().min(2, "Name is required."),

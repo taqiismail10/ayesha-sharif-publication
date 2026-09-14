@@ -1,13 +1,13 @@
 import { Truck } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
-import { getDeliveryOptions } from "@/lib/settings";
+import { getAdminDeliveryOptions } from "@/lib/admin-content";
 import { updateDeliverySettingsAction } from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
   await requireAdmin(["super_admin", "admin"]);
-  const deliveryOptions = await getDeliveryOptions();
+  const deliveryOptions = await getAdminDeliveryOptions();
 
   return (
     <div>

@@ -3,7 +3,7 @@ import { FilePenLine } from "lucide-react";
 import { PolicyEditorForm } from "@/components/admin/policy-editor-form";
 import { requireAdmin } from "@/lib/auth";
 import { isPolicySlug, POLICY_SLUGS } from "@/lib/policy-definitions";
-import { getAdminPolicies } from "@/lib/policies";
+import { getAdminPolicies } from "@/lib/admin-content";
 
 export const dynamic = "force-dynamic";
 
@@ -11,13 +11,13 @@ type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-function formatDate(value: Date | null) {
+function formatDate(value: string | null) {
   if (!value) return "Not published";
   return new Intl.DateTimeFormat("en-BD", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "Asia/Dhaka",
-  }).format(value);
+  }).format(new Date(value));
 }
 
 export default async function PoliciesPage({ searchParams }: PageProps) {
@@ -81,7 +81,7 @@ export default async function PoliciesPage({ searchParams }: PageProps) {
               </div>
             </div>
             <PolicyEditorForm
-              key={`${selected.id}-${selected.updatedAt.toISOString()}`}
+              key={`${selected.id}-${selected.updatedAt}`}
               policy={{ slug: selected.slug, title: selected.title, content: selected.content }}
             />
           </section>

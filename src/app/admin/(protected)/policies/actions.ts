@@ -2,9 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { ZodError } from "zod";
-import { assertAdminRole } from "@/lib/auth";
+import { adminApi, assertAdminRole } from "@/lib/auth";
 import { revalidatePublicPolicy } from "@/lib/cache-invalidation";
-import { publishPolicy, savePolicyDraft } from "@/lib/policy-admin";
 import { policyDraftSchema, policyPublishSchema } from "@/lib/policy-definitions";
 
 export type PolicyActionState = {
@@ -34,9 +33,10 @@ export async function savePolicyDraftAction(
   formData: FormData,
 ): Promise<PolicyActionState> {
   try {
-    const admin = await assertAdminRole(["super_admin", "admin"]);
+    await assertAdminRole(["super_admin", "admin"]);
     const values = policyDraftSchema.parse(valuesFrom(formData));
-    await savePolicyDraft(values, admin.id);
+    const response = await adminApi(`/admin/policies/${values.slug}/draft`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: values.title, content: values.content }) });
+    if (!response.ok) throw new Error("Unable to save the policy draft.");
     revalidatePath("/admin/policies");
     return {
       success: true,
@@ -53,9 +53,10 @@ export async function publishPolicyAction(
   formData: FormData,
 ): Promise<PolicyActionState> {
   try {
-    const admin = await assertAdminRole(["super_admin", "admin"]);
+    await assertAdminRole(["super_admin", "admin"]);
     const values = policyPublishSchema.parse(valuesFrom(formData));
-    await publishPolicy(values, admin.id);
+    const response = await adminApi(`/admin/policies/${values.slug}/publish`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: values.title, content: values.content }) });
+    if (!response.ok) throw new Error("Unable to publish the policy.");
     revalidatePublicPolicy(values.slug);
     revalidatePath("/admin/policies");
     return {

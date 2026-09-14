@@ -9,11 +9,7 @@ import {
 } from "@/lib/cache-invalidation";
 import { deliveryAreas } from "@/lib/constants";
 import { adminApi, assertAdminRole } from "@/lib/auth";
-import {
-  bookFormSchema,
-  categoryFormSchema,
-  tagFormSchema
-} from "@/lib/validators";
+import { bookFormSchema } from "@/lib/validators";
 import { slugify } from "@/lib/format";
 
 export type ActionState = {
@@ -139,77 +135,6 @@ export async function deleteBookAction(formData: FormData) {
   revalidatePublicCatalogue([book?.slug]);
 }
 
-export async function createCategoryAction(formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  const input = categoryFormSchema.parse({
-    name: formData.get("name"),
-    slug: formData.get("slug") || slugify(String(formData.get("name") || "")),
-    description: formData.get("description"),
-    isActive: true
-  });
-
-  await prisma.category.create({ data: input });
-  revalidatePath("/admin/categories");
-  revalidatePublicCatalogue();
-}
-
-export async function updateCategoryAction(id: string, formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  const input = categoryFormSchema.parse({
-    name: formData.get("name"),
-    slug: formData.get("slug"),
-    description: formData.get("description"),
-    isActive: formBoolean(formData, "isActive")
-  });
-  await prisma.category.update({ where: { id }, data: input });
-  revalidatePath("/admin/categories");
-  revalidatePublicCatalogue();
-}
-
-export async function archiveCategoryAction(formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  await prisma.category.update({
-    where: { id: String(formData.get("id")) },
-    data: { isActive: false }
-  });
-  revalidatePath("/admin/categories");
-  revalidatePublicCatalogue();
-}
-
-export async function createTagAction(formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  const input = tagFormSchema.parse({
-    name: formData.get("name"),
-    slug: formData.get("slug") || slugify(String(formData.get("name") || "")),
-    isActive: true
-  });
-  await prisma.tag.create({ data: input });
-  revalidatePath("/admin/tags");
-  revalidatePublicCatalogue();
-}
-
-export async function updateTagAction(id: string, formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  const input = tagFormSchema.parse({
-    name: formData.get("name"),
-    slug: formData.get("slug"),
-    isActive: formBoolean(formData, "isActive")
-  });
-  await prisma.tag.update({ where: { id }, data: input });
-  revalidatePath("/admin/tags");
-  revalidatePublicCatalogue();
-}
-
-export async function archiveTagAction(formData: FormData) {
-  await assertAdminRole(["super_admin", "admin", "editor"]);
-  await prisma.tag.update({
-    where: { id: String(formData.get("id")) },
-    data: { isActive: false }
-  });
-  revalidatePath("/admin/tags");
-  revalidatePublicCatalogue();
-}
-
 export async function updateOrderAction(orderId: string, formData: FormData) {
   await assertAdminRole(["super_admin", "admin", "order_manager"]);
   const orderStatus = String(formData.get("orderStatus"));
@@ -238,11 +163,8 @@ export async function updateDeliverySettingsAction(formData: FormData) {
     ])
   );
 
-  await prisma.siteSetting.upsert({
-    where: { key: "delivery_charges" },
-    update: { value },
-    create: { key: "delivery_charges", value }
-  });
+  const response = await adminApi("/admin/settings/delivery_charges", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ value }) });
+  if (!response.ok) throw new Error("Could not update delivery settings.");
 
   revalidatePath("/admin/settings");
   revalidatePath("/cart");

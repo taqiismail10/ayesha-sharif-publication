@@ -1,11 +1,11 @@
 import { FileText, Link2 } from "lucide-react";
 import { requireAdmin } from "@/lib/auth";
+import { DEFAULT_FOOTER_CONTENT } from "@/lib/site-content";
 import {
-  getFooterContent,
-  getContactContent,
-  getAboutContent,
-  DEFAULT_FOOTER_CONTENT,
-} from "@/lib/site-content";
+  getAdminAboutContent,
+  getAdminContactContent,
+  getAdminFooterContent,
+} from "@/lib/admin-content";
 import { ContentFormSection } from "@/components/admin/content-form-section";
 import {
   updateFooterContentAction,
@@ -66,9 +66,9 @@ export default async function SiteContentPage() {
   await requireAdmin(["super_admin", "admin"]);
 
   const [footer, contact, about] = await Promise.all([
-    getFooterContent(),
-    getContactContent(),
-    getAboutContent(),
+    getAdminFooterContent(),
+    getAdminContactContent(),
+    getAdminAboutContent(),
   ]);
 
   // Ensure we always have 4 info link rows to render, filling gaps with defaults

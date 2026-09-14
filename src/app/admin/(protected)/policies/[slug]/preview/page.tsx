@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { PolicyPage } from "@/components/site/policy-page";
 import { requireAdmin } from "@/lib/auth";
 import { isPolicySlug } from "@/lib/policy-definitions";
-import { getAdminPolicy } from "@/lib/policies";
+import { getAdminPolicy } from "@/lib/admin-content";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -29,7 +29,7 @@ export default async function PolicyPreviewPage({ params }: PageProps) {
           Draft preview — not public
         </p>
       </div>
-      <PolicyPage title={policy.title} content={policy.content} updatedAt={policy.updatedAt} />
+      <PolicyPage title={policy.title} content={policy.content} updatedAt={new Date(policy.updatedAt)} />
     </div>
   );
 }
