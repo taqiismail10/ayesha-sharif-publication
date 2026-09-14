@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import type { OrderStatus, PaymentStatus } from "@prisma/client";
 import { adminApi, requireAdmin } from "@/lib/auth";
 import {
@@ -8,6 +8,7 @@ import {
   paymentStatusLabels
 } from "@/lib/constants";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { ExportOrdersButton } from "@/components/admin/export-orders-button";
 
 export const dynamic = "force-dynamic";
 
@@ -61,13 +62,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
             Search, filter, update status, print invoices, and export CSV.
           </p>
         </div>
-        <Link
-          href={`/api/admin/orders/export?${query.toString()}`}
-          className="focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-gold px-4 py-2 text-sm font-extrabold text-navy"
-        >
-          <Download className="h-4 w-4" aria-hidden="true" />
-          Export CSV
-        </Link>
+        <ExportOrdersButton query={query.toString()} />
       </div>
 
       <form className="mb-4 grid gap-3 rounded-lg border border-line bg-white p-3 md:grid-cols-[2fr_1fr_1fr_auto]">
