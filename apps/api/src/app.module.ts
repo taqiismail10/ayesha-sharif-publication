@@ -17,6 +17,7 @@ import { ContentModule } from "./content/content.module";
 import { PoliciesModule } from "./policies/policies.module";
 import { SeoModule } from "./seo/seo.module";
 import { D1_DATABASE_BINDING } from "./prisma/prisma.service";
+import { SecurityModule } from "./security/security.module";
 @Module({
   imports: [
     // Conventional Node startup still loads non-database settings from local
@@ -29,6 +30,7 @@ import { D1_DATABASE_BINDING } from "./prisma/prisma.service";
     // 100 requests/min per IP; auth endpoints carry stricter @Throttle
     // overrides in their controllers. In-memory store — per-instance.
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
+    SecurityModule,
     PrismaModule,
     HealthModule,
     CustomerAuthModule,

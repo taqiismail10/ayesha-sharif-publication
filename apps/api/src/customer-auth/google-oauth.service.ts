@@ -1,5 +1,3 @@
-import crypto from "crypto";
-import bcrypt from "bcryptjs";
 import {
   BadRequestException,
   Inject,
@@ -226,12 +224,9 @@ export class GoogleOAuthService {
       return linked;
     }
 
-    // 3. New customer. passwordHash is REQUIRED by the schema and the old
-    // Next.js login compares against it unconditionally — so we store a
-    // random unusable hash instead of null. Password login for this customer
-    // simply fails with the generic message until they set one.
-    const unusablePassword = crypto.randomBytes(32).toString("hex");
-    const passwordHash = await bcrypt.hash(unusablePassword, 12);
+    // 3. New Google-only customer. Password credentials are intentionally
+    // absent; password login still follows the generic failure contract.
+    const passwordHash = null;
     const displayName = profile.name?.trim() || email.split("@")[0];
 
     const customerId = this.atomic.newId();

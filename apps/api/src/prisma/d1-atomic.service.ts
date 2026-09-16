@@ -67,7 +67,7 @@ export type AtomicCustomerCreateInput = {
   id: string;
   name: string;
   email: string;
-  passwordHash: string;
+  passwordHash: string | null;
   passwordLoginEnabled: boolean;
   emailVerifiedAt: Date | null;
 };

@@ -1,9 +1,9 @@
 import crypto from "crypto";
-import bcrypt from "bcryptjs";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import type { Request, Response } from "express";
 import type { Prisma } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
+import { PasswordService } from "../security/password.service";
 import {
   bangladeshPhonePattern,
   normalizeBangladeshPhone,
@@ -78,7 +78,10 @@ function randomToken() {
 
 @Injectable()
 export class CustomerAuthService {
-  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(PasswordService) private readonly passwordService: PasswordService,
+  ) {}
 
   // ── Session primitives (parity with src/lib/customer-auth.ts) ─────────────
 
@@ -192,11 +195,11 @@ export class CustomerAuthService {
   // ── Password helpers (parity with src/lib/auth.ts) ─────────────────────────
 
   hashPassword(password: string) {
-    return bcrypt.hash(password, 12);
+    return this.passwordService.hash(password);
   }
 
-  verifyPassword(password: string, hash: string) {
-    return bcrypt.compare(password, hash);
+  verifyPassword(password: string, hash: string | null | undefined) {
+    return this.passwordService.verify(password, hash);
   }
 
   // ── Login identifier resolution ────────────────────────────────────────────

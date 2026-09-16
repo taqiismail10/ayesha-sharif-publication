@@ -1,8 +1,8 @@
 import crypto from "crypto";
-import bcrypt from "bcryptjs";
 import { Inject, Injectable } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { PrismaService } from "../prisma/prisma.service";
+import { PasswordService } from "../security/password.service";
 
 export const ADMIN_SESSION_COOKIE = "asp_admin_session";
 const ADMIN_SESSION_DAYS = 7;
@@ -17,11 +17,16 @@ function randomToken() {
 
 @Injectable()
 export class AdminAuthService {
-  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(PasswordService) private readonly passwordService: PasswordService,
+  ) {}
 
   async login(email: string, password: string, res: Response) {
     const admin = await this.prisma.client.admin.findUnique({ where: { email } });
-    const valid = admin ? await bcrypt.compare(password, admin.passwordHash) : false;
+    const valid = admin
+      ? await this.passwordService.verify(password, admin.passwordHash)
+      : false;
     if (!admin?.isActive || !valid) return null;
 
     const token = randomToken();
