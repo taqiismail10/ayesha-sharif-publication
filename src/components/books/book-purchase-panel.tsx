@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, ShoppingCart } from "lucide-react";
-import type { BookStatus } from "@prisma/client";
+import type { BookStatus } from "@/types";
 import { addCartItem } from "@/lib/cart-client";
 import { trackBookEvent } from "@/lib/tracking-client";
 import { SavedBookToggle } from "@/components/books/saved-book-toggle";

@@ -1,4 +1,4 @@
-import type { Book, BookTag, Category, Tag } from "@prisma/client";
+import type { Book, BookTag, Category, Tag } from "@/types";
 import { bookStatusLabels } from "@/lib/constants";
 import { formatDate } from "@/lib/format";
 import { UploadField } from "@/components/admin/upload-field";

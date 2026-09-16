@@ -306,7 +306,7 @@ model Customer {
   email String? @unique
   phone String? @unique
 
-  passwordHash         String
+  passwordHash         String?
   passwordLoginEnabled Boolean @default(true)
 
   emailVerifiedAt DateTime?

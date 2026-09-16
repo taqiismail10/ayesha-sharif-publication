@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
-import { prisma } from "@/lib/prisma";
-import { hasUsableDatabaseUrl } from "@/lib/env";
+import { fetchPublicApi } from "@/lib/public-api";
 
 export const revalidate = 3600;
+
+type SeoSitemapResponse = {
+  books?: Array<{ slug: string; updatedAt: string }>;
+};
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
@@ -18,19 +21,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/terms-and-conditions"
   ];
 
-  let books: { slug: string; updatedAt: Date }[] = [];
-  if (hasUsableDatabaseUrl()) {
-    try {
-      books = await prisma.book.findMany({
-        where: {
-          status: { in: ["published", "pre_order", "upcoming", "out_of_stock"] }
-        },
-        select: { slug: true, updatedAt: true }
-      });
-    } catch {
-      books = [];
-    }
-  }
+  const books = await fetchPublicApi<SeoSitemapResponse>("/seo/sitemap", {
+    cache: "force-cache",
+    next: { revalidate },
+  })
+    .then((response) => response.books || [])
+    .catch(() => []);
 
   return [
     ...staticRoutes.map((route) => ({
@@ -39,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...books.map((book) => ({
       url: `${baseUrl}/books/${book.slug}`,
-      lastModified: book.updatedAt
+      lastModified: new Date(book.updatedAt)
     }))
   ];
 }

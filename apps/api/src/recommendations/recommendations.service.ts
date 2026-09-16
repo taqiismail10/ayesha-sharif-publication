@@ -162,6 +162,49 @@ export class RecommendationsService {
   }
 
   /**
+   * Book-detail similarity: same source signals, candidate pool, scoring and
+   * tie-break used by the former Next.js getSimilarBooks(slug) helper.
+   */
+  async getSimilarRecommendations(
+    bookId: string,
+    take = 4,
+  ): Promise<BookCardData[]> {
+    if (!this.prisma.isAvailable()) return [];
+
+    const db = this.prisma.client;
+    const source = await db.book.findFirst({
+      where: { id: bookId, status: { in: [...recommendationStatuses] } },
+      include: cardInclude,
+    });
+    if (!source) return this.fallbackRecommendations(take);
+
+    const tagIds = source.tags.map((item) => item.tagId);
+    const similarWhere: Prisma.BookWhereInput[] = [
+      { author: source.author },
+      { language: source.language },
+    ];
+    if (source.categoryId) similarWhere.push({ categoryId: source.categoryId });
+    if (tagIds.length) {
+      similarWhere.push({ tags: { some: { tagId: { in: tagIds } } } });
+    }
+
+    const candidates = await db.book.findMany({
+      where: {
+        id: { not: source.id },
+        status: { in: [...recommendationStatuses] },
+        OR: similarWhere,
+      },
+      include: cardInclude,
+      orderBy: [{ stockQuantity: "desc" }, { createdAt: "desc" }],
+      take: 32,
+    });
+
+    const signals = createSignalSet();
+    addBookSignals(signals, source, 5, true);
+    return sortRecommendations(candidates, signals, take);
+  }
+
+  /**
    * Personalized: customer events (last 40) + orders (last 10, score 6) +
    * stated preferences (cat 6 / tag 4 / lang 3); anonymous falls back to the
    * anonymousId event history (last 30). Consent-gated for customers.

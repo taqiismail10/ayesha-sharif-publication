@@ -19,6 +19,8 @@
     "test:admin-book-delete:local": "npm run build && node test/admin-reads.local.cjs",
     "test:public-catalogue:local": "npm run build && node test/public-catalogue.local.cjs",
     "test:order-confirmation:local": "npm run build && node test/order-confirmation.local.cjs",
+    "test:recommendations:local": "npm run build && node test/recommendations.local.cjs",
+    "test:sitemap:local": "npm run build && node test/sitemap.local.cjs",
     "lint": "eslint \"src/**/*.ts\"",
     "prisma:generate": "prisma generate --schema=../../prisma/schema.prisma --generator apiClient"
   },
@@ -30,7 +32,7 @@
     "@nestjs/throttler": "^6.5.0",
     "@prisma/adapter-d1": "^7.10.0",
     "@prisma/client": "^7.10.0",
-    "bcryptjs": "^3.0.3",
+    "argon2-wasm-edge": "1.0.23",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",

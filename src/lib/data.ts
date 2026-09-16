@@ -38,7 +38,7 @@ function normalizeBookParams(params: BookQueryParams): BookQueryParams {
   };
 }
 
-/** Retained for legacy recommendation helpers until Test 31 migrates them. */
+/** Shared frontend formatting for public catalogue response data. */
 export function serializeBookCard(book: CardSource): BookCardData {
   return {
     ...book,

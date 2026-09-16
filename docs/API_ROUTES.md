@@ -8,6 +8,12 @@ Base URL (local): `http://localhost:4000` — **no global prefix**. All cookies 
 |---|---|---|---|
 | GET | `/health` | — | `{status, service, environment, database: ok\|unreachable\|not_configured, checkedAt}` |
 
+## SEO
+
+| Method | Route | Auth | Response |
+|---|---|---|---|
+| GET | `/seo/sitemap` | — | `200 {books:[{slug,updatedAt}]}` — public statuses only, capped at 5,000 rows |
+
 ## Customer auth (Phase 2A/2C)
 
 | Method | Route | Auth | Success | Errors |
@@ -63,6 +69,7 @@ All three accept an **optional** customer session cookie; guests use `anonymousI
 | GET | `/recommendations?anonymousId=` | — | `200 {ok:true, books:[≤8]}` | — (always 200) |
 | POST | `/recommendations/cart` | `{bookIds: string[≤30]}` | `200 {ok:true, books:[≤4]}` | `400 {ok:false, message:"Invalid recommendation request."}` |
 | POST | `/recommendations/events` | `{bookId, eventType, anonymousId?, source?≤80}` | `200 {ok:true, tracked:bool}` | `400 {ok:false, tracked:false}` |
+| GET | `/books/:id/recommendations?take=` | — | `200 {ok:true, books:[≤12]}` | `400 {ok:false, message}` |
 
 **Event types** (only the 5 existing ones — none invented): `view`(w1) · `search_click`(w2) · `sample_open`(w3) · `add_to_cart`(w4) · `purchase`(w8).
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { BookStatus } from "@prisma/client";
+import type { BookStatus } from "@/types";
 import Link from "next/link";
 import { BookMarked } from "lucide-react";
 import { fetchCustomerApi, requireCustomer } from "@/lib/customer-auth";

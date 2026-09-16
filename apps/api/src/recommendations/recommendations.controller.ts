@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpException,
   Inject,
+  Param,
   Post,
   Query,
   Req,
@@ -41,6 +42,12 @@ const eventSchema = z.object({
   anonymousId: z.string().optional().nullable(),
   source: z.string().max(80).optional().nullable(),
 });
+
+const bookRecommendationParamsSchema = z.object({
+  id: z.string().trim().min(1).max(128),
+});
+
+const takeSchema = z.coerce.number().int().min(1).max(12);
 
 @Controller("recommendations")
 export class RecommendationsController {
@@ -119,5 +126,41 @@ export class RecommendationsController {
       .catch(() => false);
 
     return { ok: true, tracked };
+  }
+}
+
+/** Public book-detail similarity endpoint. */
+@Controller("books")
+export class BookRecommendationsController {
+  constructor(
+    @Inject(RecommendationsService)
+    private readonly recommendations: RecommendationsService,
+  ) {}
+
+  @Get(":id/recommendations")
+  @Header("Cache-Control", "public, max-age=300, s-maxage=300")
+  async similar(
+    @Param("id") id: string,
+    @Query("take") rawTake: string | undefined,
+  ) {
+    const parsed = bookRecommendationParamsSchema.safeParse({ id });
+    if (!parsed.success) {
+      throw new HttpException(
+        { ok: false, message: "Invalid book recommendation request." },
+        400,
+      );
+    }
+    const parsedTake = takeSchema.safeParse(rawTake ?? "4");
+    if (!parsedTake.success) {
+      throw new HttpException(
+        { ok: false, message: "Invalid book recommendation request." },
+        400,
+      );
+    }
+    const books = await this.recommendations.getSimilarRecommendations(
+      parsed.data.id,
+      parsedTake.data,
+    );
+    return { ok: true, books };
   }
 }
